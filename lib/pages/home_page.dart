@@ -144,7 +144,8 @@ class _HomePageState extends State<HomePage> {
                         final List<WellbeingItem> lastItemList = snapshot.data;
                         return lastItemList.isNotEmpty
                             ? WellbeingCircle(
-                                lastItemList[0].wellbeingScore.truncate())
+                                score:
+                                    lastItemList[0].wellbeingScore.truncate())
                             : WellbeingCircle();
                       } else if (snapshot.hasError) {
                         print(snapshot.error);

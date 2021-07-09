@@ -163,35 +163,35 @@ class MyApp extends StatelessWidget {
           scaffoldBackgroundColor: Color.fromARGB(255, 251, 249, 255),
           primaryColor: Color.fromARGB(255, 0, 74, 173),
           accentColor: Color.fromARGB(255, 182, 125, 226),
-          fontFamily: 'Rosario',
+          fontFamily: 'NotoSans',
           textTheme: TextTheme(
               headline1: TextStyle(
                   fontSize: 36.0,
                   fontWeight: FontWeight.w700,
-                  fontFamily: 'Kite_One'),
+                  fontFamily: 'Roboto'),
               headline2: TextStyle(
-                fontFamily: 'Rosario',
+                fontFamily: 'NotoSans',
                 fontSize: 25,
               ),
-              headline3: TextStyle(fontFamily: 'Rosario', fontSize: 25),
+              headline3: TextStyle(fontFamily: 'NotoSans', fontSize: 25),
               subtitle1: TextStyle(
-                  fontFamily: 'Rosario',
+                  fontFamily: 'NotoSans',
                   fontWeight: FontWeight.w500,
                   fontSize: 20),
               subtitle2: TextStyle(
-                  fontFamily: 'Rosario',
+                  fontFamily: 'NotoSans',
                   color: Colors.white,
                   fontStyle: FontStyle.italic,
                   fontSize: 20), //for tutorial
-              bodyText1: TextStyle(fontFamily: 'Rosario', fontSize: 20),
-              bodyText2: TextStyle(fontFamily: 'Rosario', fontSize: 15),
-              caption: TextStyle(fontFamily: 'Rosario', fontSize: 12)),
+              bodyText1: TextStyle(fontFamily: 'NotoSans', fontSize: 20),
+              bodyText2: TextStyle(fontFamily: 'NotoSans', fontSize: 15),
+              caption: TextStyle(fontFamily: 'NotoSans', fontSize: 12)),
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
             backgroundColor: Colors.white,
             selectedLabelStyle: TextStyle(
-                color: Colors.black, fontFamily: 'Rosario', fontSize: 14.0),
+                color: Colors.black, fontFamily: 'NotoSans', fontSize: 14.0),
             unselectedLabelStyle: TextStyle(
-                color: Colors.black, fontFamily: 'Rosario', fontSize: 14.0),
+                color: Colors.black, fontFamily: 'NotoSans', fontSize: 14.0),
             selectedItemColor: Colors.black,
             unselectedItemColor: Colors.black,
             showUnselectedLabels: true,

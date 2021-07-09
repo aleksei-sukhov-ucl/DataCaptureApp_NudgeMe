@@ -66,6 +66,9 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
+  fl_chart: ^0.36.2
+  toggle_switch: ^1.2.0
+  percent_indicator: ^3.0.1
 
 dev_dependencies:
   flutter_test:
@@ -96,15 +99,16 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - lib/images/IntroLogo.png
-    - lib/images/IntroPostcode.png
-    - lib/images/IntroSupport.png
-    - lib/images/IntroWBCheck.png
-    - lib/images/IntroShare.png
-    - lib/images/IntroWBCheckNotification.png
-    - lib/images/IntroShareNotification.png
-    - lib/images/StepProgressMarker.png
-    - lib/images/launcher/logo.png
+    - lib/images/
+#  IntroLogo.png
+#    - lib/images/IntroPostcode.png
+#    - lib/images/IntroSupport.png
+#    - lib/images/IntroWBCheck.png
+#    - lib/images/IntroShare.png
+#    - lib/images/IntroWBCheckNotification.png
+#    - lib/images/IntroShareNotification.png
+#    - lib/images/StepProgressMarker.png
+#    - lib/images/launcher/logo.png
 
 
 
@@ -126,6 +130,12 @@ flutter:
       - family: Kite_One
         fonts:
           - asset: lib/fonts/KiteOne-Regular.ttf
+      - family: NotoSans
+        fonts:
+          - asset: lib/fonts/NotoSans/NotoSans-Bold.ttf
+          - asset: lib/fonts/NotoSans/NotoSans-BoldItalic.ttf
+          - asset: lib/fonts/NotoSans/NotoSans-Italic.ttf
+          - asset: lib/fonts/NotoSans/NotoSans-Regular.ttf
          
 
   #   - family: Schyler

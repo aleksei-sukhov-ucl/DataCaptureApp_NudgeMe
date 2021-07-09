@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:highlighter_coachmark/highlighter_coachmark.dart';
+import 'package:nudge_me/pages/WellbeingPage/cards.dart';
+import 'package:nudge_me/pages/WellbeingPage/homePageGridView.dart';
 import 'package:nudge_me/model/user_model.dart';
 import 'package:nudge_me/shared/share_button.dart';
 import 'package:provider/provider.dart';
@@ -27,16 +29,21 @@ class WellbeingGraph extends StatefulWidget {
   /// true if it should display the tutorial button:
   final bool shouldShowTutorial;
 
+  /// Width of the share and info buttons
+  final double infoShareButton;
+
   WellbeingGraph(
       {this.animate = true,
       this.displayShare = true,
-      this.shouldShowTutorial = true});
+      this.shouldShowTutorial = true,
+      this.infoShareButton = 2.1});
 
   @override
   _WellbeingGraphState createState() => _WellbeingGraphState();
 }
 
 class _WellbeingGraphState extends State<WellbeingGraph> {
+  // TODO Edit the tutorial functions to point to the new widgets
   /// Keys that let the tutorial functions know which widgets to point to.
   GlobalKey _wbGraphTutorialKey = GlobalObjectKey("wb_graph");
   GlobalKey _wbShareTutorialKey = GlobalObjectKey("wb_share");
@@ -72,6 +79,7 @@ class _WellbeingGraphState extends State<WellbeingGraph> {
       fontStyle: FontStyle.italic,
       backgroundColor: Colors.white);
 
+  // TODO Edit the explanation for wellbeing graph
   /// Shows the first slide of the tutorial, explaining the wellbeing
   /// graph. Will be displayed for [int] seconds.
   void showCoachMarkGraph(int duration) {
@@ -136,99 +144,100 @@ class _WellbeingGraphState extends State<WellbeingGraph> {
         });
   }
 
+  /// Legacy Bar Chart
   /// Returns [charts.BarChart] graph widget using the [List] of [WellbeingItem]
-  Widget _getGraph(List<WellbeingItem> items, bool animate) {
-    // we create the series to convert the data into a format that the charting
-    // library can understand
-    final scoreSeries = new charts.Series<WellbeingItem, String>(
-      id: 'Wellbeing',
-      colorFn: (_, __) =>
-          charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
-      // we have to convert the id to a string since bar charts expect strings
-      // on the x axis
-      domainFn: (WellbeingItem item, _) => item.id.toString(),
-      measureFn: (WellbeingItem item, _) => item.wellbeingScore,
-      data: items,
-    );
-    final stepSeries = new charts.Series<WellbeingItem, String>(
-      id: 'Steps',
-      colorFn: (_, __) =>
-          charts.ColorUtil.fromDartColor(Theme.of(context).primaryColor),
-      domainFn: (WellbeingItem a, _) => a.id.toString(),
-      measureFn: (WellbeingItem a, _) => a.numSteps,
-      data: items,
-    )..setAttribute(charts.measureAxisIdKey, 'secondaryMeasureAxisId');
-    // we have only set an attribute on stepSeries to configure how it
-    // is displayed
-    final seriesList = [scoreSeries, stepSeries];
-
-    return Flexible(
-      child: RepaintBoundary(
-        // wraps it in a [RepaintBoundary] so we can use .toImage()
-        key: _printKey, // this [RepaintBoundary] will be 'printed'/shared
-        child: charts.BarChart(
-          // feedback from UCL recommended us to use a bar chart
-          seriesList,
-          animate: animate,
-          barGroupingType: charts.BarGroupingType.grouped,
-          // 'tick counts' used to match grid lines
-          primaryMeasureAxis: charts.NumericAxisSpec(
-              tickProviderSpec:
-                  charts.BasicNumericTickProviderSpec(desiredTickCount: 3)),
-          secondaryMeasureAxis: charts.NumericAxisSpec(
-            tickProviderSpec:
-                charts.BasicNumericTickProviderSpec(desiredTickCount: 2),
-          ),
-          behaviors: [
-            new charts.SeriesLegend(), // adds labels to colors
-            charts.RangeAnnotation(
-              [
-                // This should force the wellbeing score axis to go up to 10:
-                charts.RangeAnnotationSegment(
-                  8,
-                  10,
-                  charts.RangeAnnotationAxisType.measure,
-                  color: charts.MaterialPalette.transparent,
-                ),
-                // this displays the region of steps considered healthy
-                charts.RangeAnnotationSegment(
-                  7000, // min recommended weekly steps
-                  70000, // upper bound recommended weekly steps
-                  charts.RangeAnnotationAxisType.measure,
-                  color: charts.MaterialPalette.green.makeShades(10)[7],
-                  startLabel: "7,000",
-                  axisId: 'secondaryMeasureAxisId', // for steps axis
-                  labelPosition: charts.AnnotationLabelPosition.margin,
-                ),
-              ],
-            ),
-
-            // using title as the x axis label:
-            new charts.ChartTitle('Week',
-                behaviorPosition: charts.BehaviorPosition.bottom,
-                titleOutsideJustification:
-                    charts.OutsideJustification.middleDrawArea),
-            new charts.ChartTitle(
-              'Wellbeing Scale',
-              behaviorPosition: charts.BehaviorPosition.start,
-              titleOutsideJustification:
-                  charts.OutsideJustification.middleDrawArea,
-            ),
-            new charts.ChartTitle(
-              'Steps Scale',
-              behaviorPosition: charts.BehaviorPosition.end,
-              titleOutsideJustification:
-                  charts.OutsideJustification.middleDrawArea,
-            ),
-
-            // zooms onto the data points, without this there may be empty
-            // spaces
-            new charts.PanAndZoomBehavior(),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _getGraph(List<WellbeingItem> items, bool animate) {
+  //   // we create the series to convert the data into a format that the charting
+  //   // library can understand
+  //   final scoreSeries = new charts.Series<WellbeingItem, String>(
+  //     id: 'Wellbeing',
+  //     colorFn: (_, __) =>
+  //         charts.ColorUtil.fromDartColor(Theme.of(context).accentColor),
+  //     // we have to convert the id to a string since bar charts expect strings
+  //     // on the x axis
+  //     domainFn: (WellbeingItem item, _) => item.id.toString(),
+  //     measureFn: (WellbeingItem item, _) => item.wellbeingScore,
+  //     data: items,
+  //   );
+  //   final stepSeries = new charts.Series<WellbeingItem, String>(
+  //     id: 'Steps',
+  //     colorFn: (_, __) =>
+  //         charts.ColorUtil.fromDartColor(Theme.of(context).primaryColor),
+  //     domainFn: (WellbeingItem a, _) => a.id.toString(),
+  //     measureFn: (WellbeingItem a, _) => a.numSteps,
+  //     data: items,
+  //   )..setAttribute(charts.measureAxisIdKey, 'secondaryMeasureAxisId');
+  //   // we have only set an attribute on stepSeries to configure how it
+  //   // is displayed
+  //   final seriesList = [scoreSeries, stepSeries];
+  //
+  //   return Flexible(
+  //     child: RepaintBoundary(
+  //       // wraps it in a [RepaintBoundary] so we can use .toImage()
+  //       key: _printKey, // this [RepaintBoundary] will be 'printed'/shared
+  //       child: charts.BarChart(
+  //         // feedback from UCL recommended us to use a bar chart
+  //         seriesList,
+  //         animate: animate,
+  //         barGroupingType: charts.BarGroupingType.grouped,
+  //         // 'tick counts' used to match grid lines
+  //         primaryMeasureAxis: charts.NumericAxisSpec(
+  //             tickProviderSpec:
+  //                 charts.BasicNumericTickProviderSpec(desiredTickCount: 3)),
+  //         secondaryMeasureAxis: charts.NumericAxisSpec(
+  //           tickProviderSpec:
+  //               charts.BasicNumericTickProviderSpec(desiredTickCount: 2),
+  //         ),
+  //         behaviors: [
+  //           new charts.SeriesLegend(), // adds labels to colors
+  //           charts.RangeAnnotation(
+  //             [
+  //               // This should force the wellbeing score axis to go up to 10:
+  //               charts.RangeAnnotationSegment(
+  //                 8,
+  //                 10,
+  //                 charts.RangeAnnotationAxisType.measure,
+  //                 color: charts.MaterialPalette.transparent,
+  //               ),
+  //               // this displays the region of steps considered healthy
+  //               charts.RangeAnnotationSegment(
+  //                 7000, // min recommended weekly steps
+  //                 70000, // upper bound recommended weekly steps
+  //                 charts.RangeAnnotationAxisType.measure,
+  //                 color: charts.MaterialPalette.green.makeShades(10)[7],
+  //                 startLabel: "7,000",
+  //                 axisId: 'secondaryMeasureAxisId', // for steps axis
+  //                 labelPosition: charts.AnnotationLabelPosition.margin,
+  //               ),
+  //             ],
+  //           ),
+  //
+  //           // using title as the x axis label:
+  //           new charts.ChartTitle('Week',
+  //               behaviorPosition: charts.BehaviorPosition.bottom,
+  //               titleOutsideJustification:
+  //                   charts.OutsideJustification.middleDrawArea),
+  //           new charts.ChartTitle(
+  //             'Wellbeing Scale',
+  //             behaviorPosition: charts.BehaviorPosition.start,
+  //             titleOutsideJustification:
+  //                 charts.OutsideJustification.middleDrawArea,
+  //           ),
+  //           new charts.ChartTitle(
+  //             'Steps Scale',
+  //             behaviorPosition: charts.BehaviorPosition.end,
+  //             titleOutsideJustification:
+  //                 charts.OutsideJustification.middleDrawArea,
+  //           ),
+  //
+  //           // zooms onto the data points, without this there may be empty
+  //           // spaces
+  //           new charts.PanAndZoomBehavior(),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -237,22 +246,30 @@ class _WellbeingGraphState extends State<WellbeingGraph> {
         future: Provider.of<UserWellbeingDB>(context).getLastNWeeks(5),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+            // TODO understand how to add generated data to the graphs
             final items = snapshot.data;
-            final graph = _getGraph(items, widget.animate);
+            final graph = HomePageGridView(cards: cards);
 
             final List<Widget> buttons = [];
             if (widget.shouldShowTutorial) {
               buttons.add(Container(
+                  width: MediaQuery.of(context).size.width /
+                      widget.infoShareButton,
                   child: OutlinedButton(
                       //help button replays tutorial
-                      child: Icon(Icons.info_outline,
-                          color: Theme.of(context).primaryColor),
+                      child: Icon(
+                        Icons.info_outline,
+                        color: Theme.of(context).primaryColor,
+                        size: 37,
+                      ),
                       onPressed: () {
                         showCoachMarkGraph(20);
                       })));
             }
             if (widget.displayShare) {
               buttons.add(Container(
+                  width: MediaQuery.of(context).size.width /
+                      widget.infoShareButton,
                   key: _wbShareTutorialKey,
                   child: ShareButton(_printKey, 'wellbeing-score.pdf')));
             }
@@ -261,7 +278,17 @@ class _WellbeingGraphState extends State<WellbeingGraph> {
               Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: buttons),
-              Container(key: _wbGraphTutorialKey, child: graph)
+              Container(
+                  key: _wbGraphTutorialKey,
+                  child: Flexible(
+                    child: RepaintBoundary(
+                        // wraps it in a [RepaintBoundary] so we can use .toImage()
+                        key:
+                            _printKey, // this [RepaintBoundary] will be 'printed'/shared
+                        child: graph),
+                  )
+                  // graph
+                  )
             ];
 
             return Column(

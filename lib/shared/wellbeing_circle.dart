@@ -5,9 +5,18 @@ import 'package:flutter/material.dart';
 class WellbeingCircle extends StatefulWidget {
   /// 0 <= score <= 10 that determines how much positive/negative color to show
   final int score;
+  final Color firstColor;
+  final Color secondColor;
+  final double width;
+  final double height;
 
   /// takes an [int] score which could be null
-  const WellbeingCircle([this.score]);
+  const WellbeingCircle(
+      {this.score,
+      this.firstColor = Colors.purpleAccent,
+      this.secondColor = Colors.blueAccent,
+      this.width = 160,
+      this.height = 160});
 
   @override
   _WellbeingCircleState createState() => _WellbeingCircleState();
@@ -44,13 +53,13 @@ class _WellbeingCircleState extends State<WellbeingCircle> {
 
     final bgCircle = AnimatedContainer(
       duration: Duration(milliseconds: 900),
-      width: 160.0,
-      height: 160.0,
+      width: widget.width,
+      height: widget.height,
       decoration: BoxDecoration(
         gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
-            colors: const [Colors.purpleAccent, Colors.blueAccent],
+            colors: [widget.firstColor, widget.secondColor],
             // cumulative points to switch color:
             stops: [purpleFraction, blueStartPoint]),
         shape: BoxShape.circle,

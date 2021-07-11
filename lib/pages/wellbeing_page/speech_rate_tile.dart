@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nudge_me/pages/WellbeingPage/cards.dart';
+import 'package:nudge_me/pages/wellbeing_page/cards.dart';
 
 class SpeechRareTile extends StatefulWidget {
   final CardClass card;

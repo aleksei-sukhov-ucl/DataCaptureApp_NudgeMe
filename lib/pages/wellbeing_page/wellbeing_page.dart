@@ -8,7 +8,11 @@ class WellbeingPage extends StatelessWidget {
         body: SafeArea(
             child: Center(
                 child: Column(children: [
-          Text("Wellbeing Diary", style: Theme.of(context).textTheme.headline1),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text("Wellbeing Diary",
+                style: Theme.of(context).textTheme.headline1),
+          ),
           Flexible(
               child: WellbeingGraph(
             animate: true,

@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:nudge_me/pages/WellbeingPage/cards.dart';
+import 'package:nudge_me/pages/wellbeing_page/cards.dart';
 
 import 'chart.dart';
 

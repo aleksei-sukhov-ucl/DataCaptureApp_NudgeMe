@@ -2,7 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/gestures.dart';
-import 'package:nudge_me/pages/WellbeingPage/cards.dart';
+import 'package:nudge_me/pages/wellbeing_page/cards.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import 'chart_settings.dart';

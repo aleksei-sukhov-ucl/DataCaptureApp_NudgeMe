@@ -168,7 +168,7 @@ class MyApp extends StatelessWidget {
               headline1: TextStyle(
                   fontSize: 36.0,
                   fontWeight: FontWeight.w700,
-                  fontFamily: 'Roboto'),
+                  fontFamily: 'NotoSans'),
               headline2: TextStyle(
                 fontFamily: 'NotoSans',
                 fontSize: 25,

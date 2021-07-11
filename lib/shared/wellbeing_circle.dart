@@ -7,16 +7,12 @@ class WellbeingCircle extends StatefulWidget {
   final int score;
   final Color firstColor;
   final Color secondColor;
-  final double width;
-  final double height;
 
   /// takes an [int] score which could be null
   const WellbeingCircle(
       {this.score,
       this.firstColor = Colors.purpleAccent,
-      this.secondColor = Colors.blueAccent,
-      this.width = 160,
-      this.height = 160});
+      this.secondColor = Colors.blueAccent});
 
   @override
   _WellbeingCircleState createState() => _WellbeingCircleState();
@@ -53,8 +49,8 @@ class _WellbeingCircleState extends State<WellbeingCircle> {
 
     final bgCircle = AnimatedContainer(
       duration: Duration(milliseconds: 900),
-      width: widget.width,
-      height: widget.height,
+      width: MediaQuery.of(context).size.width / 3.1,
+      height: MediaQuery.of(context).size.width / 3.1,
       decoration: BoxDecoration(
         gradient: LinearGradient(
             begin: Alignment.bottomCenter,
@@ -72,7 +68,9 @@ class _WellbeingCircleState extends State<WellbeingCircle> {
       children: [
         bgCircle,
         Text(widget.score == null ? "N/A" : widget.score.toString(),
-            style: TextStyle(color: Colors.white, fontSize: 75),
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: MediaQuery.of(context).size.width / 7),
             textDirection: TextDirection.ltr),
       ],
     );

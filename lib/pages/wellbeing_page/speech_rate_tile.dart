@@ -12,23 +12,19 @@ class SpeechRareTile extends StatefulWidget {
 class _SpeechRareTileState extends State<SpeechRareTile> {
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-        child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 19, 0, 19),
-            child: Center(
-              child: RichText(
-                text: TextSpan(
-                  style: TextStyle(color: Colors.black),
-                  children: [
-                    TextSpan(
-                      text: "${widget.card.score}",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 50),
-                    ),
-                    TextSpan(text: "words/min", style: TextStyle(fontSize: 8))
-                  ],
-                ),
-              ),
-            )));
+    return Center(
+      child: RichText(
+        text: TextSpan(
+          style: TextStyle(color: Colors.black),
+          children: [
+            TextSpan(
+              text: "${widget.card.score}",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 50),
+            ),
+            TextSpan(text: "words/min", style: TextStyle(fontSize: 8))
+          ],
+        ),
+      ),
+    );
   }
 }

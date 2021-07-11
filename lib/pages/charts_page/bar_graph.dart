@@ -1,4 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/gestures.dart';
@@ -80,9 +81,19 @@ class BarChartWidgetState extends State<BarChartWidget> {
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0, 10, 0, 20),
-                        child: Text(
-                          widget.card.units,
-                          style: Theme.of(context).textTheme.bodyText1,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              widget.card.units,
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
+                            TextButton.icon(
+                              onPressed: () {},
+                              label: Text("Add Data"),
+                              icon: Icon(Icons.add),
+                            )
+                          ],
                         ),
                       ),
                       Expanded(
@@ -114,7 +125,7 @@ class BarChartWidgetState extends State<BarChartWidget> {
       x: x,
       barRods: [
         BarChartRodData(
-          y: isTouched ? y : y,
+          y: y,
           colors: isTouched ? [Colors.yellow] : [widget.card.color],
           width: width,
           backDrawRodData: BackgroundBarChartRodData(

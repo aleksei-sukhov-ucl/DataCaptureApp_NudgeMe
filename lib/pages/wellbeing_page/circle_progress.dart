@@ -29,8 +29,8 @@ class _CirclePercentIndicator extends State<CirclePercentIndicator> {
   Widget build(BuildContext context) {
     return Container(
       child: CircularPercentIndicator(
-        radius: 100.0,
-        lineWidth: 14.0,
+        radius: MediaQuery.of(context).size.width / 3.1,
+        lineWidth: MediaQuery.of(context).size.width / 20,
         animation: true,
         percent: (widget.actualValue / widget.goal >= 1)
             ? 1

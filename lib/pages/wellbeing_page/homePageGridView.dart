@@ -11,11 +11,16 @@ import 'package:nudge_me/shared/wellbeing_circle.dart';
 
 import '../charts_page/graph_page.dart';
 
-class HomePageGridView extends StatelessWidget {
+class HomePageGridView extends StatefulWidget {
   final List<CardClass> cards;
 
   const HomePageGridView({Key key, this.cards}) : super(key: key);
 
+  @override
+  State<HomePageGridView> createState() => _HomePageGridViewState();
+}
+
+class _HomePageGridViewState extends State<HomePageGridView> {
   /// Return different visualisation for different card depending on card id
   Widget _getCardVisualisation(CardClass card) {
     switch (card.cardId) {
@@ -29,8 +34,6 @@ class HomePageGridView extends StatelessWidget {
       case 1:
         return WellbeingCircle(
           score: card.score,
-          width: 100,
-          height: 100,
         );
 
       /// Sputum colour
@@ -38,9 +41,7 @@ class HomePageGridView extends StatelessWidget {
         return WellbeingCircle(
             score: card.score,
             firstColor: card.color,
-            secondColor: Colors.transparent,
-            width: 100,
-            height: 100);
+            secondColor: Colors.transparent);
 
       /// Breathlessness
       case 3:
@@ -62,7 +63,7 @@ class HomePageGridView extends StatelessWidget {
   Widget build(BuildContext context) {
     /// Building Grid View
     GridView homePageGridView = new GridView.builder(
-        itemCount: cards.length,
+        itemCount: widget.cards.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: MediaQuery.of(context).size.width /
@@ -72,6 +73,7 @@ class HomePageGridView extends StatelessWidget {
           // print(cards[index].units);
           return GestureDetector(
             child: Card(
+              shadowColor: Theme.of(context).primaryColor,
               color: Colors.grey[100],
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
@@ -82,17 +84,19 @@ class HomePageGridView extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     Container(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          cards[index].cardIcon,
+                          widget.cards[index].cardIcon,
                           Expanded(
                             child: Padding(
                               padding: const EdgeInsets.fromLTRB(6, 0, 0, 0),
                               child: Text(
-                                cards[index].titleOfCard,
+                                widget.cards[index].titleOfCard,
                                 style:
                                     Theme.of(context).textTheme.bodyText2.merge(
                                           TextStyle(
@@ -107,8 +111,12 @@ class HomePageGridView extends StatelessWidget {
                       height: 40,
                     ),
 
+                    //Padding(
+                    //                       padding: const EdgeInsets.fromLTRB(0, 16, 0, 16),
+                    //                       child: _getCardVisualisation(cards[index]),
+                    //                     ),
                     /// Padding for visualisation
-                    _getCardVisualisation(cards[index]),
+                    _getCardVisualisation(widget.cards[index]),
 
                     ///"View more >" text
                     Row(
@@ -131,18 +139,9 @@ class HomePageGridView extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => BarChartPage(card: cards[index]),
+                  builder: (context) => BarChartPage(card: widget.cards[index]),
                 ),
               );
-
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => new BarChartPage(
-              //       card: cards[index],
-              //     ),
-              //   ),
-              // );
             },
           );
         });

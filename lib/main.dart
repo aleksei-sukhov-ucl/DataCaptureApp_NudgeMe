@@ -161,37 +161,43 @@ class MyApp extends StatelessWidget {
         title: 'NudgeMe',
         theme: ThemeData(
           scaffoldBackgroundColor: Color.fromARGB(255, 251, 249, 255),
-          primaryColor: Color.fromARGB(255, 0, 74, 173),
-          accentColor: Color.fromARGB(255, 182, 125, 226),
-          fontFamily: 'NotoSans',
+          // primaryColor: Color.fromARGB(255, 0, 74, 173),
+          primaryColor: Color.fromRGBO(113, 101, 226, 1),
+          // accentColor: Color.fromARGB(255, 182, 125, 226),
+          accentColor: Color.fromRGBO(63, 135, 253, 1),
+          fontFamily: 'Lato-Regular',
           textTheme: TextTheme(
               headline1: TextStyle(
                   fontSize: 36.0,
                   fontWeight: FontWeight.w700,
-                  fontFamily: 'NotoSans'),
+                  fontFamily: 'Lato-Regular'),
               headline2: TextStyle(
-                fontFamily: 'NotoSans',
+                fontFamily: 'Lato-Regular',
                 fontSize: 25,
               ),
-              headline3: TextStyle(fontFamily: 'NotoSans', fontSize: 25),
+              headline3: TextStyle(fontFamily: 'Lato-Regular', fontSize: 25),
               subtitle1: TextStyle(
-                  fontFamily: 'NotoSans',
+                  fontFamily: 'Lato-Regular',
                   fontWeight: FontWeight.w500,
                   fontSize: 20),
               subtitle2: TextStyle(
-                  fontFamily: 'NotoSans',
+                  fontFamily: 'Lato-Regular',
                   color: Colors.white,
                   fontStyle: FontStyle.italic,
                   fontSize: 20), //for tutorial
-              bodyText1: TextStyle(fontFamily: 'NotoSans', fontSize: 20),
-              bodyText2: TextStyle(fontFamily: 'NotoSans', fontSize: 15),
-              caption: TextStyle(fontFamily: 'NotoSans', fontSize: 12)),
+              bodyText1: TextStyle(fontFamily: 'Lato-Regular', fontSize: 20),
+              bodyText2: TextStyle(fontFamily: 'Lato-Regular', fontSize: 15),
+              caption: TextStyle(fontFamily: 'Lato-Regular', fontSize: 12)),
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
             backgroundColor: Colors.white,
             selectedLabelStyle: TextStyle(
-                color: Colors.black, fontFamily: 'NotoSans', fontSize: 14.0),
+                color: Colors.black,
+                fontFamily: 'Lato-Regular',
+                fontSize: 14.0),
             unselectedLabelStyle: TextStyle(
-                color: Colors.black, fontFamily: 'NotoSans', fontSize: 14.0),
+                color: Colors.black,
+                fontFamily: 'Lato-Regular',
+                fontSize: 14.0),
             selectedItemColor: Colors.black,
             unselectedItemColor: Colors.black,
             showUnselectedLabels: true,

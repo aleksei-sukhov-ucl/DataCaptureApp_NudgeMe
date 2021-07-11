@@ -136,6 +136,11 @@ flutter:
           - asset: lib/fonts/NotoSans/NotoSans-BoldItalic.ttf
           - asset: lib/fonts/NotoSans/NotoSans-Italic.ttf
           - asset: lib/fonts/NotoSans/NotoSans-Regular.ttf
+      - family: Lato
+        fonts:
+          - asset: lib/fonts/Lato/Lato-Black.ttf
+          - asset: lib/fonts/Lato/Lato-Bold.ttf
+          - asset: lib/fonts/Lato/Lato-Regular.ttf
          
 
   #   - family: Schyler

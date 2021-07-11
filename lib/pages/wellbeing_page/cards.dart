@@ -8,6 +8,7 @@ class CardClass {
   int score;
   String units;
   Color color;
+  String text;
 
   CardClass(
       {this.cardId,
@@ -15,7 +16,8 @@ class CardClass {
       this.titleOfCard,
       this.score,
       this.units,
-      this.color});
+      this.color,
+      this.text});
 }
 
 /// Defining the list of cards
@@ -26,37 +28,51 @@ List<CardClass> cards = [
       titleOfCard: "Steps",
       score: 10000,
       units: "Steps",
-      color: Colors.greenAccent),
+      color: Color.fromRGBO(123, 230, 236, 1),
+      text:
+          "Walking for 30 minutes a day or more on most days of the week is a great way to improve or maintain your overall health.\n\nIf you can’t manage 30 minutes a day, remember ‘even a little is good, but more is better’.\n\nWalking with others can turn exercise into an enjoyable social occasion."),
+
+  /// Text ref: https://www.betterhealth.vic.gov.au/health/healthyliving/walking-for-good-health
   CardClass(
       cardId: 1,
       cardIcon: Icon(Icons.accessibility_new),
       titleOfCard: "Wellbeing\nScore",
       score: 8,
       units: "Wellbeing score",
-      color: Colors.deepPurple),
+      color: Colors.deepPurple,
+      text: ""),
   CardClass(
       cardId: 2,
       cardIcon: Icon(Icons.sentiment_satisfied_alt),
       titleOfCard: "Sputum\ncolour",
       score: 5,
       units: "Color",
-      color: Colors.yellowAccent),
+      color: Color.fromRGBO(251, 222, 147, 1),
+      text:
+          "Sputum is produced when a person’s lungs are diseased or damaged. Sputum is not saliva but the thick mucus – sometimes called phlegm – which is coughed up from the lungs.\n\nThe body produces mucus to keep the thin, delicate tissues of the respiratory tract moist so that small particles of foreign matter that may pose a threat can be trapped and forced out.\n\nSometimes, such as when there is an infection in the lungs, an excess of mucus is produced. The body attempts to get rid of this excess by coughing it up as sputum."),
+
+  /// Text ref: https://www.medicalnewstoday.com/articles/318924
   CardClass(
-      cardId: 3,
-      cardIcon: ImageIcon(
-        AssetImage("lib/images/634cbe378c7b08daa95fd9197f77b468.png"),
-        size: 24,
-      ),
-      titleOfCard: "MRC Dyspnoea Scale",
-      // "MRC Dispnoea Scale",
-      score: 9,
-      units: "Breathlessness Score",
-      color: Colors.cyanAccent),
+    cardId: 3,
+    cardIcon: ImageIcon(
+      AssetImage("lib/images/634cbe378c7b08daa95fd9197f77b468.png"),
+      size: 24,
+    ),
+    titleOfCard: "MRC\nDyspnoea Scale",
+    score: 9,
+    units: "Breathlessness Score",
+    color: Color.fromRGBO(138, 127, 245, 1),
+    text:
+        "The dyspnoea scale has been in use for many years for grading the effect of breathlessness on daily activities.\n\nThis scale measures perceived respiratory disability.\n\nThe MRC dyspnoea scale is simple to administer as it allows the patients to indicate the extent to which their breathlessness affects their mobility.",
+
+    ///Text ref: https://mrc.ukri.org/research/facilities-and-resources-for-researchers/mrc-scales/mrc-dyspnoea-scale-mrc-breathlessness-scale/
+  ),
   CardClass(
       cardId: 4,
       cardIcon: Icon(Icons.record_voice_over),
       titleOfCard: "Speech\nRate",
       score: 60,
       units: "Words/min",
-      color: Colors.cyanAccent),
+      color: Colors.cyanAccent,
+      text: ""),
 ];

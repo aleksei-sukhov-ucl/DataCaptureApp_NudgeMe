@@ -5,18 +5,15 @@ import 'package:flutter/gestures.dart';
 import 'package:nudge_me/pages/wellbeing_page/cards.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
-import 'chart_settings.dart';
+import 'bar_graph_settings.dart';
 
 /// Ref: https://github.com/imaNNeoFighT/fl_chart/blob/master/example/lib/bar_chart/samples/bar_chart_sample1.dart
 
 class BarChartWidget extends StatefulWidget {
   final CardClass card;
-  // final String titleOfCard;
-  // final String units;
-  // final CardClass cardInfo;
 
   const BarChartWidget({
-    key,
+    Key key,
     this.card,
   }) : super(key: key);
 
@@ -38,9 +35,9 @@ class BarChartWidgetState extends State<BarChartWidget> {
       initialLabelIndex: initialIndex,
       minWidth: 400,
       activeBgColors: [
-        [Colors.lightBlue],
-        [Colors.lightBlue],
-        [Colors.lightBlue]
+        [Theme.of(context).accentColor],
+        [Theme.of(context).accentColor],
+        [Theme.of(context).accentColor]
       ],
       inactiveBgColor: Colors.grey[100],
       totalSwitches: 3,
@@ -52,7 +49,7 @@ class BarChartWidgetState extends State<BarChartWidget> {
       radiusStyle: true,
       cornerRadius: 15.0,
       onToggle: (index) {
-        print('switched to: $index');
+        // print('switched to: $index');
         setState(() {
           initialIndex = index;
         });
@@ -82,13 +79,10 @@ class BarChartWidgetState extends State<BarChartWidget> {
                     mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 20),
                         child: Text(
                           widget.card.units,
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold),
+                          style: Theme.of(context).textTheme.bodyText1,
                         ),
                       ),
                       Expanded(
@@ -279,13 +273,13 @@ class BarChartWidgetState extends State<BarChartWidget> {
             getTitles: (double value) {
               switch (initialIndex) {
                 case 0:
-                  print("getTitles case 0");
+                  // print("getTitles case 0");
                   return weekXAxisUnits(value);
                 case 1:
-                  print("getTitles case 1");
+                  // print("getTitles case 1");
                   return monthXAxisUnits(value);
                 case 2:
-                  print("getTitles case 2");
+                  // print("getTitles case 2");
                   return yearXAxisUnits(value);
                 default:
                   return " ";

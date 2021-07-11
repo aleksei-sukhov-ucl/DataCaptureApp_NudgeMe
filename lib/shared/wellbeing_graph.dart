@@ -297,10 +297,12 @@ class _WellbeingGraphState extends State<WellbeingGraph> {
           } else if (snapshot.hasError) {
             return Text("Error: ${snapshot.error}");
           }
-          return SizedBox(
-            child: CircularProgressIndicator(),
-            width: 60,
-            height: 60,
+          return Center(
+            child: SizedBox(
+              child: CircularProgressIndicator(),
+              width: 60,
+              height: 60,
+            ),
           );
         });
   }

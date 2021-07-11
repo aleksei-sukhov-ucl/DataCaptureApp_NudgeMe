@@ -9,7 +9,7 @@ import 'package:nudge_me/pages/wellbeing_page/circle_progress.dart';
 import 'package:nudge_me/pages/wellbeing_page/speech_rate_tile.dart';
 import 'package:nudge_me/shared/wellbeing_circle.dart';
 
-import '../../NewUI/graph_page.dart';
+import '../charts_page/graph_page.dart';
 
 class HomePageGridView extends StatelessWidget {
   final List<CardClass> cards;
@@ -37,7 +37,7 @@ class HomePageGridView extends StatelessWidget {
       case 2:
         return WellbeingCircle(
             score: card.score,
-            firstColor: Colors.amberAccent.shade400,
+            firstColor: card.color,
             secondColor: Colors.transparent,
             width: 100,
             height: 100);
@@ -69,7 +69,7 @@ class HomePageGridView extends StatelessWidget {
               (MediaQuery.of(context).size.height / 1.65),
         ),
         itemBuilder: (BuildContext context, int index) {
-          print(cards[index].units);
+          // print(cards[index].units);
           return GestureDetector(
             child: Card(
               color: Colors.grey[100],
@@ -108,10 +108,7 @@ class HomePageGridView extends StatelessWidget {
                     ),
 
                     /// Padding for visualisation
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 16, 0, 16),
-                      child: _getCardVisualisation(cards[index]),
-                    ),
+                    _getCardVisualisation(cards[index]),
 
                     ///"View more >" text
                     Row(

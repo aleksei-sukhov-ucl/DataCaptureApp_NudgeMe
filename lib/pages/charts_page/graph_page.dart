@@ -6,7 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nudge_me/pages/wellbeing_page/cards.dart';
 
-import 'chart.dart';
+import 'bar_graph.dart';
 
 class BarChartPage extends StatefulWidget {
   final CardClass card;
@@ -20,6 +20,7 @@ class _BarChartPageState extends State<BarChartPage> {
   timeFrame _timeFrame = timeFrame.Week;
   dataToExport _dataToExport = dataToExport.Steps;
 
+  /// Data sharing preferences Modal
   Future<Null> _sharingPreferences() async {
     switch (await showDialog(
         context: context,
@@ -79,18 +80,6 @@ class _BarChartPageState extends State<BarChartPage> {
                 ),
               )
             ],
-
-            // ),
-            /**/ // actions: [
-            //   TextButton(
-            //     onPressed: () {},
-            //     child: Text('Cancel'),
-            //   ),
-            //   TextButton(
-            //     onPressed: () {},
-            //     child: Text('Export'),
-            //   ),
-            // ],
           );
         })) {
       case timeFrame.Week:
@@ -122,7 +111,8 @@ class _BarChartPageState extends State<BarChartPage> {
           ),
         ),
         fixedSize: MaterialStateProperty.all<Size>(Size(380, 40)),
-        backgroundColor: MaterialStateProperty.all<Color>(Colors.lightBlue),
+        backgroundColor:
+            MaterialStateProperty.all<Color>(Theme.of(context).accentColor),
         foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
         overlayColor: MaterialStateProperty.resolveWith<Color>(
           (Set<MaterialState> states) {
@@ -139,24 +129,64 @@ class _BarChartPageState extends State<BarChartPage> {
     );
 
     return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            SafeArea(
-              child: Align(
-                alignment: Alignment(-0.9, 1),
-                child: Text(
-                  widget.card.titleOfCard,
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+      appBar: AppBar(
+        title: Text(
+          widget.card.titleOfCard,
+          style: Theme.of(context).textTheme.subtitle1.merge(
+              TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+            child: Column(
+              children: [
+                // SafeArea(
+                //   child: Align(
+                //     alignment: Alignment(-0.9, 1),
+                //     child: Text(
+                //       widget.card.titleOfCard,
+                //       style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                //     ),
+                //   ),
+                // ),
+                BarChartWidget(card: widget.card),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+                  child: shareDataButton,
                 ),
-              ),
+                Container(
+                  width: 380,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    color: Colors.grey[100],
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                            child: Text(
+                              "About",
+                              style: Theme.of(context).textTheme.bodyText1,
+                              textAlign: TextAlign.start,
+                            ),
+                          ),
+                          Text(
+                            widget.card.text,
+                            style: Theme.of(context).textTheme.bodyText2,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              ],
             ),
-            BarChartWidget(card: widget.card),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-              child: shareDataButton,
-            )
-          ],
+          ),
         ),
       ),
     );

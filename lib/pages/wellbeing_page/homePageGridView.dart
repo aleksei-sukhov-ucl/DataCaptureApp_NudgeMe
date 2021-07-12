@@ -28,7 +28,7 @@ class _HomePageGridViewState extends State<HomePageGridView> {
       /// Steps
       case 0:
         return CirclePercentIndicator(
-            color: card.color, actualValue: 100, goal: 1000, units: card.units);
+            color: card.color, score: card.score, units: card.units);
 
       /// Wellbeing Score
       case 1:
@@ -46,7 +46,7 @@ class _HomePageGridViewState extends State<HomePageGridView> {
       /// Breathlessness
       case 3:
         return CirclePercentIndicator(
-            color: card.color, actualValue: card.score, goal: 10, units: "");
+            color: card.color, score: card.score, goal: 10, units: "");
 
       /// Speech Rate
       case 4:
@@ -67,7 +67,7 @@ class _HomePageGridViewState extends State<HomePageGridView> {
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: MediaQuery.of(context).size.width /
-              (MediaQuery.of(context).size.height / 1.65),
+              (MediaQuery.of(context).size.height / 1.7),
         ),
         itemBuilder: (BuildContext context, int index) {
           // print(cards[index].units);

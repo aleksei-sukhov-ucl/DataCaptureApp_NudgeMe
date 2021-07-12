@@ -7,7 +7,7 @@ const _dbName = "wellbeing_items_db.db";
 
 // versions could be used to change the database schema once the app is
 // already released (since you cannot ask users to reinstall the app)
-const _dbVersion = 1;
+const _dbVersion = 2;
 
 const _tableName = "WellbeingItems";
 const _columns = [
@@ -16,16 +16,20 @@ const _columns = [
   "postcode",
   "wellbeing_score",
   "steps",
+  "sputumColour",
+  "mrcDyspnoeaScale",
+  "speechRate",
+  "audioURL",
   "support_code"
 ];
 
 /// Singleton [ChangeNotifier] to read/write to DB.
 /// Stores the user's wellbeing scores and steps.
 class UserWellbeingDB extends ChangeNotifier {
+  UserWellbeingDB._(); // private constructor
   static final UserWellbeingDB _instance = UserWellbeingDB._();
   static Database _database;
 
-  UserWellbeingDB._(); // private constructor
   factory UserWellbeingDB() =>
       _instance; // factory so we don't return new instance
 
@@ -45,16 +49,25 @@ class UserWellbeingDB extends ChangeNotifier {
       postcode: String,
       wellbeingScore: double,
       numSteps: int,
+      sputumColour: int,
+      mrcDyspnoeaScale: int,
+      speechRate: int,
+      audioURL: String,
       supportCode: String}) async {
     assert(wellbeingScore != null);
-    return insert(WellbeingItem(
-      id: null,
-      date: date,
-      postcode: postcode,
-      wellbeingScore: wellbeingScore,
-      numSteps: numSteps,
-      supportCode: supportCode,
-    ));
+    return insert(
+      WellbeingItem(
+          id: null,
+          date: date,
+          postcode: postcode,
+          wellbeingScore: wellbeingScore,
+          numSteps: numSteps,
+          sputumColour: sputumColour,
+          mrcDyspnoeaScale: mrcDyspnoeaScale,
+          speechRate: speechRate,
+          audioURL: audioURL,
+          supportCode: supportCode),
+    );
   }
 
   /// returns up to n wellbeing items
@@ -105,7 +118,11 @@ class UserWellbeingDB extends ChangeNotifier {
       ${_columns[2]} TEXT,
       ${_columns[3]} DOUBLE,
       ${_columns[4]} INTEGER,
-      ${_columns[5]} TEXT
+      ${_columns[5]} INTEGER,
+      ${_columns[6]} INTEGER,
+      ${_columns[7]} INTEGER,    
+      ${_columns[8]} TEXT,
+      ${_columns[9]} TEXT
     )
       ''');
   }
@@ -118,6 +135,10 @@ class WellbeingItem {
   String postcode; // it's possible that the user moves house
   double wellbeingScore;
   int numSteps;
+  int sputumColour;
+  int mrcDyspnoeaScale;
+  int speechRate;
+  String audioURL;
   String supportCode;
 
   WellbeingItem(
@@ -126,7 +147,11 @@ class WellbeingItem {
       this.postcode,
       this.wellbeingScore,
       this.numSteps,
-      this.supportCode});
+      this.supportCode,
+      this.sputumColour,
+      this.mrcDyspnoeaScale,
+      this.audioURL,
+      this.speechRate});
 
   WellbeingItem.fromMap(Map<String, dynamic> map) {
     id = map[_columns[0]];
@@ -134,7 +159,11 @@ class WellbeingItem {
     postcode = map[_columns[2]];
     wellbeingScore = map[_columns[3]];
     numSteps = map[_columns[4]];
-    supportCode = map[_columns[5]];
+    sputumColour = map[_columns[5]];
+    mrcDyspnoeaScale = map[_columns[6]];
+    speechRate = map[_columns[7]];
+    audioURL = map[_columns[8]];
+    supportCode = map[_columns[9]];
   }
 
   Map<String, dynamic> toMap() {
@@ -144,7 +173,11 @@ class WellbeingItem {
       _columns[2]: postcode,
       _columns[3]: wellbeingScore,
       _columns[4]: numSteps,
-      _columns[5]: supportCode,
+      _columns[5]: sputumColour,
+      _columns[6]: mrcDyspnoeaScale,
+      _columns[7]: speechRate,
+      _columns[8]: audioURL,
+      _columns[9]: supportCode,
     };
     if (id != null) {
       map[_columns[0]] = id;

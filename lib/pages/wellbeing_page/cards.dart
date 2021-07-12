@@ -26,7 +26,7 @@ List<CardClass> cards = [
       cardId: 0,
       cardIcon: Icon(Icons.directions_walk),
       titleOfCard: "Steps",
-      score: 10000,
+      score: 9999,
       units: "Steps",
       color: Color.fromRGBO(123, 230, 236, 1),
       text:

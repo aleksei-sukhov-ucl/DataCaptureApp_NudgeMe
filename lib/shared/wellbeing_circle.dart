@@ -49,8 +49,8 @@ class _WellbeingCircleState extends State<WellbeingCircle> {
 
     final bgCircle = AnimatedContainer(
       duration: Duration(milliseconds: 900),
-      width: MediaQuery.of(context).size.width / 3.1,
-      height: MediaQuery.of(context).size.width / 3.1,
+      width: MediaQuery.of(context).size.height / 7,
+      height: MediaQuery.of(context).size.height / 7,
       decoration: BoxDecoration(
         gradient: LinearGradient(
             begin: Alignment.bottomCenter,

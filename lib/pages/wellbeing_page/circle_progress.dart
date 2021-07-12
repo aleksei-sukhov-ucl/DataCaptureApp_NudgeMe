@@ -6,11 +6,11 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class CirclePercentIndicator extends StatefulWidget {
   final Color color;
-  final int actualValue;
+  final int score;
   final int goal;
   final String units;
   const CirclePercentIndicator(
-      {Key key, this.color, this.actualValue, this.goal, this.units})
+      {Key key, this.color, this.score = 0, this.goal = 70000, this.units})
       : super(key: key);
 
   @override
@@ -29,19 +29,18 @@ class _CirclePercentIndicator extends State<CirclePercentIndicator> {
   Widget build(BuildContext context) {
     return Container(
       child: CircularPercentIndicator(
-        radius: MediaQuery.of(context).size.width / 3.1,
-        lineWidth: MediaQuery.of(context).size.width / 20,
+        radius: MediaQuery.of(context).size.height / 6,
+        lineWidth: MediaQuery.of(context).size.height / 45,
         animation: true,
-        percent: (widget.actualValue / widget.goal >= 1)
-            ? 1
-            : widget.actualValue / widget.goal,
+        percent:
+            (widget.score / widget.goal >= 1) ? 1 : widget.score / widget.goal,
         center: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                widget.actualValue.toString(),
+                widget.score.toString(),
                 style: Theme.of(context)
                     .textTheme
                     .bodyText1

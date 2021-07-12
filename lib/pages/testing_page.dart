@@ -44,6 +44,10 @@ class TestingPage extends StatelessWidget {
                 postcode: prefs.getString('postcode'),
                 wellbeingScore: Random().nextDouble() * 10.0,
                 numSteps: Random().nextInt(70001),
+                sputumColour: Random().nextInt(6),
+                mrcDyspnoeaScale: Random().nextInt(6),
+                speechRate: Random().nextInt(100),
+                audioURL: "helloworld",
                 supportCode: prefs.getString('support_code'),
                 date: dateStr,
               ));

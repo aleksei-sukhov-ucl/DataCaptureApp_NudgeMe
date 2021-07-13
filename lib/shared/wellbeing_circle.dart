@@ -67,7 +67,7 @@ class _WellbeingCircleState extends State<WellbeingCircle> {
       alignment: Alignment.center, // aligns all to center by default
       children: [
         bgCircle,
-        Text(widget.score == null ? "N/A" : widget.score.toString(),
+        Text(_currScore == null ? "N/A" : _currScore.toString(),
             style: TextStyle(
                 color: Colors.white,
                 fontSize: MediaQuery.of(context).size.width / 7),

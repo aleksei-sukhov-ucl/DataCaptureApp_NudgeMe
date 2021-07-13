@@ -9,6 +9,7 @@ import 'package:nudge_me/pages/home_page.dart';
 import 'package:nudge_me/pages/nudge_screen.dart';
 import 'package:nudge_me/pages/support_page.dart';
 import 'package:nudge_me/pages/testing_page.dart';
+import 'package:nudge_me/pages/wellbeing_page/cards.dart';
 import 'package:nudge_me/pages/wellbeing_page/wellbeing_page.dart';
 import 'package:nudge_me/pages/settings_page.dart';
 import 'package:pedometer/pedometer.dart';
@@ -38,7 +39,7 @@ class _MainPagesState extends State<MainPages> {
 
   /// [int] used to determine the current selected page.
   /// Default selected page is the homepage.
-  int _selectedIndex = NavBarIndex.home.index;
+  int _selectedIndex = NavBarIndex.wellbeing.index;
 
   /// A subscription of events. They occur whenever a deeplink is pressed,
   /// but the app is already open.
@@ -84,7 +85,7 @@ class _MainPagesState extends State<MainPages> {
     });
     _linksSub =
         getUriLinksStream().listen(_handleAddFriendDeeplink, onError: (err) {
-      // warn user, maybe create a snackbar?
+      //TODO: warn user, maybe create a snackbar?
       print(err);
     });
 
@@ -120,7 +121,10 @@ class _MainPagesState extends State<MainPages> {
     _updateUnread();
 
     final List<Widget> pages = [
-      WellbeingPage(),
+      WellbeingPage(
+        stepValueStream: Pedometer.stepCountStream.map((event) => event.steps),
+        cards: cards,
+      ),
       HomePage(Pedometer.stepCountStream.map((event) => event.steps)),
       SupportPage(),
       SettingsPage(),
@@ -157,9 +161,13 @@ class _MainPagesState extends State<MainPages> {
   void _handleNotification(String payload) async {
     switch (payload) {
       case CHECKUP_PAYLOAD:
-        await navigatorKey.currentState.push(MaterialPageRoute(
-            builder: (context) => WellbeingCheck(Pedometer.stepCountStream
-                .map((stepCount) => stepCount.steps))));
+        await navigatorKey.currentState.push(
+          MaterialPageRoute(
+            builder: (context) => WellbeingCheck(
+              Pedometer.stepCountStream.map((stepCount) => stepCount.steps),
+            ),
+          ),
+        );
         break;
       case NUDGE_PAYLOAD:
         await navigatorKey.currentState

@@ -11,42 +11,38 @@ import 'package:nudge_me/shared/wellbeing_circle.dart';
 
 import '../charts_page/graph_page.dart';
 
-class HomePageGridView extends StatefulWidget {
+class WellbeingPageGridView extends StatefulWidget {
   final List<CardClass> cards;
+  final Stream<int> stepValueStream;
 
-  const HomePageGridView({Key key, this.cards}) : super(key: key);
+  const WellbeingPageGridView({Key key, this.cards, this.stepValueStream})
+      : super(key: key);
 
   @override
-  State<HomePageGridView> createState() => _HomePageGridViewState();
+  State<WellbeingPageGridView> createState() => _WellbeingPageGridViewState();
 }
 
-class _HomePageGridViewState extends State<HomePageGridView> {
+class _WellbeingPageGridViewState extends State<WellbeingPageGridView> {
   /// Return different visualisation for different card depending on card id
   Widget _getCardVisualisation(CardClass card) {
     switch (card.cardId) {
 
       /// Steps
       case 0:
-        return CirclePercentIndicator(
-            color: card.color, score: card.score, units: card.units);
+        return CirclePercentIndicator(color: card.color, units: card.units);
 
       /// Wellbeing Score
       case 1:
-        return WellbeingCircle(
-          score: card.score,
-        );
+        return WellbeingCircle();
 
       /// Sputum colour
       case 2:
         return WellbeingCircle(
-            score: card.score,
-            firstColor: card.color,
-            secondColor: Colors.transparent);
+            firstColor: card.color, secondColor: Colors.transparent);
 
       /// Breathlessness
       case 3:
-        return CirclePercentIndicator(
-            color: card.color, score: card.score, goal: 10, units: "");
+        return CirclePercentIndicator(color: card.color, goal: 10, units: "");
 
       /// Speech Rate
       case 4:
@@ -62,7 +58,7 @@ class _HomePageGridViewState extends State<HomePageGridView> {
   @override
   Widget build(BuildContext context) {
     /// Building Grid View
-    GridView homePageGridView = new GridView.builder(
+    GridView wellbeingPageGridView = new GridView.builder(
         itemCount: widget.cards.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
@@ -146,6 +142,6 @@ class _HomePageGridViewState extends State<HomePageGridView> {
           );
         });
 
-    return homePageGridView;
+    return Flexible(child: wellbeingPageGridView);
   }
 }

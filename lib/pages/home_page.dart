@@ -22,7 +22,6 @@ const URL_USER_MANUAL =
 /// and steps so far since the last Wellbeing Check.
 class HomePage extends StatefulWidget {
   final Stream<int> stepValueStream;
-
   const HomePage(this.stepValueStream);
 
   @override

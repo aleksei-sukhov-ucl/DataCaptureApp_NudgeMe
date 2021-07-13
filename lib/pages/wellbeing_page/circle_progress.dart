@@ -10,7 +10,7 @@ class CirclePercentIndicator extends StatefulWidget {
   final int goal;
   final String units;
   const CirclePercentIndicator(
-      {Key key, this.color, this.score = 0, this.goal = 70000, this.units})
+      {Key key, this.color, this.score = null, this.goal = 70000, this.units})
       : super(key: key);
 
   @override
@@ -32,15 +32,16 @@ class _CirclePercentIndicator extends State<CirclePercentIndicator> {
         radius: MediaQuery.of(context).size.height / 6,
         lineWidth: MediaQuery.of(context).size.height / 45,
         animation: true,
-        percent:
-            (widget.score / widget.goal >= 1) ? 1 : widget.score / widget.goal,
+        percent: (widget.score == null || widget.score / widget.goal >= 1)
+            ? 1
+            : widget.score / widget.goal,
         center: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                widget.score.toString(),
+                widget.score == null ? "N/A" : widget.score.toString(),
                 style: Theme.of(context)
                     .textTheme
                     .bodyText1

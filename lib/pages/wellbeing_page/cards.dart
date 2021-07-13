@@ -5,7 +5,6 @@ class CardClass {
   int cardId;
   dynamic cardIcon;
   String titleOfCard;
-  int score;
   String units;
   Color color;
   String text;
@@ -14,7 +13,6 @@ class CardClass {
       {this.cardId,
       this.cardIcon,
       this.titleOfCard,
-      this.score,
       this.units,
       this.color,
       this.text});
@@ -26,7 +24,6 @@ List<CardClass> cards = [
       cardId: 0,
       cardIcon: Icon(Icons.directions_walk),
       titleOfCard: "Steps",
-      score: 9999,
       units: "Steps",
       color: Color.fromRGBO(123, 230, 236, 1),
       text:
@@ -37,7 +34,6 @@ List<CardClass> cards = [
       cardId: 1,
       cardIcon: Icon(Icons.accessibility_new),
       titleOfCard: "Wellbeing\nScore",
-      score: 8,
       units: "Wellbeing score",
       color: Colors.deepPurple,
       text: ""),
@@ -45,7 +41,6 @@ List<CardClass> cards = [
       cardId: 2,
       cardIcon: Icon(Icons.sentiment_satisfied_alt),
       titleOfCard: "Sputum\ncolour",
-      score: 5,
       units: "Color",
       color: Color.fromRGBO(251, 222, 147, 1),
       text:
@@ -59,7 +54,6 @@ List<CardClass> cards = [
       size: 24,
     ),
     titleOfCard: "MRC\nDyspnoea Scale",
-    score: 9,
     units: "Breathlessness Score",
     color: Color.fromRGBO(138, 127, 245, 1),
     text:
@@ -71,8 +65,14 @@ List<CardClass> cards = [
       cardId: 4,
       cardIcon: Icon(Icons.record_voice_over),
       titleOfCard: "Speech\nRate",
-      score: 60,
       units: "Words/min",
       color: Colors.cyanAccent,
       text: ""),
+  CardClass(
+      cardId: 5,
+      cardIcon: Icon(Icons.timeline_outlined),
+      titleOfCard: "Trends",
+      units: "",
+      color: Colors.pinkAccent,
+      text: "Here you can see all the trends.")
 ];

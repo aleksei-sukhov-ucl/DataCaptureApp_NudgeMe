@@ -41,16 +41,16 @@ class BarChartWidgetState extends State<BarChartWidget> {
         [Theme.of(context).accentColor]
       ],
       inactiveBgColor: Colors.grey[100],
-      totalSwitches: 3,
-      labels: [
-        'Week',
-        'Month',
-        'Year'
-      ], // with just animate set to true, default curve = Curves.easeIn
+      totalSwitches: (widget.card.cardId == 0) ? 3 : 2,
+      labels: (widget.card.cardId == 0)
+          ? ['Week', 'Month', 'Year']
+          : [
+              'Month',
+              'Year'
+            ], // with just animate set to true, default curve = Curves.easeIn
       radiusStyle: true,
       cornerRadius: 15.0,
       onToggle: (index) {
-        // print('switched to: $index');
         setState(() {
           initialIndex = index;
         });
@@ -222,7 +222,10 @@ class BarChartWidgetState extends State<BarChartWidget> {
             tooltipBgColor: Colors.blueGrey,
             getTooltipItem: (group, groupIndex, rod, rodIndex) {
               String weekDayWeekMonth;
-              switch (initialIndex) {
+              // if (widget.card.cardId == 0) {
+              switch ((widget.card.cardId == 0)
+                  ? initialIndex
+                  : (initialIndex + 1)) {
                 case 0:
                   weekDayWeekMonth = weekDayDescription(group);
                   break;
@@ -235,6 +238,18 @@ class BarChartWidgetState extends State<BarChartWidget> {
                 default:
                   throw Error();
               }
+              // } else {
+              //   switch (initialIndex) {
+              //     case 0:
+              //       weekDayWeekMonth = monthWeekDescription(group);
+              //       break;
+              //     case 1:
+              //       weekDayWeekMonth = yearMonthDescription(group);
+              //       break;
+              //     default:
+              //       throw Error();
+              //   }
+              // }
 
               /// Popup with the information
               return BarTooltipItem(
@@ -282,7 +297,10 @@ class BarChartWidgetState extends State<BarChartWidget> {
             margin: 16,
             // TODO: Create a Switch-Case statement to get data for week/month/year
             getTitles: (double value) {
-              switch (initialIndex) {
+              // if (widget.card.cardId == 0) {
+              switch ((widget.card.cardId == 0)
+                  ? initialIndex
+                  : (initialIndex + 1)) {
                 case 0:
                   // print("getTitles case 0");
                   return weekXAxisUnits(value);
@@ -295,6 +313,18 @@ class BarChartWidgetState extends State<BarChartWidget> {
                 default:
                   return " ";
               }
+              // } else {
+              //   switch (initialIndex) {
+              //     case 0:
+              //       // print("getTitles case 1");
+              //       return monthXAxisUnits(value);
+              //     case 1:
+              //       // print("getTitles case 2");
+              //       return yearXAxisUnits(value);
+              //     default:
+              //       return " ";
+              //   }
+              // }
             }),
         rightTitles: SideTitles(
           showTitles: true,
@@ -317,7 +347,8 @@ class BarChartWidgetState extends State<BarChartWidget> {
 
   /// Selecting Correct dataset for week/month/year
   List<BarChartGroupData> timeFrameData(int initialIndex) {
-    switch (initialIndex) {
+    // if (widget.card.cardId == 0) {
+    switch ((widget.card.cardId == 0) ? initialIndex : (initialIndex + 1)) {
       case 0:
         return weeklyShowingGroups();
       case 1:
@@ -327,6 +358,16 @@ class BarChartWidgetState extends State<BarChartWidget> {
       default:
         return weeklyShowingGroups();
     }
+    // } else {
+    //   switch (initialIndex) {
+    //     case 0:
+    //       return monthlyShowingGroups();
+    //     case 1:
+    //       return yearlyShowingGroups();
+    //     default:
+    //       return monthlyShowingGroups();
+    //   }
+    // }
   }
 
   weekXAxisUnits(double value) {

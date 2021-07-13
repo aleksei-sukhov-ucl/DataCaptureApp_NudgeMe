@@ -4,6 +4,7 @@ import 'package:nudge_me/pages/charts_page/graph_page.dart';
 import 'package:nudge_me/pages/wellbeing_page/cards.dart';
 import 'package:nudge_me/pages/wellbeing_page/circle_progress.dart';
 import 'package:nudge_me/pages/wellbeing_page/speech_rate_tile.dart';
+import 'package:nudge_me/pages/wellbeing_page/trends_tile.dart';
 import 'package:nudge_me/shared/wellbeing_circle.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -46,6 +47,8 @@ class _WellbeingPageState extends State<WellbeingPage> {
           return CirclePercentIndicator(color: card.color);
         case 4:
           return SpeechRareTile();
+        case 5:
+          return LineChartSample1();
         default:
           return Text("Oops,\nthis should not\nhave happened!");
       }
@@ -78,6 +81,8 @@ class _WellbeingPageState extends State<WellbeingPage> {
 
           /// Speech Rate
           return SpeechRareTile(score: lastItemList.speechRate.truncate());
+        case 5:
+          return LineChartSample1();
         default:
           return Text("Oops,\nthis should not\nhave happened!");
       }
@@ -234,7 +239,9 @@ class _WellbeingPageState extends State<WellbeingPage> {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => BarChartPage(card: widget.cards[index]),
+                  builder: (context) => (widget.cards[index].cardId != 4)
+                      ? BarChartPage(card: widget.cards[index])
+                      : BarChartPage(card: widget.cards[index]),
                 ),
               );
             },

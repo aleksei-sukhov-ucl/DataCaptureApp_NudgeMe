@@ -33,14 +33,14 @@ List<CardClass> cards = [
   CardClass(
       cardId: 1,
       cardIcon: Icon(Icons.accessibility_new),
-      titleOfCard: "Wellbeing\nScore",
+      titleOfCard: "Wellbeing Score",
       units: "Wellbeing score",
       color: Colors.deepPurple,
       text: ""),
   CardClass(
       cardId: 2,
       cardIcon: Icon(Icons.sentiment_satisfied_alt),
-      titleOfCard: "Sputum\ncolour",
+      titleOfCard: "Sputum colour",
       units: "Color",
       color: Color.fromRGBO(251, 222, 147, 1),
       text:
@@ -53,7 +53,7 @@ List<CardClass> cards = [
       AssetImage("lib/images/634cbe378c7b08daa95fd9197f77b468.png"),
       size: 24,
     ),
-    titleOfCard: "MRC\nDyspnoea Scale",
+    titleOfCard: "MRC Dyspnoea Scale",
     units: "Breathlessness Score",
     color: Color.fromRGBO(138, 127, 245, 1),
     text:
@@ -64,7 +64,7 @@ List<CardClass> cards = [
   CardClass(
       cardId: 4,
       cardIcon: Icon(Icons.record_voice_over),
-      titleOfCard: "Speech\nRate",
+      titleOfCard: "Speech Rate",
       units: "Words/min",
       color: Colors.cyanAccent,
       text: ""),

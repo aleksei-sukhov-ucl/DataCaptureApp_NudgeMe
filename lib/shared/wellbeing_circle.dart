@@ -34,7 +34,7 @@ class _WellbeingCircleState extends State<WellbeingCircle> {
   Widget build(BuildContext context) {
     // subtracted 2 from score to allow space for larger gradient
     final double purpleFraction =
-        (_currScore == null ? 10.0 : _currScore - 2) / 10.0;
+        (widget.score == null ? 10.0 : widget.score - 2) / 10.0;
     final double blueStartPoint =
         purpleFraction + 0.4 <= 1 ? purpleFraction + 0.4 : 1;
 
@@ -49,8 +49,8 @@ class _WellbeingCircleState extends State<WellbeingCircle> {
 
     final bgCircle = AnimatedContainer(
       duration: Duration(milliseconds: 900),
-      width: MediaQuery.of(context).size.height / 7,
-      height: MediaQuery.of(context).size.height / 7,
+      width: MediaQuery.of(context).size.height / 6,
+      height: MediaQuery.of(context).size.height / 6,
       decoration: BoxDecoration(
         gradient: LinearGradient(
             begin: Alignment.bottomCenter,

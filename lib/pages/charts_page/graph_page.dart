@@ -142,15 +142,6 @@ class _BarChartPageState extends State<BarChartPage> {
             padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
             child: Column(
               children: [
-                // SafeArea(
-                //   child: Align(
-                //     alignment: Alignment(-0.9, 1),
-                //     child: Text(
-                //       widget.card.titleOfCard,
-                //       style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                //     ),
-                //   ),
-                // ),
                 BarChartWidget(card: widget.card),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),

@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:nudge_me/pages/wellbeing_page/cards.dart';
+import 'package:nudge_me/shared/cards.dart';
 import 'package:nudge_me/pages/wellbeing_page/circle_progress.dart';
 import 'package:nudge_me/pages/wellbeing_page/speech_rate_tile.dart';
 import 'package:nudge_me/shared/wellbeing_circle.dart';

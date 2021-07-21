@@ -9,7 +9,7 @@ import 'package:nudge_me/pages/home_page.dart';
 import 'package:nudge_me/pages/nudge_screen.dart';
 import 'package:nudge_me/pages/support_page.dart';
 import 'package:nudge_me/pages/testing_page.dart';
-import 'package:nudge_me/pages/wellbeing_page/cards.dart';
+import 'package:nudge_me/shared/cards.dart';
 import 'package:nudge_me/pages/wellbeing_page/wellbeing_page.dart';
 import 'package:nudge_me/pages/settings_page.dart';
 import 'package:pedometer/pedometer.dart';

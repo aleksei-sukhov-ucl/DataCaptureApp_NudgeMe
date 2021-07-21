@@ -122,7 +122,7 @@ class LineChartSample1State extends State<LineChartSample1> {
       colors: [
         const Color.fromRGBO(123, 230, 236, 1),
       ],
-      barWidth: 6,
+      barWidth: 4,
       isStrokeCapRound: true,
       dotData: FlDotData(
         show: false,
@@ -146,7 +146,7 @@ class LineChartSample1State extends State<LineChartSample1> {
       colors: [
         const Color(0xffe040FB),
       ],
-      barWidth: 6,
+      barWidth: 4,
       isStrokeCapRound: true,
       dotData: FlDotData(
         show: false,
@@ -169,7 +169,7 @@ class LineChartSample1State extends State<LineChartSample1> {
       colors: const [
         Color.fromRGBO(251, 222, 147, 1),
       ],
-      barWidth: 8,
+      barWidth: 4,
       isStrokeCapRound: true,
       dotData: FlDotData(
         show: false,
@@ -192,7 +192,7 @@ class LineChartSample1State extends State<LineChartSample1> {
       colors: const [
         Color.fromRGBO(138, 127, 245, 1),
       ],
-      barWidth: 8,
+      barWidth: 4,
       isStrokeCapRound: true,
       dotData: FlDotData(
         show: false,

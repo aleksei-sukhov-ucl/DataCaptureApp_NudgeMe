@@ -36,23 +36,103 @@ class TestingPage extends StatelessWidget {
                       builder: (context) => WellbeingCheck(
                           Pedometer.stepCountStream.map((sc) => sc.steps)))),
               child: Text("Wellbeing Check Screen")),
+
+          /// Generating a single Wellbeing item
           ElevatedButton(
             onPressed: () async {
               final prefs = await SharedPreferences.getInstance();
               final dateStr = DateTime.now().toIso8601String().substring(0, 10);
               UserWellbeingDB().insert(WellbeingItem(
+                date: dateStr,
                 postcode: prefs.getString('postcode'),
+                numSteps: Random().nextInt(10001),
                 wellbeingScore: Random().nextDouble() * 10.0,
-                numSteps: Random().nextInt(70001),
-                sputumColour: Random().nextInt(6),
-                mrcDyspnoeaScale: Random().nextInt(6),
-                speechRate: Random().nextInt(100),
+                sputumColour: Random().nextDouble() * 6.0,
+                mrcDyspnoeaScale: Random().nextDouble() * 6.0,
+                speechRate: Random().nextDouble() * 100.0,
                 audioURL: "helloworld",
                 supportCode: prefs.getString('support_code'),
-                date: dateStr,
               ));
             },
             child: Text("Generate WellbeingItem"),
+          ),
+
+          /// Generating a week much wellbeing item
+          ElevatedButton(
+            onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
+              final List<DateTime> dateStrs = List<DateTime>.generate(
+                  7,
+                  (subtractingDay) =>
+                      DateTime.now().subtract(Duration(days: subtractingDay)));
+              DateTime.now().toIso8601String().substring(0, 10);
+              dateStrs.forEach((dateStr) {
+                UserWellbeingDB().insert(WellbeingItem(
+                  postcode: prefs.getString('postcode'),
+                  numSteps: Random().nextInt(10001),
+                  wellbeingScore: Random().nextInt(10).toDouble(),
+                  sputumColour: Random().nextInt(5).toDouble(),
+                  mrcDyspnoeaScale: Random().nextInt(5).toDouble(),
+                  speechRate: Random().nextInt(200).toDouble(),
+                  audioURL: "helloworld",
+                  supportCode: prefs.getString('support_code'),
+                  date: dateStr.toIso8601String().substring(0, 10),
+                ));
+              });
+            },
+            child: Text("Generate WellbeingItem for a week"),
+          ),
+
+          /// Generate a month long amount of data for DB
+          ElevatedButton(
+            onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
+              final List<DateTime> dateStrs = List<DateTime>.generate(
+                  30,
+                  (subtractingDay) =>
+                      DateTime.now().subtract(Duration(days: subtractingDay)));
+              DateTime.now().toIso8601String().substring(0, 10);
+              dateStrs.forEach((dateStr) {
+                UserWellbeingDB().insert(WellbeingItem(
+                  postcode: prefs.getString('postcode'),
+                  numSteps: Random().nextInt(10001),
+                  wellbeingScore: Random().nextInt(10).toDouble(),
+                  sputumColour: Random().nextInt(5).toDouble(),
+                  mrcDyspnoeaScale: Random().nextInt(5).toDouble(),
+                  speechRate: Random().nextInt(200).toDouble(),
+                  audioURL: "helloworld",
+                  supportCode: prefs.getString('support_code'),
+                  date: dateStr.toIso8601String().substring(0, 10),
+                ));
+              });
+            },
+            child: Text("Generate WellbeingItem for a month"),
+          ),
+
+          /// Generate a month long amount of data for DB
+          ElevatedButton(
+            onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
+              final List<DateTime> dateStrs = List<DateTime>.generate(
+                  365,
+                  (subtractingDay) =>
+                      DateTime.now().subtract(Duration(days: subtractingDay)));
+              DateTime.now().toIso8601String().substring(0, 10);
+              dateStrs.forEach((dateStr) {
+                UserWellbeingDB().insert(WellbeingItem(
+                  postcode: prefs.getString('postcode'),
+                  numSteps: Random().nextInt(15001),
+                  wellbeingScore: Random().nextInt(10).toDouble(),
+                  sputumColour: Random().nextInt(5).toDouble(),
+                  mrcDyspnoeaScale: Random().nextInt(5).toDouble(),
+                  speechRate: Random().nextInt(200).toDouble(),
+                  audioURL: "helloworld",
+                  supportCode: prefs.getString('support_code'),
+                  date: dateStr.toIso8601String().substring(0, 10),
+                ));
+              });
+            },
+            child: Text("Generate WellbeingItem for a year"),
           ),
           ElevatedButton(
             onPressed: () => UserWellbeingDB().delete(),

@@ -1,15 +1,21 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nudge_me/model/user_model.dart';
 import 'package:nudge_me/pages/charts_page/graph_page.dart';
-import 'package:nudge_me/pages/wellbeing_page/cards.dart';
+import 'package:nudge_me/shared/cards.dart';
 import 'package:nudge_me/pages/wellbeing_page/circle_progress.dart';
 import 'package:nudge_me/pages/wellbeing_page/speech_rate_tile.dart';
 import 'package:nudge_me/pages/wellbeing_page/trends_tile.dart';
 import 'package:nudge_me/shared/wellbeing_circle.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../main.dart';
+
+const URL_USER_MANUAL =
+    'https://uclcomputerscience.github.io/COMP0016_2020_21_Team26/'
+    'pdfs/usermanual.pdf';
 
 /// Displays current Wellbeing Score, steps and all aditional metircs this week
 class WellbeingPage extends StatefulWidget {
@@ -254,8 +260,21 @@ class _WellbeingPageState extends State<WellbeingPage> {
             child: Column(children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
-                child: Text("Wellbeing Diary",
-                    style: Theme.of(context).textTheme.headline1),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text("NudgeMe",
+                        style: Theme.of(context).textTheme.headline1),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(150, 0, 0, 0),
+                      child: IconButton(
+                        onPressed: () => launch(URL_USER_MANUAL),
+                        icon: Icon(Icons.help_outline),
+                        color: Colors.blue,
+                      ),
+                    )
+                  ],
+                ),
               ),
               Visibility(
                 visible: pedometerWarn == true,

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:highlighter_coachmark/highlighter_coachmark.dart';
-import 'package:nudge_me/pages/wellbeing_page/cards.dart';
+import 'package:nudge_me/shared/cards.dart';
 import 'package:nudge_me/pages/wellbeing_page/wellbeingPageGridView.dart';
 import 'package:nudge_me/model/user_model.dart';
 import 'package:nudge_me/shared/share_button.dart';

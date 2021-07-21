@@ -4,7 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:nudge_me/pages/wellbeing_page/cards.dart';
+import 'package:nudge_me/shared/cards.dart';
+import 'package:provider/provider.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 import 'bar_graph.dart';
 
@@ -19,6 +21,7 @@ class BarChartPage extends StatefulWidget {
 class _BarChartPageState extends State<BarChartPage> {
   timeFrame _timeFrame = timeFrame.Week;
   dataToExport _dataToExport = dataToExport.Steps;
+  int initialIndex = 0;
 
   /// Data sharing preferences Modal
   Future<Null> _sharingPreferences() async {
@@ -110,7 +113,9 @@ class _BarChartPageState extends State<BarChartPage> {
             borderRadius: BorderRadius.circular(15.0),
           ),
         ),
-        fixedSize: MaterialStateProperty.all<Size>(Size(380, 40)),
+        fixedSize: MaterialStateProperty.all<Size>(Size(
+            MediaQuery.of(context).size.width * 0.95,
+            MediaQuery.of(context).size.height * 0.05)),
         backgroundColor:
             MaterialStateProperty.all<Color>(Theme.of(context).accentColor),
         foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
@@ -128,6 +133,32 @@ class _BarChartPageState extends State<BarChartPage> {
       ),
     );
 
+    /// Toggle Button
+    ToggleSwitch timeFrameSelector = ToggleSwitch(
+      initialLabelIndex: initialIndex,
+      minWidth: MediaQuery.of(context).size.width * 0.95,
+      minHeight: MediaQuery.of(context).size.height * 0.04,
+      activeBgColors: [
+        [Theme.of(context).accentColor],
+        [Theme.of(context).accentColor],
+        [Theme.of(context).accentColor]
+      ],
+      inactiveBgColor: Colors.grey[100],
+      totalSwitches: (widget.card.cardId == 0) ? 3 : 2,
+      labels: (widget.card.cardId == 0)
+          ? ['Week', 'Month', 'Year']
+          : [
+              'Month',
+              'Year'
+            ], // with just animate set to true, default curve = Curves.easeIn
+      radiusStyle: true,
+      cornerRadius: 15.0,
+      onToggle: (index) {
+        setState(() {
+          initialIndex = index;
+        });
+      },
+    );
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -142,13 +173,24 @@ class _BarChartPageState extends State<BarChartPage> {
             padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
             child: Column(
               children: [
-                BarChartWidget(card: widget.card),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+                  child: timeFrameSelector,
+                ),
+                (widget.card.cardId == 5)
+                    ? Text("This is where the line graph will go")
+                    : Provider.value(
+                        value: initialIndex,
+                        updateShouldNotify: (oldValue, newValue) =>
+                            newValue != oldValue,
+                        child: BarChartWidget(
+                            card: widget.card, initialIndex: initialIndex)),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
                   child: shareDataButton,
                 ),
                 Container(
-                  width: 380,
+                  width: MediaQuery.of(context).size.width * 0.95,
                   child: Card(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),

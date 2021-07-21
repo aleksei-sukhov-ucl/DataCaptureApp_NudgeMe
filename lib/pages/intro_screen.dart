@@ -49,6 +49,7 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
   /// true if done was tapped with valid input
   bool doneTapped = false;
 
+  /// TODO Create forms/pages for missing data
   /// Records first wellbeing check
   void setInitialWellbeing(
       double _currentSliderValue, String postcode, String suppCode) async {
@@ -56,8 +57,12 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
     await Provider.of<UserWellbeingDB>(context, listen: false).insertWithData(
       date: dateString,
       postcode: postcode,
-      wellbeingScore: _currentSliderValue,
       numSteps: 0,
+      wellbeingScore: _currentSliderValue,
+      sputumColour: 1.toDouble(),
+      mrcDyspnoeaScale: 2.toDouble(),
+      speechRate: 100.toDouble(),
+      audioURL: "helloWorld",
       supportCode: suppCode,
     );
   }

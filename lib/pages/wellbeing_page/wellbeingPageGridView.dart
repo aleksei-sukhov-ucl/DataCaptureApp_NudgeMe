@@ -66,7 +66,6 @@ class _WellbeingPageGridViewState extends State<WellbeingPageGridView> {
               (MediaQuery.of(context).size.height / 1.7),
         ),
         itemBuilder: (BuildContext context, int index) {
-          // print(cards[index].units);
           return GestureDetector(
             child: Card(
               shadowColor: Theme.of(context).primaryColor,
@@ -135,7 +134,7 @@ class _WellbeingPageGridViewState extends State<WellbeingPageGridView> {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => BarChartPage(card: widget.cards[index]),
+                  builder: (context) => ChartPage(card: widget.cards[index]),
                 ),
               );
             },

@@ -54,7 +54,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
         case 4:
           return SpeechRareTile();
         case 5:
-          return LineChartSample1();
+          return LineChartTile();
         default:
           return Text("Oops,\nthis should not\nhave happened!");
       }
@@ -88,7 +88,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
           /// Speech Rate
           return SpeechRareTile(score: lastItemList.speechRate.truncate());
         case 5:
-          return LineChartSample1();
+          return LineChartTile();
         default:
           return Text("Oops,\nthis should not\nhave happened!");
       }
@@ -157,6 +157,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
   Widget build(BuildContext context) {
     /// Pop-up banner (widget) to notify of the pedometer not working
     final Widget warningBanner = MaterialBanner(
+      backgroundColor: Colors.white,
       leading: Icon(
         Icons.warning,
         color: Colors.red,
@@ -246,8 +247,8 @@ class _WellbeingPageState extends State<WellbeingPage> {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => (widget.cards[index].cardId != 4)
-                      ? BarChartPage(card: widget.cards[index])
-                      : BarChartPage(card: widget.cards[index]),
+                      ? ChartPage(card: widget.cards[index])
+                      : ChartPage(card: widget.cards[index]),
                 ),
               );
             },

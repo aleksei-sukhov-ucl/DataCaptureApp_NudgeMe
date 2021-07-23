@@ -16,7 +16,7 @@ import 'package:uni_links/uni_links.dart';
 import 'main_pages.dart';
 
 /// true if app is in production, meant for end users
-bool isProduction = false;
+bool isProduction = true;
 
 /// key to retrieve [bool] that is true if setup is done
 const FIRST_TIME_DONE_KEY = "first_time_done";
@@ -158,13 +158,13 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'NudgeMe',
         theme: ThemeData(
           scaffoldBackgroundColor: Color.fromARGB(255, 251, 249, 255),
           // primaryColor: Color.fromARGB(255, 0, 74, 173),
           primaryColor: Color.fromRGBO(113, 101, 226, 1),
           // accentColor: Color.fromARGB(255, 182, 125, 226),
-          accentColor: Color.fromRGBO(63, 135, 253, 1),
           fontFamily: 'Lato-Regular',
           textTheme: TextTheme(
               headline1: TextStyle(
@@ -201,6 +201,32 @@ class MyApp extends StatelessWidget {
             selectedItemColor: Colors.black,
             unselectedItemColor: Colors.black,
             showUnselectedLabels: true,
+          ),
+          colorScheme: ColorScheme(
+            primary: Color.fromRGBO(113, 101, 226, 1),
+            secondary: Color.fromRGBO(63, 135, 253, 1),
+
+            /// Steps Color
+            primaryVariant: Color.fromRGBO(123, 230, 236, 1),
+
+            ///Wellbeing color
+            secondaryVariant: Colors.deepPurple,
+
+            /// Sputum colour
+            surface: Color.fromRGBO(251, 222, 147, 1),
+
+            ///MRC Dyspnoea Scale
+            background: Color.fromRGBO(138, 127, 245, 1),
+            error: Colors.white,
+
+            onPrimary: Colors.white,
+
+            ///Speech Rate
+            onSecondary: Color.fromRGBO(241, 139, 128, 1.0),
+            onSurface: Colors.white,
+            onBackground: Colors.white,
+            onError: Colors.white,
+            brightness: Brightness.light,
           ),
         ),
         home: FutureBuilder(

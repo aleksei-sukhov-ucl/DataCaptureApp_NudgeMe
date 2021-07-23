@@ -57,6 +57,28 @@ class TestingPage extends StatelessWidget {
             child: Text("Generate WellbeingItem"),
           ),
 
+          ElevatedButton(
+            onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
+              final dateStr = DateTime.now()
+                  .subtract(Duration(days: 1))
+                  .toIso8601String()
+                  .substring(0, 10);
+              UserWellbeingDB().insert(WellbeingItem(
+                date: dateStr,
+                postcode: prefs.getString('postcode'),
+                numSteps: Random().nextInt(10001),
+                wellbeingScore: Random().nextDouble() * 10.0,
+                sputumColour: Random().nextDouble() * 6.0,
+                mrcDyspnoeaScale: Random().nextDouble() * 6.0,
+                speechRate: Random().nextDouble() * 100.0,
+                audioURL: "helloworld",
+                supportCode: prefs.getString('support_code'),
+              ));
+            },
+            child: Text("Generate WellbeingItem for yesterday"),
+          ),
+
           /// Generating a week much wellbeing item
           ElevatedButton(
             onPressed: () async {

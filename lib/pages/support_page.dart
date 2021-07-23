@@ -194,7 +194,7 @@ class SupportPageState extends State<SupportPage> {
     final scanCodeButton = OutlinedButton(
         style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all<Color>(
-                Theme.of(context).accentColor)),
+                Theme.of(context).colorScheme.secondary)),
         onPressed: () => Navigator.push(
             context,
             MaterialPageRoute(
@@ -208,7 +208,7 @@ class SupportPageState extends State<SupportPage> {
     final showKeyButton = OutlinedButton(
         style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all<Color>(
-                Theme.of(context).accentColor)),
+                Theme.of(context).colorScheme.secondary)),
         onPressed: () => showDialog(
             builder: (context) => AlertDialog(
                   scrollable: true,

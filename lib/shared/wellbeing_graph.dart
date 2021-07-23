@@ -247,7 +247,7 @@ class _WellbeingGraphState extends State<WellbeingGraph> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             // TODO understand how to add generated data to the graphs
-            final items = snapshot.data;
+            // final items = snapshot.data;
             final graph = WellbeingPageGridView(cards: cards);
 
             final List<Widget> buttons = [];

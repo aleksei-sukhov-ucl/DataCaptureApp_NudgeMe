@@ -2,39 +2,15 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class LineChartSample1 extends StatefulWidget {
+class LineChartTile extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => LineChartSample1State();
+  State<StatefulWidget> createState() => LineChartTileState();
 }
 
-class LineChartSample1State extends State<LineChartSample1> {
+class LineChartTileState extends State<LineChartTile> {
   @override
   void initState() {
     super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: (MediaQuery.of(context).size.width /
-              MediaQuery.of(context).size.height) *
-          2.45,
-      child: Container(
-        child: Stack(
-          children: <Widget>[
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Expanded(
-                  child: LineChart(sampleData1()),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   LineChartData sampleData1() {
@@ -207,5 +183,29 @@ class LineChartSample1State extends State<LineChartSample1> {
       lineChartBarData2,
       lineChartBarData3,
     ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: (MediaQuery.of(context).size.width /
+              MediaQuery.of(context).size.height) *
+          2.45,
+      child: Container(
+        child: Stack(
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Expanded(
+                  child: LineChart(sampleData1()),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -77,13 +77,45 @@ class UserWellbeingDB extends ChangeNotifier {
         columns: _columns, orderBy: "${_columns[0]} DESC", limit: n);
 
     for (var value in wellbeingMaps) {
-      print("getLastNWeeks: $wellbeingMaps");
+      print("getLastNWeeks: $value");
     }
     final itemList = wellbeingMaps
         .map((wellbeingMap) => WellbeingItem.fromMap(wellbeingMap))
         .toList(growable: false);
 
     itemList.sort((a, b) => a.id.compareTo(b.id));
+    return itemList;
+  }
+
+  /// returns last week day-by-day data
+  Future<List<WellbeingItem>> getLastWeekOfSpecificColumns({int id}) async {
+    final db = await database;
+
+    /// Generating a list of columns we want to get
+    List<String> allNeededColumns = ["${_columns[1]}", "${_columns[id]}"];
+    // print("allNeededColumns: $allNeededColumns");
+
+    /// Genrating start and end date
+    final startDate = DateTime.now().toIso8601String().substring(0, 10);
+    final endDate = DateTime.now()
+        .subtract(Duration(days: 6))
+        .toIso8601String()
+        .substring(0, 10);
+    List<Map> wellbeingMaps = await db.query(
+      _tableName,
+      columns: allNeededColumns,
+      where: '''date BETWEEN '$endDate' AND '$startDate' ''',
+      orderBy: "${allNeededColumns[0]}",
+      // groupBy: "[date]"
+    );
+
+    wellbeingMaps.forEach((element) {
+      print("getLastWeekOfSpecificColumns: $element");
+    });
+
+    final itemList = wellbeingMaps
+        .map((wellbeingMap) => WellbeingItem.fromMap(wellbeingMap))
+        .toList();
     return itemList;
   }
 
@@ -129,7 +161,7 @@ class UserWellbeingDB extends ChangeNotifier {
     }
 
     List<Map> wellbeingMaps = await db.rawQuery('''
-            SELECT  STRFTIME('%$timeframe',date) as IsoSting, date, ${allNeededColumns.join(", ")}
+            SELECT STRFTIME('%$timeframe',date) as IsoSting, date, ${allNeededColumns.join(", ")}
             FROM $_tableName
             WHERE date BETWEEN '$endDate' AND '$startDate' 
             GROUP BY STRFTIME('%$timeframe',date)
@@ -148,35 +180,35 @@ class UserWellbeingDB extends ChangeNotifier {
     return itemList;
   }
 
-  /// returns last week day-by-day data
-  Future<List<WellbeingItem>> getLastWeekOfSpecificColumns({int id}) async {
+  ///Get overall trends for all the data - grouped by weeks
+  Future<List<WellbeingItem>> getOverallTrendsForPastFourMonth() async {
     final db = await database;
-
-    /// Generating a list of columns we want to get
-    List<String> allNeededColumns = ["${_columns[1]}", "${_columns[id]}"];
-    // print("allNeededColumns: $allNeededColumns");
-
-    /// Genrating start and end date
     final startDate = DateTime.now().toIso8601String().substring(0, 10);
-    final endDate = DateTime.now()
-        .subtract(Duration(days: 6))
+    final endDate = DateTime.utc(
+            DateTime.now().year, DateTime.now().month - 4, DateTime.now().day)
         .toIso8601String()
         .substring(0, 10);
-    List<Map> wellbeingMaps = await db.query(
-      _tableName,
-      columns: allNeededColumns,
-      where: '''date BETWEEN '$endDate' AND '$startDate' ''',
-      orderBy: "${allNeededColumns[0]}",
-      // groupBy: "[date]"
-    );
+    List<Map> wellbeingMaps = await db.rawQuery('''
+    SELECT STRFTIME('%W',date) as IsoSting,
+    date,
+    sum(numSteps) as numSteps,
+    avg(wellbeingScore) as wellbeingScore,
+    avg(sputumColour) as sputumColour,
+    avg(mrcDyspnoeaScale) as mrcDyspnoeaScale,
+    avg(speechRate) as speechRate
+    FROM $_tableName
+    WHERE date BETWEEN '$endDate' AND '$startDate' 
+    GROUP BY STRFTIME('%W',date)
+    ''');
 
     wellbeingMaps.forEach((element) {
-      print("getLastWeekOfSpecificColumns: $element");
+      print("$element");
     });
 
     final itemList = wellbeingMaps
         .map((wellbeingMap) => WellbeingItem.fromMap(wellbeingMap))
-        .toList();
+        .toList(growable: false);
+
     return itemList;
   }
 

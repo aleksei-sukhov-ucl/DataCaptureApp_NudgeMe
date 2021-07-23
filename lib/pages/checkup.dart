@@ -136,7 +136,7 @@ class _WellbeingCheckWidgetsState extends State<WellbeingCheckWidgets> {
                           style: TextStyle(
                               fontFamily: 'Rosario',
                               fontSize: 25,
-                              color: Theme.of(context).accentColor)),
+                              color: Theme.of(context).colorScheme.secondary)),
                       SizedBox(height: 40),
                       Text("How did you feel this week?",
                           style: Theme.of(context).textTheme.bodyText1),
@@ -184,7 +184,7 @@ class _WellbeingCheckWidgetsState extends State<WellbeingCheckWidgets> {
                 style: TextStyle(
                     fontFamily: 'Rosario',
                     fontSize: 25,
-                    color: Theme.of(context).accentColor));
+                    color: Theme.of(context).colorScheme.secondary));
           }
           return CircularProgressIndicator();
         },

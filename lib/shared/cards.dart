@@ -41,7 +41,7 @@ List<CardClass> cards = [
       cardId: 2,
       cardIcon: Icon(Icons.sentiment_satisfied_alt),
       titleOfCard: "Sputum colour",
-      units: "Color",
+      units: "Sputum Color",
       color: Color.fromRGBO(251, 222, 147, 1),
       text:
           "Sputum is produced when a person’s lungs are diseased or damaged. Sputum is not saliva but the thick mucus – sometimes called phlegm – which is coughed up from the lungs.\n\nThe body produces mucus to keep the thin, delicate tissues of the respiratory tract moist so that small particles of foreign matter that may pose a threat can be trapped and forced out.\n\nSometimes, such as when there is an infection in the lungs, an excess of mucus is produced. The body attempts to get rid of this excess by coughing it up as sputum."),
@@ -54,7 +54,7 @@ List<CardClass> cards = [
       size: 24,
     ),
     titleOfCard: "MRC Dyspnoea Scale",
-    units: "Breathlessness Score",
+    units: "Score",
     color: Color.fromRGBO(138, 127, 245, 1),
     text:
         "The dyspnoea scale has been in use for many years for grading the effect of breathlessness on daily activities.\n\nThis scale measures perceived respiratory disability.\n\nThe MRC dyspnoea scale is simple to administer as it allows the patients to indicate the extent to which their breathlessness affects their mobility.",
@@ -66,13 +66,13 @@ List<CardClass> cards = [
       cardIcon: Icon(Icons.record_voice_over),
       titleOfCard: "Speech Rate",
       units: "Words/min",
-      color: Colors.cyanAccent,
+      color: Color.fromRGBO(241, 139, 128, 1.0),
       text: ""),
   CardClass(
       cardId: 5,
       cardIcon: Icon(Icons.timeline_outlined),
       titleOfCard: "Trends",
-      units: "",
+      units: "Trends",
       color: Colors.pinkAccent,
       text: "Here you can see all the trends.")
 ];

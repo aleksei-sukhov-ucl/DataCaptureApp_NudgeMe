@@ -5,7 +5,7 @@ import 'package:nudge_me/model/friends_model.dart';
 import 'package:nudge_me/notification.dart';
 import 'package:nudge_me/pages/add_friend_page.dart';
 import 'package:nudge_me/pages/checkup.dart';
-import 'package:nudge_me/pages/home_page.dart';
+// import 'package:nudge_me/pages/home_page.dart';
 import 'package:nudge_me/pages/nudge_screen.dart';
 import 'package:nudge_me/pages/support_page.dart';
 import 'package:nudge_me/pages/testing_page.dart';
@@ -25,7 +25,7 @@ import 'main.dart';
 const BASE_URL = "https://comp0016.cyberchris.xyz";
 
 /// defines the index of a page
-enum NavBarIndex { wellbeing, home, network, settings, testing }
+enum NavBarIndex { wellbeing, /*home,*/ network, settings, testing }
 
 /// Widget that switches between and displays the currently selected
 /// page from the navigation bar.
@@ -56,7 +56,7 @@ class _MainPagesState extends State<MainPages> {
     List<TabItem> items = [
       TabItem(
           icon: Icon(Icons.bar_chart, color: Colors.white), title: "Wellbeing"),
-      TabItem(icon: Icon(Icons.home, color: Colors.white), title: "Home"),
+      // TabItem(icon: Icon(Icons.home, color: Colors.white), title: "Home"),
       TabItem(icon: Icon(Icons.people, color: Colors.white), title: "Network"),
       TabItem(
           icon: Icon(Icons.settings, color: Colors.white), title: "Settings"),
@@ -125,7 +125,7 @@ class _MainPagesState extends State<MainPages> {
         stepValueStream: Pedometer.stepCountStream.map((event) => event.steps),
         cards: cards,
       ),
-      HomePage(Pedometer.stepCountStream.map((event) => event.steps)),
+      // HomePage(Pedometer.stepCountStream.map((event) => event.steps)),
       SupportPage(),
       SettingsPage(),
       TestingPage(),

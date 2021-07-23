@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class dataSharingModal extends StatefulWidget {
-  const dataSharingModal({key}) : super(key: key);
+class DataSharingModal extends StatefulWidget {
+  const DataSharingModal({key}) : super(key: key);
 
   @override
-  State<dataSharingModal> createState() => _dataSharingModalState();
+  State<DataSharingModal> createState() => _DataSharingModalState();
 }
 
-class _dataSharingModalState extends State<dataSharingModal> {
+class _DataSharingModalState extends State<DataSharingModal> {
   @override
   Widget build(BuildContext context) {
     return Container();

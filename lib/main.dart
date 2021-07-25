@@ -16,7 +16,7 @@ import 'package:uni_links/uni_links.dart';
 import 'main_pages.dart';
 
 /// true if app is in production, meant for end users
-bool isProduction = true;
+bool isProduction = false;
 
 /// key to retrieve [bool] that is true if setup is done
 const FIRST_TIME_DONE_KEY = "first_time_done";
@@ -213,7 +213,7 @@ class MyApp extends StatelessWidget {
             secondaryVariant: Colors.deepPurple,
 
             /// Sputum colour
-            surface: Color.fromRGBO(251, 222, 147, 1),
+            surface: Color.fromRGBO(113, 101, 226, 1),
 
             ///MRC Dyspnoea Scale
             background: Color.fromRGBO(138, 127, 245, 1),
@@ -224,7 +224,7 @@ class MyApp extends StatelessWidget {
             ///Speech Rate
             onSecondary: Color.fromRGBO(241, 139, 128, 1.0),
             onSurface: Colors.white,
-            onBackground: Colors.white,
+            onBackground: Color.fromRGBO(251, 222, 147, 1),
             onError: Colors.white,
             brightness: Brightness.light,
           ),

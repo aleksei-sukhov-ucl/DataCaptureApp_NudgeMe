@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nudge_me/shared/cards.dart';
-import 'package:nudge_me/pages/wellbeing_page/circle_progress.dart';
+import 'package:nudge_me/shared/circle_progress.dart';
 import 'package:nudge_me/pages/wellbeing_page/speech_rate_tile.dart';
 import 'package:nudge_me/shared/wellbeing_circle.dart';
 
@@ -42,7 +42,7 @@ class _WellbeingPageGridViewState extends State<WellbeingPageGridView> {
 
       /// Breathlessness
       case 3:
-        return CirclePercentIndicator(color: card.color, goal: 10, units: "");
+        return CirclePercentIndicator(color: card.color, goal: 5, units: "");
 
       /// Speech Rate
       case 4:
@@ -106,10 +106,6 @@ class _WellbeingPageGridViewState extends State<WellbeingPageGridView> {
                       height: 40,
                     ),
 
-                    //Padding(
-                    //                       padding: const EdgeInsets.fromLTRB(0, 16, 0, 16),
-                    //                       child: _getCardVisualisation(cards[index]),
-                    //                     ),
                     /// Padding for visualisation
                     _getCardVisualisation(widget.cards[index]),
 

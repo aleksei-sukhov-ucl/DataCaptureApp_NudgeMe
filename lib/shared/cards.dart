@@ -50,7 +50,7 @@ List<CardClass> cards = [
   CardClass(
     cardId: 3,
     cardIcon: ImageIcon(
-      AssetImage("lib/images/634cbe378c7b08daa95fd9197f77b468.png"),
+      AssetImage("lib/images/Lungs.png"),
       size: 24,
     ),
     titleOfCard: "MRC Dyspnoea Scale",

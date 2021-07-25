@@ -7,7 +7,7 @@ const _dbName = "wellbeing_items_db.db";
 
 // versions could be used to change the database schema once the app is
 // already released (since you cannot ask users to reinstall the app)
-const _dbVersion = 2;
+const _dbVersion = 3;
 
 const _tableName = "WellbeingItems";
 const _columns = [
@@ -18,6 +18,8 @@ const _columns = [
   "wellbeingScore",
   "sputumColour",
   "mrcDyspnoeaScale",
+  "speechRateTest",
+  "testDuration",
   "speechRate",
   "audioURL",
   "support_code"
@@ -44,6 +46,7 @@ class UserWellbeingDB extends ChangeNotifier {
 
   /// inserts a [WellbeingItem] constructed with the given data.
   /// returns the id of the newly inserted record
+
   Future<int> insertWithData(
       {date: String,
       postcode: String,
@@ -51,6 +54,8 @@ class UserWellbeingDB extends ChangeNotifier {
       numSteps: int,
       sputumColour: double,
       mrcDyspnoeaScale: double,
+      speechRateTest: int,
+      testDuration: double,
       speechRate: double,
       audioURL: String,
       supportCode: String}) async {
@@ -64,6 +69,8 @@ class UserWellbeingDB extends ChangeNotifier {
           numSteps: numSteps,
           sputumColour: sputumColour,
           mrcDyspnoeaScale: mrcDyspnoeaScale,
+          speechRateTest: speechRateTest,
+          testDuration: testDuration,
           speechRate: speechRate,
           audioURL: audioURL,
           supportCode: supportCode),
@@ -251,11 +258,25 @@ class UserWellbeingDB extends ChangeNotifier {
       ${_columns[4]} DOUBLE,
       ${_columns[5]} DOUBLE,
       ${_columns[6]} DOUBLE,
-      ${_columns[7]} DOUBLE,    
-      ${_columns[8]} TEXT,
-      ${_columns[9]} TEXT
+      ${_columns[7]} INTEGER,
+      ${_columns[8]} DOUBLE,
+      ${_columns[9]} DOUBLE,    
+      ${_columns[10]} TEXT,
+      ${_columns[11]} TEXT
     )
       ''');
+    /*"id",
+      "date",
+      "postcode",
+      "numSteps",
+      "wellbeingScore",
+      "sputumColour",
+      "mrcDyspnoeaScale",
+      "speechRateTest",
+      "testDuration",
+      "speechRate",
+      "audioURL",
+      "support_code"*/
   }
 }
 
@@ -268,6 +289,8 @@ class WellbeingItem {
   double wellbeingScore;
   double sputumColour;
   double mrcDyspnoeaScale;
+  int speechRateTest;
+  double testDuration;
   double speechRate;
   String audioURL;
   String supportCode;
@@ -278,11 +301,13 @@ class WellbeingItem {
       this.postcode,
       this.numSteps,
       this.wellbeingScore,
-      this.supportCode,
       this.sputumColour,
       this.mrcDyspnoeaScale,
+      this.speechRateTest,
+      this.testDuration,
+      this.speechRate,
       this.audioURL,
-      this.speechRate});
+      this.supportCode});
 
   WellbeingItem.fromMap(Map<String, dynamic> map) {
     id = map[_columns[0]];
@@ -292,9 +317,11 @@ class WellbeingItem {
     wellbeingScore = map[_columns[4]];
     sputumColour = map[_columns[5]];
     mrcDyspnoeaScale = map[_columns[6]];
-    speechRate = map[_columns[7]];
-    audioURL = map[_columns[8]];
-    supportCode = map[_columns[9]];
+    speechRateTest = map[_columns[7]];
+    testDuration = map[_columns[8]];
+    speechRate = map[_columns[9]];
+    audioURL = map[_columns[10]];
+    supportCode = map[_columns[11]];
   }
 
   Map<String, dynamic> toMap() {
@@ -306,9 +333,11 @@ class WellbeingItem {
       _columns[4]: wellbeingScore,
       _columns[5]: sputumColour,
       _columns[6]: mrcDyspnoeaScale,
-      _columns[7]: speechRate,
-      _columns[8]: audioURL,
-      _columns[9]: supportCode,
+      _columns[7]: speechRateTest,
+      _columns[8]: testDuration,
+      _columns[9]: speechRate,
+      _columns[10]: audioURL,
+      _columns[11]: supportCode,
     };
     if (id != null) {
       map[_columns[0]] = id;

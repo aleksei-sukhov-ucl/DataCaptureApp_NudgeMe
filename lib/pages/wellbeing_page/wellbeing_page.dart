@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:nudge_me/model/user_model.dart';
 import 'package:nudge_me/pages/charts_page/graph_page.dart';
 import 'package:nudge_me/shared/cards.dart';
-import 'package:nudge_me/pages/wellbeing_page/circle_progress.dart';
+import 'package:nudge_me/shared/circle_progress.dart';
 import 'package:nudge_me/pages/wellbeing_page/speech_rate_tile.dart';
 import 'package:nudge_me/pages/wellbeing_page/trends_tile.dart';
 import 'package:nudge_me/shared/wellbeing_circle.dart';
@@ -81,7 +81,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
           return CirclePercentIndicator(
               score: lastItemList.mrcDyspnoeaScale.truncate(),
               color: card.color,
-              goal: 10,
+              goal: 5,
               units: "");
         case 4:
 

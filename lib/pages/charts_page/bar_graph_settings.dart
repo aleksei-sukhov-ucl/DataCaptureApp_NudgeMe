@@ -195,7 +195,7 @@ double maxYaxis({int cardId, int initialIndex, double dynamicMaxValue}) {
     case 1:
       return 10;
     case 2:
-      return 5;
+      return 4;
     case 3:
       return 5;
     case 4:

@@ -22,7 +22,7 @@ class ShareButton extends StatelessWidget {
         child: Icon(
           Icons.share,
           color: Colors.blueAccent,
-          size: 40,
+          size: 30,
         ));
   }
 

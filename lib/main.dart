@@ -158,43 +158,75 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'NudgeMe',
         theme: ThemeData(
           scaffoldBackgroundColor: Color.fromARGB(255, 251, 249, 255),
-          primaryColor: Color.fromARGB(255, 0, 74, 173),
-          accentColor: Color.fromARGB(255, 182, 125, 226),
-          fontFamily: 'Rosario',
+          // primaryColor: Color.fromARGB(255, 0, 74, 173),
+          primaryColor: Color.fromRGBO(113, 101, 226, 1),
+          // accentColor: Color.fromARGB(255, 182, 125, 226),
+          fontFamily: 'Lato-Regular',
           textTheme: TextTheme(
               headline1: TextStyle(
                   fontSize: 36.0,
                   fontWeight: FontWeight.w700,
-                  fontFamily: 'Kite_One'),
+                  fontFamily: 'Lato-Regular'),
               headline2: TextStyle(
-                fontFamily: 'Rosario',
+                fontFamily: 'Lato-Regular',
                 fontSize: 25,
               ),
-              headline3: TextStyle(fontFamily: 'Rosario', fontSize: 25),
+              headline3: TextStyle(fontFamily: 'Lato-Regular', fontSize: 25),
               subtitle1: TextStyle(
-                  fontFamily: 'Rosario',
+                  fontFamily: 'Lato-Regular',
                   fontWeight: FontWeight.w500,
                   fontSize: 20),
               subtitle2: TextStyle(
-                  fontFamily: 'Rosario',
+                  fontFamily: 'Lato-Regular',
                   color: Colors.white,
                   fontStyle: FontStyle.italic,
                   fontSize: 20), //for tutorial
-              bodyText1: TextStyle(fontFamily: 'Rosario', fontSize: 20),
-              bodyText2: TextStyle(fontFamily: 'Rosario', fontSize: 15),
-              caption: TextStyle(fontFamily: 'Rosario', fontSize: 12)),
+              bodyText1: TextStyle(fontFamily: 'Lato-Regular', fontSize: 20),
+              bodyText2: TextStyle(fontFamily: 'Lato-Regular', fontSize: 15),
+              caption: TextStyle(fontFamily: 'Lato-Regular', fontSize: 12)),
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
             backgroundColor: Colors.white,
             selectedLabelStyle: TextStyle(
-                color: Colors.black, fontFamily: 'Rosario', fontSize: 14.0),
+                color: Colors.black,
+                fontFamily: 'Lato-Regular',
+                fontSize: 14.0),
             unselectedLabelStyle: TextStyle(
-                color: Colors.black, fontFamily: 'Rosario', fontSize: 14.0),
+                color: Colors.black,
+                fontFamily: 'Lato-Regular',
+                fontSize: 14.0),
             selectedItemColor: Colors.black,
             unselectedItemColor: Colors.black,
             showUnselectedLabels: true,
+          ),
+          colorScheme: ColorScheme(
+            primary: Color.fromRGBO(113, 101, 226, 1),
+            secondary: Color.fromRGBO(63, 135, 253, 1),
+
+            /// Steps Color
+            primaryVariant: Color.fromRGBO(123, 230, 236, 1),
+
+            ///Wellbeing color
+            secondaryVariant: Colors.deepPurple,
+
+            /// Sputum colour
+            surface: Color.fromRGBO(113, 101, 226, 1),
+
+            ///MRC Dyspnoea Scale
+            background: Color.fromRGBO(138, 127, 245, 1),
+            error: Colors.white,
+
+            onPrimary: Colors.white,
+
+            ///Speech Rate
+            onSecondary: Color.fromRGBO(241, 139, 128, 1.0),
+            onSurface: Colors.white,
+            onBackground: Color.fromRGBO(251, 222, 147, 1),
+            onError: Colors.white,
+            brightness: Brightness.light,
           ),
         ),
         home: FutureBuilder(

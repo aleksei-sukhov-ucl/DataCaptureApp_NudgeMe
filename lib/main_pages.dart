@@ -5,11 +5,12 @@ import 'package:nudge_me/model/friends_model.dart';
 import 'package:nudge_me/notification.dart';
 import 'package:nudge_me/pages/add_friend_page.dart';
 import 'package:nudge_me/pages/checkup.dart';
-import 'package:nudge_me/pages/home_page.dart';
+// import 'package:nudge_me/pages/home_page.dart';
 import 'package:nudge_me/pages/nudge_screen.dart';
 import 'package:nudge_me/pages/support_page.dart';
 import 'package:nudge_me/pages/testing_page.dart';
-import 'package:nudge_me/pages/wellbeing_page.dart';
+import 'package:nudge_me/shared/cards.dart';
+import 'package:nudge_me/pages/wellbeing_page/wellbeing_page.dart';
 import 'package:nudge_me/pages/settings_page.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +25,7 @@ import 'main.dart';
 const BASE_URL = "https://comp0016.cyberchris.xyz";
 
 /// defines the index of a page
-enum NavBarIndex { wellbeing, home, network, settings, testing }
+enum NavBarIndex { wellbeing, /*home,*/ network, settings, testing }
 
 /// Widget that switches between and displays the currently selected
 /// page from the navigation bar.
@@ -38,7 +39,7 @@ class _MainPagesState extends State<MainPages> {
 
   /// [int] used to determine the current selected page.
   /// Default selected page is the homepage.
-  int _selectedIndex = NavBarIndex.home.index;
+  int _selectedIndex = NavBarIndex.wellbeing.index;
 
   /// A subscription of events. They occur whenever a deeplink is pressed,
   /// but the app is already open.
@@ -55,7 +56,7 @@ class _MainPagesState extends State<MainPages> {
     List<TabItem> items = [
       TabItem(
           icon: Icon(Icons.bar_chart, color: Colors.white), title: "Wellbeing"),
-      TabItem(icon: Icon(Icons.home, color: Colors.white), title: "Home"),
+      // TabItem(icon: Icon(Icons.home, color: Colors.white), title: "Home"),
       TabItem(icon: Icon(Icons.people, color: Colors.white), title: "Network"),
       TabItem(
           icon: Icon(Icons.settings, color: Colors.white), title: "Settings"),
@@ -84,7 +85,7 @@ class _MainPagesState extends State<MainPages> {
     });
     _linksSub =
         getUriLinksStream().listen(_handleAddFriendDeeplink, onError: (err) {
-      // warn user, maybe create a snackbar?
+      //TODO: warn user, maybe create a snackbar?
       print(err);
     });
 
@@ -119,9 +120,12 @@ class _MainPagesState extends State<MainPages> {
   Widget build(BuildContext context) {
     _updateUnread();
 
-    final pages = [
-      WellbeingPage(),
-      HomePage(Pedometer.stepCountStream.map((event) => event.steps)),
+    final List<Widget> pages = [
+      WellbeingPage(
+        stepValueStream: Pedometer.stepCountStream.map((event) => event.steps),
+        cards: cards,
+      ),
+      // HomePage(Pedometer.stepCountStream.map((event) => event.steps)),
       SupportPage(),
       SettingsPage(),
       TestingPage(),
@@ -157,9 +161,13 @@ class _MainPagesState extends State<MainPages> {
   void _handleNotification(String payload) async {
     switch (payload) {
       case CHECKUP_PAYLOAD:
-        await navigatorKey.currentState.push(MaterialPageRoute(
-            builder: (context) => WellbeingCheck(Pedometer.stepCountStream
-                .map((stepCount) => stepCount.steps))));
+        await navigatorKey.currentState.push(
+          MaterialPageRoute(
+            builder: (context) => WellbeingCheck(
+              Pedometer.stepCountStream.map((stepCount) => stepCount.steps),
+            ),
+          ),
+        );
         break;
       case NUDGE_PAYLOAD:
         await navigatorKey.currentState

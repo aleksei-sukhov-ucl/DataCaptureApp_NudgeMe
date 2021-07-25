@@ -22,7 +22,6 @@ const URL_USER_MANUAL =
 /// and steps so far since the last Wellbeing Check.
 class HomePage extends StatefulWidget {
   final Stream<int> stepValueStream;
-
   const HomePage(this.stepValueStream);
 
   @override
@@ -144,7 +143,8 @@ class _HomePageState extends State<HomePage> {
                         final List<WellbeingItem> lastItemList = snapshot.data;
                         return lastItemList.isNotEmpty
                             ? WellbeingCircle(
-                                lastItemList[0].wellbeingScore.truncate())
+                                score:
+                                    lastItemList[0].wellbeingScore.truncate())
                             : WellbeingCircle();
                       } else if (snapshot.hasError) {
                         print(snapshot.error);

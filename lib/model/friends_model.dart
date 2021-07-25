@@ -7,7 +7,7 @@ const _dbName = "friends_db.db";
 
 // versions could be used to change the database schema once the app is
 // already released (since you cannot ask users to reinstall the app)
-const _dbVersion = 1;
+const _dbVersion = 2;
 
 const _tableName = "Friends";
 const _columns = [

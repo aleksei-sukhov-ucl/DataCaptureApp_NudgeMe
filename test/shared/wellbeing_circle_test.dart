@@ -3,7 +3,7 @@ import 'package:nudge_me/shared/wellbeing_circle.dart';
 
 void main() {
   testWidgets('WellbeingCircle displays score', (WidgetTester tester) async {
-    await tester.pumpWidget(WellbeingCircle(7));
+    await tester.pumpWidget(WellbeingCircle(score: 7));
     await tester.pumpAndSettle();
 
     final scoreFinder = find.text('7');

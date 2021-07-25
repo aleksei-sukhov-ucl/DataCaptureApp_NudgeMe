@@ -1,7 +1,11 @@
 import 'package:clock/clock.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:nudge_me/background.dart';
@@ -14,6 +18,7 @@ import 'package:nudge_me/notification.dart';
 import 'package:nudge_me/model/user_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:nudge_me/pages/settings_sections/reschedule_wb.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Screen that displays to faciliate the user setup.
@@ -38,8 +43,23 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
   /// Keeps track of the support code [TextField]
   final supportCodeController = TextEditingController();
 
+  /// List of descriptions of MRC Dyspnoea Scale
+  final List<String> descriptionsMRCDyspnoeaScale = [
+    "Not troubled by breathless except on strenuous exercise",
+    "Short of breath when hurrying on a level or when walking up a slight hill",
+    "	Walks slower than most people on the level, stops after a mile or so, or stops after 15 minutes walking at own pace",
+    "Stops for breath after walking 100 yards, or after a few minutes on level ground",
+    "Too breathless to leave the house, or breathless when dressing/undressing  "
+  ];
+
   /// Default values for silder, switch, and notification day, hour and min.
-  double _currentSliderValue = 0;
+  double _currentSliderValueWellbeing = 0;
+  double _currentSliderValueSputumColor = 0;
+  double _currentSliderValueMRCDyspnoeaScale = 1;
+  int _currentValueSpeechRateTest = 0;
+  double _currentValueTestDuration = 30;
+  double _currentValueSpeechRate = 0;
+  String _currentValueAudioURL = "url/test";
   bool _currentSwitchValue = false;
   int _wbCheckNotifDay = DateTime.sunday;
   int _wbCheckNotifHour = 12;
@@ -49,21 +69,46 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
   /// true if done was tapped with valid input
   bool doneTapped = false;
 
+  /// TODO Create forms/pages for missing data
   /// Records first wellbeing check
   void setInitialWellbeing(
-      double _currentSliderValue, String postcode, String suppCode) async {
+    double _currentSliderValueWellbeing,
+    double _currentSliderValueSputumColor,
+    double _currentSliderValueMRCDyspnoeaScale,
+    int _currentValueSpeechRateTest,
+    double _currentValueTestDuration,
+    double _currentValueSpeechRate,
+    String _currentValueAudioURL,
+    String postcode,
+    String suppCode,
+  ) async {
     final dateString = clock.now().toIso8601String().substring(0, 10);
     await Provider.of<UserWellbeingDB>(context, listen: false).insertWithData(
       date: dateString,
       postcode: postcode,
-      wellbeingScore: _currentSliderValue,
       numSteps: 0,
+      wellbeingScore: _currentSliderValueWellbeing,
+      sputumColour: _currentSliderValueSputumColor,
+      mrcDyspnoeaScale: _currentSliderValueMRCDyspnoeaScale,
+      speechRateTest: _currentValueSpeechRateTest,
+      testDuration: _currentValueTestDuration,
+      speechRate: _currentValueSpeechRate,
+      audioURL: _currentValueAudioURL,
       supportCode: suppCode,
     );
   }
 
   /// Saves user input: postcode, support code and notification time.
-  void _saveInput(String postcode, String suppcode, double _currentSliderValue,
+  void _saveInput(
+      String postcode,
+      String suppcode,
+      double _currentSliderValueWellbeing,
+      double _currentSliderValueSputumColor,
+      double _currentSliderValueMRCDyspnoeaScale,
+      int _currentValueSpeechRateTest,
+      double _currentValueTestDuration,
+      double _currentValueSpeechRate,
+      String _currentValueAudioURL,
       DateTime _wbCheckNotifTime) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('postcode', postcode);
@@ -71,7 +116,16 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
     String _wbCheckNotifString = _wbCheckNotifTime.toIso8601String();
     prefs.setString('wb_notif_time', _wbCheckNotifString);
 
-    setInitialWellbeing(_currentSliderValue, postcode, suppcode);
+    setInitialWellbeing(
+        _currentSliderValueWellbeing,
+        _currentSliderValueSputumColor,
+        _currentSliderValueMRCDyspnoeaScale,
+        _currentValueSpeechRateTest,
+        _currentValueTestDuration,
+        _currentValueSpeechRate,
+        _currentValueAudioURL,
+        postcode,
+        suppcode);
   }
 
   /// Returns whether postcode and support code are valid lengths
@@ -101,7 +155,13 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
   /// Called when intro screen finishes.
   void _onIntroEnd(
       context,
-      double _currentSliderValue,
+      double _currentSliderValueWellbeing,
+      double _currentSliderValueSputumColor,
+      double _currentSliderValueMRCDyspnoeaScale,
+      int _currentValueSpeechRateTest,
+      double _currentValueTestDuration,
+      double _currentValueSpeechRate,
+      String _currentValueAudioURL,
       bool _currentSwitchValue,
       _wbCheckNotifDay,
       _wbCheckNotifHour,
@@ -130,7 +190,13 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
     _saveInput(
         postcodeController.text.toUpperCase(),
         supportCodeController.text.toUpperCase(),
-        _currentSliderValue,
+        _currentSliderValueWellbeing,
+        _currentSliderValueSputumColor,
+        _currentSliderValueMRCDyspnoeaScale,
+        _currentValueSpeechRateTest,
+        _currentValueTestDuration,
+        _currentValueSpeechRate,
+        _currentValueAudioURL,
         _wbCheckNotifTime);
 
     // NOTE: this is the 'proper' way of requesting permissions (instead of
@@ -273,12 +339,14 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
 
     const pageDecoration = const PageDecoration(
         titleTextStyle: TextStyle(fontSize: 27.0, fontWeight: FontWeight.w700),
-        descriptionPadding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
+        descriptionPadding: EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 0.0),
         pageColor: Color.fromARGB(255, 251, 249, 255),
-        imagePadding: EdgeInsets.zero);
+        imagePadding: EdgeInsets.zero,
+        footerPadding: EdgeInsets.symmetric(vertical: 10.0));
 
     return IntroductionScreen(
         pages: [
+          /// First Page of Intro Screen
           PageViewModel(
               title: "Welcome",
               image: Image.asset("lib/images/IntroLogo.png"),
@@ -288,21 +356,28 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
                   style: introTextStyle,
                   textAlign: TextAlign.center),
               decoration: pageDecoration),
+
+          /// Second Page of Intro Screen
           PageViewModel(
               title: "How?",
               image: Image.asset("lib/images/IntroLogo.png"),
               bodyWidget: Text(
                   "Occasionally, it will nudge you to keep in contact with people you like to speak to. " +
                       "It will also make you aware of opportunities to share your wellbeing with this group. " +
-                      "If you consent to this, swipe left.",
+                      "\n\nIf you consent to this, swipe left.",
                   style: introTextStyle,
                   textAlign: TextAlign.center),
               decoration: pageDecoration),
+
+          /// Third Page of Intro Screen - Wellbeing
           PageViewModel(
               title: "Wellbeing Check",
               image: Center(
-                  child: Image.asset("lib/images/IntroWBCheck.png",
-                      height: 225.0)),
+                  child: Icon(
+                Icons.emoji_people_rounded,
+                size: 225,
+                color: Theme.of(context).colorScheme.secondary,
+              )),
               bodyWidget: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -314,34 +389,324 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
                         "\n Over the past 7 days, rate how well you have felt out of 10. ",
                         style: introTextStyle,
                         textAlign: TextAlign.center),
-                    Text("Confused? Find additional instructions below.",
-                        style: Theme.of(context).textTheme.caption,
-                        textAlign: TextAlign.center),
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Text(
+                          "Confused? Find additional instructions below.",
+                          style: Theme.of(context).textTheme.caption,
+                          textAlign: TextAlign.center),
+                    ),
                     Container(
-                        child: Slider(
-                          value: _currentSliderValue,
-                          min: 0,
-                          max: 10,
-                          divisions: 10,
-                          label: _currentSliderValue.round().toString(),
-                          activeColor: Theme.of(context).primaryColor,
-                          inactiveColor: Color.fromARGB(189, 189, 189, 255),
-                          onChanged: (double value) {
-                            setState(() {
-                              _currentSliderValue = value;
-                            });
-                          },
+                        child: SliderTheme(
+                          data: SliderTheme.of(context).copyWith(
+                              valueIndicatorShape:
+                                  PaddleSliderValueIndicatorShape()),
+                          child: Slider(
+                            value: _currentSliderValueWellbeing,
+                            min: 0,
+                            max: 10,
+                            divisions: 10,
+                            label:
+                                _currentSliderValueWellbeing.round().toString(),
+                            activeColor: Theme.of(context).primaryColor,
+                            inactiveColor: Color.fromARGB(189, 189, 189, 255),
+                            onChanged: (double value) {
+                              setState(() {
+                                _currentSliderValueWellbeing = value;
+                              });
+                            },
+                          ),
                         ),
                         width: 300.0),
                     Text(
-                        "Move the blue circle up or down the scale to log how you feel." +
+                        "Move the purple circle up or down the scale to log how you feel." +
                             " (On the scale, 0 is the lowest score and 10 is the highest score)",
                         style: introTextStyle,
                         textAlign: TextAlign.center),
                     SizedBox(height: 15),
                   ]),
               decoration: pageDecoration),
+
+          /// Fourth Page of Intro Screen - Sputum Color
+          PageViewModel(
+              title: "Sputum Color Check",
+              image: ColorFiltered(
+                child: Image.asset(
+                  "lib/images/Lungs.png",
+                  scale: 2,
+                ),
+                colorFilter: ColorFilter.mode(
+                    Theme.of(context).colorScheme.secondary, BlendMode.srcATop),
+              ),
+              bodyWidget: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                        "This is your first sputum color check.\nSputum that is a different color from saliva may be a sign of a Respiratory Tract Infections (RTIs).",
+                        style: introTextStyle,
+                        textAlign: TextAlign.center),
+                    Text(
+                        "\n Over the past 7 days, rate what color your sputum was. ",
+                        style: introTextStyle,
+                        textAlign: TextAlign.center),
+                    Container(
+                        child: SliderTheme(
+                          data: SliderTheme.of(context).copyWith(
+                              valueIndicatorShape:
+                                  PaddleSliderValueIndicatorShape()),
+                          child: Slider(
+                            value: _currentSliderValueSputumColor,
+                            min: 0,
+                            max: 4,
+                            divisions: 4,
+                            label: _currentSliderValueSputumColor
+                                .round()
+                                .toString(),
+                            activeColor: Theme.of(context).colorScheme.primary,
+                            inactiveColor: Color.fromARGB(189, 189, 189, 255),
+                            onChanged: (double value) {
+                              setState(() {
+                                _currentSliderValueSputumColor = value;
+                              });
+                            },
+                          ),
+                        ),
+                        width: 340.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: Color.fromRGBO(246, 247, 249, 1),
+                              border: Border.all(color: Colors.grey)),
+                          height: 50,
+                          width: 50,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: Color.fromRGBO(253, 250, 243, 1.0),
+                              border: Border.all(color: Colors.grey)),
+                          height: 50,
+                          width: 50,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: Color.fromRGBO(252, 250, 227, 1),
+                              border: Border.all(color: Colors.grey)),
+                          height: 50,
+                          width: 50,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: Color.fromRGBO(220, 219, 188, 1),
+                              border: Border.all(color: Colors.grey)),
+                          height: 50,
+                          width: 50,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: Color.fromRGBO(211, 206, 125, 1),
+                              border: Border.all(color: Colors.grey)),
+                          height: 50,
+                          width: 50,
+                        ),
+                      ],
+                    )
+                  ]),
+              decoration: pageDecoration),
+
+          /// Fifth page of Intro Screen - MRC Dysonea Scale
+          PageViewModel(
+              title: "Breathlessness Check",
+              image: Center(
+                  child: Icon(
+                Icons.directions_walk_rounded,
+                size: 225,
+                color: Theme.of(context).colorScheme.secondary,
+              )),
+              bodyWidget: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                        "This is your first breathlessness check.\nThe Dyspnoea Scale is used for grading the effect of breathlessness on daily activities.",
+                        style: introTextStyle,
+                        textAlign: TextAlign.center),
+                    Text(
+                        "\n Over the past 7 days, rate your level of breathlessness.",
+                        style: introTextStyle,
+                        textAlign: TextAlign.center),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 15, 0, 5),
+                      child: Container(
+                        width: 340,
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(15),
+                            ),
+                            color: Theme.of(context).colorScheme.primary),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text(
+                              descriptionsMRCDyspnoeaScale[
+                                  _currentSliderValueMRCDyspnoeaScale.toInt() -
+                                      1],
+                              style: TextStyle(color: Colors.white),
+                              textAlign: TextAlign.center),
+                        ),
+                      ),
+                    ),
+                    Container(
+                        child: SliderTheme(
+                          data: SliderTheme.of(context).copyWith(
+                              valueIndicatorShape:
+                                  PaddleSliderValueIndicatorShape(),
+                              valueIndicatorTextStyle:
+                                  TextStyle(overflow: TextOverflow.ellipsis)),
+                          child: Slider(
+                            value: _currentSliderValueMRCDyspnoeaScale,
+                            min: 1,
+                            max: 5,
+                            divisions: 4,
+                            // label: _currentSliderValueMRCDyspnoeaScale.toString(),
+                            // label: descriptionsMRCDyspnoeaScale[
+                            //     _currentSliderValueMRCDyspnoeaScale.toInt() -
+                            //         1],
+                            activeColor: Theme.of(context).colorScheme.primary,
+                            inactiveColor: Color.fromARGB(189, 189, 189, 255),
+                            onChanged: (double newValue) {
+                              setState(() {
+                                _currentSliderValueMRCDyspnoeaScale = newValue;
+                                print(
+                                    "_currentSliderValueSputumColor: $_currentSliderValueMRCDyspnoeaScale");
+                              });
+                            },
+                          ),
+                        ),
+                        width: 340.0),
+                  ]),
+              decoration: pageDecoration),
+
+          /// Sixth page of Intro Screen - Speech Rate
+          PageViewModel(
+              title: "Speech Rate Check",
+              image: Center(
+                  child: Icon(
+                Icons.record_voice_over_rounded,
+                size: 225,
+                color: Theme.of(context).colorScheme.secondary,
+              )),
+              bodyWidget: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                      child: Text("Please select the type of test:",
+                          style: introTextStyle, textAlign: TextAlign.center),
+                    ),
+                    ToggleSwitch(
+                      fontSize: introTextStyle.fontSize,
+                      initialLabelIndex: _currentValueSpeechRateTest,
+                      minWidth: MediaQuery.of(context).size.width * 0.4,
+                      minHeight: MediaQuery.of(context).size.height * 0.04,
+                      activeBgColors: [
+                        [Theme.of(context).colorScheme.primary],
+                        [Theme.of(context).colorScheme.secondary]
+                      ],
+                      inactiveBgColor: Colors.grey[100],
+                      totalSwitches: 2,
+                      labels: ["Text", "Numbers"],
+                      // with just animate set to true, default curve = Curves.easeIn
+                      radiusStyle: true,
+                      cornerRadius: 15.0,
+                      onToggle: (index) {
+                        setState(() {
+                          _currentValueSpeechRateTest = index;
+                        });
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 20),
+                      child: Text(
+                        (_currentValueSpeechRateTest == 0)
+                            ? "In this test, you will be asked to say \"Hippopotamus\" as many times as possible in a selected time "
+                            : "In this test, you will be asked to count from one onwards until the time runs out",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                      child: Text("Please select the duration of test:",
+                          style: introTextStyle, textAlign: TextAlign.center),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Container(
+                          child: DropdownButton<int>(
+                            value: _currentValueTestDuration.toInt(),
+                            icon: const Icon(Icons.arrow_drop_down_circle,
+                                color: Color.fromRGBO(113, 101, 226, 1)),
+                            iconSize: 24,
+                            elevation: 16,
+                            style: const TextStyle(color: Colors.black),
+                            underline: Container(
+                              height: 2,
+                              color: Colors.deepPurpleAccent,
+                            ),
+                            onChanged: (int newValue) {
+                              setState(() {
+                                _currentValueTestDuration = newValue.toDouble();
+                                print(
+                                    "_currentValueTestDuration: $_currentValueTestDuration");
+                              });
+                            },
+                            items: <int>[
+                              30,
+                              60,
+                              90,
+                              120,
+                            ].map<DropdownMenuItem<int>>((int value) {
+                              return DropdownMenuItem<int>(
+                                value: value,
+                                child: Text(value.toString(),
+                                    style: introTextStyle,
+                                    textAlign: TextAlign.center),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        Text("Seconds",
+                            style: introTextStyle, textAlign: TextAlign.center),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                      child: ElevatedButton(
+                          onPressed: () {
+                            _currentValueSpeechRate = 185;
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text("Start Text",
+                                style: introTextStyle
+                                    .merge(TextStyle(color: Colors.white)),
+                                textAlign: TextAlign.center),
+                          )),
+                    )
+                  ]),
+              decoration: pageDecoration),
           _getWBCheckNotificationPage(context, introTextStyle, pageDecoration),
+
           PageViewModel(
               title: "Share Data",
               image: Center(
@@ -366,6 +731,8 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
                         textAlign: TextAlign.center),
                   ]),
               decoration: pageDecoration),
+
+          /// Final Page of Intro Screen
           PageViewModel(
               title: "Postcode and Support Code",
               image: Center(
@@ -425,7 +792,13 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
         ],
         onDone: () => _onIntroEnd(
               context,
-              _currentSliderValue,
+              _currentSliderValueWellbeing,
+              _currentSliderValueSputumColor,
+              _currentSliderValueMRCDyspnoeaScale,
+              _currentValueSpeechRateTest,
+              _currentValueTestDuration,
+              _currentValueSpeechRate,
+              _currentValueAudioURL,
               _currentSwitchValue,
               _wbCheckNotifDay,
               _wbCheckNotifHour,

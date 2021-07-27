@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:nudge_me/pages/add_data.dart';
+import 'package:nudge_me/pages/wellbeing_page/wellbeing_page.dart';
 import 'package:nudge_me/shared/cards.dart';
 import 'package:provider/provider.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -190,6 +192,16 @@ class _ChartPageState extends State<ChartPage> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+                icon: const Icon(Icons.arrow_back_ios_rounded),
+                onPressed: () {
+                  Navigator.pop(context,
+                      MaterialPageRoute(builder: (context) => WellbeingPage()));
+                });
+          },
+        ),
         title: Text(
           widget.card.titleOfCard,
           style: Theme.of(context).textTheme.subtitle1.merge(
@@ -242,7 +254,15 @@ class _ChartPageState extends State<ChartPage> {
                                               widget.card.cardId == 5)
                                           ? SizedBox.shrink()
                                           : TextButton.icon(
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        AddData(
+                                                            card: widget.card),
+                                                  ),
+                                                );
+                                              },
                                               label: Text("Add Data"),
                                               icon: Icon(Icons.add),
                                             )

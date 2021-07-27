@@ -18,9 +18,9 @@ const _columns = [
   "wellbeingScore",
   "sputumColour",
   "mrcDyspnoeaScale",
+  "speechRate",
   "speechRateTest",
   "testDuration",
-  "speechRate",
   "audioURL",
   "support_code"
 ];
@@ -44,6 +44,45 @@ class UserWellbeingDB extends ChangeNotifier {
     return id;
   }
 
+  Future<int> update({int columnId, value, String Date}) async {
+    final db = await database;
+    // row to update
+    Map<String, dynamic> row = {_columns[columnId]: value};
+
+    final count = await db.update(_tableName, row,
+        where: '${_columns[1]} = ?', whereArgs: [Date]);
+
+    notifyListeners();
+    print("count from SQL: $count");
+    return count;
+  }
+
+  Future<int> updateSpeechTest(
+      {currentValueSpeechRateTest,
+      currentValueTestDuration,
+      currentValueSpeechRate,
+      currentValueAudioURL,
+      Date}) async {
+    final db = await database;
+
+    // "speechRate",
+    // "speechRateTest",
+    // "testDuration",
+    // "audioURL"
+
+    Map<String, dynamic> row = {
+      _columns[7]: currentValueSpeechRate,
+      _columns[8]: currentValueSpeechRateTest,
+      _columns[9]: currentValueTestDuration,
+      _columns[10]: currentValueAudioURL
+    };
+
+    final id = await db.update(_tableName, row,
+        where: '${_columns[1]} = ?', whereArgs: [Date]);
+    notifyListeners();
+    return id;
+  }
+
   /// inserts a [WellbeingItem] constructed with the given data.
   /// returns the id of the newly inserted record
 
@@ -54,12 +93,12 @@ class UserWellbeingDB extends ChangeNotifier {
       numSteps: int,
       sputumColour: double,
       mrcDyspnoeaScale: double,
+      speechRate: double,
       speechRateTest: int,
       testDuration: double,
-      speechRate: double,
       audioURL: String,
       supportCode: String}) async {
-    assert(wellbeingScore != null);
+    // assert(wellbeingScore != null);
     return insert(
       WellbeingItem(
           id: null,
@@ -69,9 +108,9 @@ class UserWellbeingDB extends ChangeNotifier {
           numSteps: numSteps,
           sputumColour: sputumColour,
           mrcDyspnoeaScale: mrcDyspnoeaScale,
+          speechRate: speechRate,
           speechRateTest: speechRateTest,
           testDuration: testDuration,
-          speechRate: speechRate,
           audioURL: audioURL,
           supportCode: supportCode),
     );
@@ -81,7 +120,7 @@ class UserWellbeingDB extends ChangeNotifier {
   Future<List<WellbeingItem>> getLastNWeeks(int n) async {
     final db = await database;
     List<Map> wellbeingMaps = await db.query(_tableName,
-        columns: _columns, orderBy: "${_columns[0]} DESC", limit: n);
+        columns: _columns, orderBy: "${_columns[1]} DESC", limit: n);
 
     for (var value in wellbeingMaps) {
       print("getLastNWeeks: $value");
@@ -241,6 +280,13 @@ class UserWellbeingDB extends ChangeNotifier {
         0;
   }
 
+  Future<bool> getDataAlreadyExists({String checkDate}) async {
+    final db = await database;
+    return firstIntValue(await db.rawQuery('''SELECT EXISTS(SELECT 1 
+               FROM $_tableName 
+               WHERE date="$checkDate");''')) == 1;
+  }
+
   Future<Database> _init() async {
     final dir = await getDatabasesPath();
     final dbPath = join(dir, _dbName);
@@ -258,8 +304,8 @@ class UserWellbeingDB extends ChangeNotifier {
       ${_columns[4]} DOUBLE,
       ${_columns[5]} DOUBLE,
       ${_columns[6]} DOUBLE,
-      ${_columns[7]} INTEGER,
-      ${_columns[8]} DOUBLE,
+      ${_columns[7]} DOUBLE,
+      ${_columns[8]} INTEGER,
       ${_columns[9]} DOUBLE,    
       ${_columns[10]} TEXT,
       ${_columns[11]} TEXT
@@ -272,9 +318,9 @@ class UserWellbeingDB extends ChangeNotifier {
       "wellbeingScore",
       "sputumColour",
       "mrcDyspnoeaScale",
+      "speechRate",
       "speechRateTest",
       "testDuration",
-      "speechRate",
       "audioURL",
       "support_code"*/
   }
@@ -289,9 +335,9 @@ class WellbeingItem {
   double wellbeingScore;
   double sputumColour;
   double mrcDyspnoeaScale;
+  double speechRate;
   int speechRateTest;
   double testDuration;
-  double speechRate;
   String audioURL;
   String supportCode;
 
@@ -303,9 +349,9 @@ class WellbeingItem {
       this.wellbeingScore,
       this.sputumColour,
       this.mrcDyspnoeaScale,
+      this.speechRate,
       this.speechRateTest,
       this.testDuration,
-      this.speechRate,
       this.audioURL,
       this.supportCode});
 
@@ -317,9 +363,9 @@ class WellbeingItem {
     wellbeingScore = map[_columns[4]];
     sputumColour = map[_columns[5]];
     mrcDyspnoeaScale = map[_columns[6]];
-    speechRateTest = map[_columns[7]];
-    testDuration = map[_columns[8]];
-    speechRate = map[_columns[9]];
+    speechRate = map[_columns[7]];
+    speechRateTest = map[_columns[8]];
+    testDuration = map[_columns[9]];
     audioURL = map[_columns[10]];
     supportCode = map[_columns[11]];
   }
@@ -333,9 +379,9 @@ class WellbeingItem {
       _columns[4]: wellbeingScore,
       _columns[5]: sputumColour,
       _columns[6]: mrcDyspnoeaScale,
-      _columns[7]: speechRateTest,
-      _columns[8]: testDuration,
-      _columns[9]: speechRate,
+      _columns[7]: speechRate,
+      _columns[8]: speechRateTest,
+      _columns[9]: testDuration,
       _columns[10]: audioURL,
       _columns[11]: supportCode,
     };

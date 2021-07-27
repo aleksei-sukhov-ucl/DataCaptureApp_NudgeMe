@@ -58,7 +58,7 @@ class _WellbeingCheckWidgetsState extends State<WellbeingCheckWidgets> {
 
   /// Sets original slider value to 0.
   double _currentSliderValueWellbeing = 0;
-  double _currentSliderValueSputumColor = 0;
+  double _currentSliderValueSputumColor = 1;
   double _currentSliderValueMRCDyspnoeaScale = 1;
   int _currentValueSpeechRateTest = 0;
   double _currentValueTestDuration = 30;
@@ -198,7 +198,7 @@ class _WellbeingCheckWidgetsState extends State<WellbeingCheckWidgets> {
               Container(
                 child: DropdownButton<int>(
                   value: _currentValueTestDuration.toInt(),
-                  icon: const Icon(Icons.arrow_drop_down_circle,
+                  icon: const Icon(Icons.arrow_drop_down,
                       color: Color.fromRGBO(113, 101, 226, 1)),
                   iconSize: 24,
                   elevation: 16,
@@ -244,7 +244,7 @@ class _WellbeingCheckWidgetsState extends State<WellbeingCheckWidgets> {
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text("Start Text",
+                      child: Text("Start Test",
                           style: Theme.of(context)
                               .textTheme
                               .bodyText2
@@ -266,6 +266,7 @@ class _WellbeingCheckWidgetsState extends State<WellbeingCheckWidgets> {
             return StreamBuilder(
               stream: widget.stepValueStream,
               builder: (context, streamSnapshot) {
+                /// For Deployment change this to how it was
                 if (!streamSnapshot.hasData) {
                   final currentTotalSteps = streamSnapshot.data;
                   final thisWeeksSteps = 10;
@@ -282,7 +283,7 @@ class _WellbeingCheckWidgetsState extends State<WellbeingCheckWidgets> {
                               color: Theme.of(context).colorScheme.secondary)),
                       SizedBox(height: sizeBoxHeight + 20),
 
-                      /// Weelbeing
+                      /// Wellbeing
                       Text("How did you feel this week?",
                           style: Theme.of(context).textTheme.bodyText1),
                       Container(
@@ -305,8 +306,8 @@ class _WellbeingCheckWidgetsState extends State<WellbeingCheckWidgets> {
                                 PaddleSliderValueIndicatorShape()),
                         child: Slider(
                           value: _currentSliderValueSputumColor,
-                          min: 0,
-                          max: 4,
+                          min: 1,
+                          max: 5,
                           divisions: 4,
                           label:
                               _currentSliderValueSputumColor.round().toString(),

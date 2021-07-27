@@ -54,7 +54,7 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
 
   /// Default values for silder, switch, and notification day, hour and min.
   double _currentSliderValueWellbeing = 0;
-  double _currentSliderValueSputumColor = 0;
+  double _currentSliderValueSputumColor = 1;
   double _currentSliderValueMRCDyspnoeaScale = 1;
   int _currentValueSpeechRateTest = 0;
   double _currentValueTestDuration = 30;
@@ -456,8 +456,8 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
                                   PaddleSliderValueIndicatorShape()),
                           child: Slider(
                             value: _currentSliderValueSputumColor,
-                            min: 0,
-                            max: 4,
+                            min: 1,
+                            max: 5,
                             divisions: 4,
                             label: _currentSliderValueSputumColor
                                 .round()
@@ -654,7 +654,7 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
                         Container(
                           child: DropdownButton<int>(
                             value: _currentValueTestDuration.toInt(),
-                            icon: const Icon(Icons.arrow_drop_down_circle,
+                            icon: const Icon(Icons.arrow_drop_down,
                                 color: Color.fromRGBO(113, 101, 226, 1)),
                             iconSize: 24,
                             elevation: 16,
@@ -815,10 +815,10 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
             : CircularProgressIndicator(),
         onChange: (int _) => _dismisKeyboard(),
         dotsDecorator: const DotsDecorator(
-            size: Size(2, 2.5),
+            size: Size(1.9, 2.5),
             color: Color(0xFFBDBDBD),
             activeColor: Color.fromARGB(255, 0, 74, 173),
-            activeSize: Size(3, 3.5),
+            activeSize: Size(2.9, 3.5),
             activeShape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(25.0)))));
   }

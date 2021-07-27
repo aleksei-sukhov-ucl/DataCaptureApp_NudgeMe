@@ -27,6 +27,31 @@ class WellbeingPage extends StatefulWidget {
 }
 
 class _WellbeingPageState extends State<WellbeingPage> {
+  Future _futureLatestData;
+  double lastWellbeingScore = 0;
+  double lastSputumColour = 0;
+  double lastmrcDyspnoeaScale = 0;
+  double lastSpeechRate = 0;
+
+  @override
+  initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    setState(() {
+      print("didChangeDependencies got triggered");
+      _futureLatestData = _getFutureLatestData();
+      super.didChangeDependencies();
+    });
+  }
+
+  _getFutureLatestData() async {
+    return await Provider.of<UserWellbeingDB>(context, listen: true)
+        .getLastNWeeks(8);
+  }
+
   /// true if we should display a banner to warn that we cannot access the
   /// pedometer
   bool pedometerWarn = false;
@@ -35,126 +60,25 @@ class _WellbeingPageState extends State<WellbeingPage> {
       .then((prefs) => prefs.getInt(PREV_STEP_COUNT_KEY));
 
   /// Wellbeing page tutorial keys tutorial keys
-  GlobalKey _lastWeekWBTutorialKey = GlobalObjectKey("laskweek_wb");
-  GlobalKey _stepsTutorialKey = GlobalObjectKey("steps");
+  // GlobalKey _lastWeekWBTutorialKey = GlobalObjectKey("laskweek_wb");
+  // GlobalKey _stepsTutorialKey = GlobalObjectKey("steps");
 
   /// TODO: Add tutorial to the wellbeing page
   /// Card specific visualisations
-  Widget _getCardVisualisation(CardClass card) {
-    ///Returning Default "N/A" graphs in case of Future fails
-    Widget _defaultGraph([CardClass card]) {
-      switch (card.cardId) {
-        case 1:
-          return WellbeingCircle();
-        case 2:
-          return WellbeingCircle(
-              firstColor: card.color, secondColor: Colors.transparent);
-        case 3:
-          return CirclePercentIndicator(color: card.color);
-        case 4:
-          return SpeechRareTile();
-        case 5:
-          return LineChartTile();
-        default:
-          return Text("Oops,\nthis should not\nhave happened!");
-      }
-    }
-
-    Widget _dataGraph({CardClass card, WellbeingItem lastItemList}) {
-      switch (card.cardId) {
-        case 1:
-
-          /// Wellbeing Circle
-          return WellbeingCircle(
-            score: lastItemList.wellbeingScore.truncate(),
-          );
-        case 2:
-
-          /// Sputum Colour
-          return WellbeingCircle(
-              score: lastItemList.sputumColour.truncate(),
-              firstColor: card.color,
-              secondColor: Colors.transparent);
-        case 3:
-
-          /// MRC Dyspnoea Scale
-          return CirclePercentIndicator(
-              score: lastItemList.mrcDyspnoeaScale.truncate(),
-              color: card.color,
-              goal: 5,
-              units: "");
-        case 4:
-
-          /// Speech Rate
-          return SpeechRareTile(score: lastItemList.speechRate.truncate());
-        case 5:
-          return LineChartTile();
-        default:
-          return Text("Oops,\nthis should not\nhave happened!");
-      }
-    }
-
-    if (card.cardId == 0) {
-      return FutureBuilder(
-          key: _stepsTutorialKey,
-          future: _lastTotalStepsFuture,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final lastTotalSteps = snapshot.data;
-              return StreamBuilder(
-                stream: widget.stepValueStream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    final int currTotalSteps = snapshot.data;
-                    final actualSteps = lastTotalSteps > currTotalSteps
-                        ? currTotalSteps
-                        : currTotalSteps - lastTotalSteps;
-                    return CirclePercentIndicator(
-                        color: card.color,
-                        score: actualSteps,
-                        units: card.units);
-                    // return Text(actualSteps.toString());
-                  } else if (snapshot.hasError) {
-                    print(snapshot.error);
-                    // NOTE: we do not have to worry about using setState here
-                    // since whenever it builds it will execute this first and
-                    // then the [Visibility] banner widget. Therefore, there is
-                    // no case where the pedometer throws an error but no
-                    // banner is shown.
-                    pedometerWarn = true;
-                    return CirclePercentIndicator(
-                        color: card.color, units: card.units);
-                  }
-                  return CircularProgressIndicator();
-                },
-              );
-            } else if (snapshot.hasError) {
-              print(snapshot.error);
-              return Text("Error");
-            }
-            return CircularProgressIndicator();
-          });
-    } else {
-      return FutureBuilder(
-          future: Provider.of<UserWellbeingDB>(context).getLastNWeeks(1),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final List<WellbeingItem> lastItemList = snapshot.data;
-              return lastItemList.isNotEmpty
-                  ? _dataGraph(card: card, lastItemList: lastItemList[0])
-                  : _defaultGraph(card);
-            } else if (snapshot.hasError) {
-              print(snapshot.error);
-              return Text("Something went wrong.",
-                  style: Theme.of(context).textTheme.bodyText1);
-            }
-            return CircularProgressIndicator();
-          });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
+    // Provider.of<UserWellbeingDB>(context).getLastNWeeks(8).then((items) {
+    //   double maxSpeehRate = 0.0;
+    //   items.reversed.forEach((element) {
+    //     if (element.wellbeingScore != null) {
+    //       maxSpeehRate = element.wellbeingScore;
+    //     }
+    //   });
+    //
+    //   print("maxSpeehRate: $maxSpeehRate");
+    // });
+
     /// Pop-up banner (widget) to notify of the pedometer not working
     final Widget warningBanner = MaterialBanner(
       backgroundColor: Colors.white,
@@ -171,6 +95,147 @@ class _WellbeingPageState extends State<WellbeingPage> {
         )
       ],
     );
+
+    Widget _getCardVisualisation(CardClass card) {
+      ///Returning Default "N/A" graphs in case of Future fails
+      Widget _defaultGraph([CardClass card]) {
+        switch (card.cardId) {
+          case 1:
+            return WellbeingCircle();
+          case 2:
+            return WellbeingCircle(
+                firstColor: card.color, secondColor: Colors.transparent);
+          case 3:
+            return CirclePercentIndicator(color: card.color);
+          case 4:
+            return SpeechRareTile();
+          case 5:
+            return LineChartTile();
+          default:
+            return Text("Oops,\nthis should not\nhave happened!");
+        }
+      }
+
+      // if (element.wellbeingScore != null) {
+      //   maxSpeehRate = element.wellbeingScore;
+      // }
+
+      Widget _dataGraph({CardClass card, List<WellbeingItem> lastItems}) {
+        switch (card.cardId) {
+
+          /// Wellbeing Circle
+          case 1:
+            lastItems.forEach((element) {
+              if (element.wellbeingScore != null) {
+                lastWellbeingScore = element.wellbeingScore;
+              }
+            });
+            print("print(lastWellbeingScore): $lastWellbeingScore");
+            return WellbeingCircle(
+              score: lastWellbeingScore.truncate(),
+            );
+
+          /// Sputum Colour
+          case 2:
+            lastItems.forEach((element) {
+              if (element.sputumColour != null) {
+                lastSputumColour = element.sputumColour;
+              }
+            });
+
+            print("lastSputumColour: $lastSputumColour");
+            return WellbeingCircle(
+                score: lastSputumColour.truncate(),
+                firstColor: card.color,
+                secondColor: Colors.transparent);
+
+          /// MRC Dyspnoea Scale
+          case 3:
+            lastItems.forEach((element) {
+              if (element.mrcDyspnoeaScale != null) {
+                lastmrcDyspnoeaScale = element.mrcDyspnoeaScale;
+              }
+            });
+            return CirclePercentIndicator(
+                score: lastmrcDyspnoeaScale.truncate(),
+                color: card.color,
+                goal: 5,
+                units: "");
+
+          /// Speech Rate
+          case 4:
+            lastItems.forEach((element) {
+              if (element.speechRate != null) {
+                lastSpeechRate = element.speechRate;
+              }
+            });
+
+            return SpeechRareTile(score: lastSpeechRate.truncate());
+          case 5:
+            return LineChartTile();
+          default:
+            return Text("Oops,\nthis should not\nhave happened!");
+        }
+      }
+
+      if (card.cardId == 0) {
+        return FutureBuilder(
+            // key: _stepsTutorialKey,
+            future: _futureLatestData,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final lastTotalSteps = snapshot.data;
+                return StreamBuilder(
+                  stream: widget.stepValueStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final int currTotalSteps = snapshot.data;
+                      final actualSteps = lastTotalSteps > currTotalSteps
+                          ? currTotalSteps
+                          : currTotalSteps - lastTotalSteps;
+                      return CirclePercentIndicator(
+                          color: card.color,
+                          score: actualSteps,
+                          units: card.units);
+                      // return Text(actualSteps.toString());
+                    } else if (snapshot.hasError) {
+                      print(snapshot.error);
+                      // NOTE: we do not have to worry about using setState here
+                      // since whenever it builds it will execute this first and
+                      // then the [Visibility] banner widget. Therefore, there is
+                      // no case where the pedometer throws an error but no
+                      // banner is shown.
+                      pedometerWarn = true;
+                      return CirclePercentIndicator(
+                          color: card.color, units: card.units);
+                    }
+                    return CircularProgressIndicator();
+                  },
+                );
+              } else if (snapshot.hasError) {
+                print(snapshot.error);
+                return Text("Error");
+              }
+              return CircularProgressIndicator();
+            });
+      } else {
+        return FutureBuilder(
+            future: _futureLatestData,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final List<WellbeingItem> lastItemList = snapshot.data;
+                return lastItemList.isNotEmpty
+                    ? _dataGraph(card: card, lastItems: lastItemList)
+                    : _defaultGraph(card);
+              } else if (snapshot.hasError) {
+                print(snapshot.error);
+                return Text("Something went wrong.",
+                    style: Theme.of(context).textTheme.bodyText1);
+              }
+              return CircularProgressIndicator();
+            });
+      }
+    }
 
     /// GridView for tiles
     final GridView _homePageGridView = new GridView.builder(
@@ -246,10 +311,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => (widget.cards[index].cardId != 4)
-                      ? ChartPage(card: widget.cards[index])
-                      : ChartPage(card: widget.cards[index]),
-                ),
+                    builder: (context) => ChartPage(card: widget.cards[index])),
               );
             },
           );

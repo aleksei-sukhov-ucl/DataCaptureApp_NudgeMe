@@ -32,6 +32,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
   double lastSputumColour = 0;
   double lastmrcDyspnoeaScale = 0;
   double lastSpeechRate = 0;
+  Stream currentStepValueStream;
 
   @override
   initState() {
@@ -43,6 +44,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
     setState(() {
       print("didChangeDependencies got triggered");
       _futureLatestData = _getFutureLatestData();
+      currentStepValueStream = widget.stepValueStream;
       super.didChangeDependencies();
     });
   }
@@ -186,7 +188,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
               if (snapshot.hasData) {
                 final lastTotalSteps = snapshot.data;
                 return StreamBuilder(
-                  stream: widget.stepValueStream,
+                  stream: currentStepValueStream,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       final int currTotalSteps = snapshot.data;

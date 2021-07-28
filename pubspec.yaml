@@ -70,6 +70,8 @@ dependencies:
   toggle_switch: ^1.2.0
   percent_indicator: ^3.0.1
   week_of_year: ^2.0.0
+  ml_preprocessing: ^5.1.0
+  moving_average: ^0.3.0
 
 dev_dependencies:
   flutter_test:

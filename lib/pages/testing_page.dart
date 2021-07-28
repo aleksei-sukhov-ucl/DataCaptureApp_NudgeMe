@@ -85,8 +85,8 @@ class TestingPage extends StatelessWidget {
               final prefs = await SharedPreferences.getInstance();
               final List<DateTime> dateStrs = List<DateTime>.generate(
                   7,
-                  (subtractingDay) =>
-                      DateTime.now().subtract(Duration(days: subtractingDay)));
+                  (subtractingDay) => DateTime.now()
+                      .subtract(Duration(days: (6 - subtractingDay))));
               DateTime.now().toIso8601String().substring(0, 10);
               dateStrs.forEach((dateStr) {
                 UserWellbeingDB().insert(WellbeingItem(
@@ -111,8 +111,8 @@ class TestingPage extends StatelessWidget {
               final prefs = await SharedPreferences.getInstance();
               final List<DateTime> dateStrs = List<DateTime>.generate(
                   30,
-                  (subtractingDay) =>
-                      DateTime.now().subtract(Duration(days: subtractingDay)));
+                  (subtractingDay) => DateTime.now()
+                      .subtract(Duration(days: (30 - subtractingDay))));
               DateTime.now().toIso8601String().substring(0, 10);
               dateStrs.forEach((dateStr) {
                 UserWellbeingDB().insert(WellbeingItem(

@@ -227,11 +227,12 @@ class UserWellbeingDB extends ChangeNotifier {
   }
 
   ///Get overall trends for all the data - grouped by weeks
-  Future<List<WellbeingItem>> getOverallTrendsForPastFourMonth() async {
+  Future<List<WellbeingItem>> getOverallTrendsForPastFourMonth(
+      numbOfMonth) async {
     final db = await database;
     final startDate = DateTime.now().toIso8601String().substring(0, 10);
-    final endDate = DateTime.utc(
-            DateTime.now().year, DateTime.now().month - 4, DateTime.now().day)
+    final endDate = DateTime.utc(DateTime.now().year,
+            DateTime.now().month - numbOfMonth, DateTime.now().day)
         .toIso8601String()
         .substring(0, 10);
     List<Map> wellbeingMaps = await db.rawQuery('''

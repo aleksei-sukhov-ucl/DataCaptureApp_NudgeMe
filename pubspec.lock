@@ -211,6 +211,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1"
+  csv:
+    dependency: transitive
+    description:
+      name: csv
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.1.0"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -397,6 +404,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.2"
+  injector:
+    dependency: transitive
+    description:
+      name: injector
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.9"
   integration_test:
     dependency: "direct dev"
     description:
@@ -476,6 +490,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
+  ml_dataframe:
+    dependency: transitive
+    description:
+      name: ml_dataframe
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.11"
+  ml_linalg:
+    dependency: transitive
+    description:
+      name: ml_linalg
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "12.17.10"
+  ml_preprocessing:
+    dependency: "direct main"
+    description:
+      name: ml_preprocessing
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.1.0"
   mockito:
     dependency: "direct dev"
     description:
@@ -483,6 +518,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.0.10"
+  moving_average:
+    dependency: "direct main"
+    description:
+      name: moving_average
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.0"
   nested:
     dependency: transitive
     description:
@@ -1055,6 +1097,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.1.2"
+  xrange:
+    dependency: transitive
+    description:
+      name: xrange
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   yaml:
     dependency: transitive
     description:

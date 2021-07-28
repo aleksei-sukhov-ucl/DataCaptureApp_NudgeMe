@@ -280,7 +280,7 @@ class _ChartPageState extends State<ChartPage> {
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .bodyText2),
-                                        Text(" - "),
+                                        Icon(Icons.arrow_forward),
                                         Text(
                                             DateFormat.yMMMMd('en_US')
                                                 .format(DateTime.now()),
@@ -292,7 +292,12 @@ class _ChartPageState extends State<ChartPage> {
                                   ),
                                   Expanded(
                                       child: (widget.card.cardId == 5)
-                                          ? LineChartTrends(card: widget.card)
+                                          ? Padding(
+                                              padding:
+                                                  const EdgeInsets.all(15.0),
+                                              child: LineChartTrends(
+                                                  card: widget.card),
+                                            )
                                           : Provider.value(
                                               value: initialIndex,
                                               updateShouldNotify:
@@ -333,32 +338,7 @@ class _ChartPageState extends State<ChartPage> {
                                   (widget.card.cardId != 5) ? "About" : "Key",
                                   style: Theme.of(context).textTheme.bodyText1),
                             ),
-                            (widget.card.cardId != 5)
-                                ? Text(
-                                    widget.card.text,
-                                    style:
-                                        Theme.of(context).textTheme.bodyText2,
-                                  )
-                                : Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                        key(
-                                            color: cards[0].color,
-                                            text: cards[0].titleOfCard),
-                                        key(
-                                            color: cards[1].color,
-                                            text: cards[1].titleOfCard),
-                                        key(
-                                            color: cards[2].color,
-                                            text: cards[2].titleOfCard),
-                                        key(
-                                            color: cards[3].color,
-                                            text: cards[3].titleOfCard),
-                                        key(
-                                            color: cards[4].color,
-                                            text: cards[4].titleOfCard)
-                                      ])
+                            widget.card.cardDescription
                           ],
                         )),
                   ),

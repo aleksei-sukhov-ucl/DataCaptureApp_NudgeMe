@@ -9,6 +9,7 @@ import 'package:nudge_me/pages/checkup.dart';
 import 'package:nudge_me/pages/nudge_screen.dart';
 import 'package:nudge_me/pages/support_page.dart';
 import 'package:nudge_me/pages/testing_page.dart';
+import 'package:nudge_me/pages/text_to_speech_page.dart';
 import 'package:nudge_me/shared/cards.dart';
 import 'package:nudge_me/pages/wellbeing_page/wellbeing_page.dart';
 import 'package:nudge_me/pages/settings_page.dart';
@@ -25,7 +26,13 @@ import 'main.dart';
 const BASE_URL = "https://comp0016.cyberchris.xyz";
 
 /// defines the index of a page
-enum NavBarIndex { wellbeing, /*home,*/ network, settings, testing }
+enum NavBarIndex {
+  wellbeing,
+  /*home,*/ textToSpeech,
+  network,
+  settings,
+  testing
+}
 
 /// Widget that switches between and displays the currently selected
 /// page from the navigation bar.
@@ -57,6 +64,7 @@ class _MainPagesState extends State<MainPages> {
       TabItem(
           icon: Icon(Icons.bar_chart, color: Colors.white), title: "Wellbeing"),
       // TabItem(icon: Icon(Icons.home, color: Colors.white), title: "Home"),
+      TabItem(icon: Icon(Icons.home, color: Colors.white), title: "TTS"),
       TabItem(icon: Icon(Icons.people, color: Colors.white), title: "Network"),
       TabItem(
           icon: Icon(Icons.settings, color: Colors.white), title: "Settings"),
@@ -125,6 +133,7 @@ class _MainPagesState extends State<MainPages> {
         stepValueStream: Pedometer.stepCountStream.map((event) => event.steps),
         cards: cards,
       ),
+      textToSpeechPage(),
       // HomePage(Pedometer.stepCountStream.map((event) => event.steps)),
       SupportPage(),
       SettingsPage(),

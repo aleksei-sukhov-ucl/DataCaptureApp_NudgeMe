@@ -18,10 +18,27 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>addFriend</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>nudgeme</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to scan QR codes</string>
+	<key>NSContactsUsageDescription</key>
+	<string>This app requires contacts access to share directly to contacts.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>This application tracks your steps</string>
 	<key>UIBackgroundModes</key>
@@ -49,22 +66,5 @@
 	<false/>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
-	<key>NSCameraUsageDescription</key>
-	<string>This app needs camera access to scan QR codes</string>
-	<key>CFBundleURLTypes</key>
-    <array>
-      <dict>
-        <key>CFBundleTypeRole</key>
-        <string>Editor</string>
-        <key>CFBundleURLName</key>
-        <string>addFriend</string>
-        <key>CFBundleURLSchemes</key>
-        <array>
-          <string>nudgeme</string>
-        </array>
-      </dict>
-    </array>
-	<key>NSContactsUsageDescription</key>
-    <string>This app requires contacts access to share directly to contacts.</string>
 </dict>
 </plist>

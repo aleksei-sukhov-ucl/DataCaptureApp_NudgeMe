@@ -28,7 +28,7 @@ const BASE_URL = "https://comp0016.cyberchris.xyz";
 /// defines the index of a page
 enum NavBarIndex {
   wellbeing,
-  /*home,*/ textToSpeech,
+  /*home,*/ /*textToSpeech,*/
   network,
   settings,
   testing
@@ -64,7 +64,7 @@ class _MainPagesState extends State<MainPages> {
       TabItem(
           icon: Icon(Icons.bar_chart, color: Colors.white), title: "Wellbeing"),
       // TabItem(icon: Icon(Icons.home, color: Colors.white), title: "Home"),
-      TabItem(icon: Icon(Icons.home, color: Colors.white), title: "TTS"),
+      // TabItem(icon: Icon(Icons.home, color: Colors.white), title: "TTS"),
       TabItem(icon: Icon(Icons.people, color: Colors.white), title: "Network"),
       TabItem(
           icon: Icon(Icons.settings, color: Colors.white), title: "Settings"),
@@ -130,10 +130,11 @@ class _MainPagesState extends State<MainPages> {
 
     final List<Widget> pages = [
       WellbeingPage(
-        stepValueStream: Pedometer.stepCountStream.map((event) => event.steps),
+        currentStepValueStream:
+            Pedometer.stepCountStream.map((event) => event.steps),
         cards: cards,
       ),
-      textToSpeechPage(),
+      // textToSpeechPage(),
       // HomePage(Pedometer.stepCountStream.map((event) => event.steps)),
       SupportPage(),
       SettingsPage(),

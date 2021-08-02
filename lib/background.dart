@@ -31,6 +31,7 @@ const NUDGE_CHECK_KEY = "nudge_check";
 
 /// scheduled cron job for publishing data to the server
 ScheduledTask publishTask;
+ScheduledTask addDataToDB;
 
 /// inits the [Workmanager] and registers a background task to track steps
 /// and refresh friend data
@@ -55,7 +56,6 @@ void callbackDispatcher() {
         assert(pedometerPair.length == 2);
         final prevTotal = int.parse(pedometerPair.first);
         final prevDateTime = DateTime.parse(pedometerPair.last);
-
         final int currTotal = await Pedometer.stepCountStream.first
             .then((value) => value.steps)
             .catchError((_) => 0);
@@ -202,6 +202,19 @@ Future<Null> _handleGoalCompleted(Friend friend) async {
   await FriendDB().updateGoalFromFriend(friend.identifier, null, null);
 }
 
+void schedulePedometerInsert() {
+  print("Cron executes background tasks");
+
+  // final adToDBhour = 23;
+  final addToDBhour = 23;
+  final addToDBminute = 58;
+  addDataToDB = Cron().schedule(
+      Schedule.parse("$addToDBminute $addToDBhour * * 0-6"), () async {
+    print("Schedule has been set");
+    await _addStepsDaily();
+  });
+}
+
 /// schedules a cron job to publish data
 void schedulePublish() {
   final day = DateTime.monday;
@@ -223,6 +236,73 @@ void cancelPublish() {
   publishTask = null;
 }
 
+/// This task needs to be scheduled every day at 23:58
+void _addStepsDaily() async {
+  final prefs = await SharedPreferences.getInstance();
+  final pedometerPair = prefs.getStringList(PREV_PEDOMETER_PAIR_KEY);
+  assert(pedometerPair.length == 2);
+  final prevTotal = int.parse(pedometerPair.first);
+
+  print("prevTotal: $prevTotal");
+
+  final int currTotal = await Pedometer.stepCountStream.first
+      .then((value) => value.steps)
+      .catchError((_) => 0);
+
+  print("currTotal: $currTotal");
+  final actualSteps = prevTotal > currTotal ? currTotal : currTotal - prevTotal;
+  print("actualSteps $actualSteps");
+  if (await _checkIfDataExists()) {
+    await updateData(numSteps: 8888);
+    // await updateData(numSteps: actualSteps.toInt());
+    print("Steps updated for ${DateTime.now().toIso8601String()}");
+  } else {
+    await insertData(numSteps: 8888);
+    // await insertData(numSteps:actualSteps.toInt());
+    print("Steps added for ${DateTime.now().toIso8601String()}");
+  }
+
+  ///Setting new value for the pedometer to count from
+  prefs.setStringList(PREV_PEDOMETER_PAIR_KEY,
+      [currTotal.toString(), DateTime.now().toIso8601String()]);
+}
+
+Future<bool> _checkIfDataExists() async {
+  String checkDate = DateTime.now().toIso8601String().substring(0, 10);
+  bool _dataAlreadyExists =
+      await UserWellbeingDB().getDataAlreadyExists(checkDate: checkDate);
+  return _dataAlreadyExists == true;
+}
+
+updateData({int numSteps}) async {
+  int id = await UserWellbeingDB().update(
+      columnId: 3,
+      value: numSteps,
+      Date: DateTime.now().toIso8601String().substring(0, 10));
+  print("Record id updated: $id");
+  return id;
+}
+
+insertData({int numSteps}) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String userPostcode = prefs.getString('postcode');
+  String userSupportCode = prefs.getString('support_code');
+
+  await UserWellbeingDB().insertWithData(
+      date: DateTime.now().toIso8601String().substring(0, 10),
+      postcode: userPostcode,
+      numSteps: numSteps,
+      wellbeingScore: null,
+      sputumColour: null,
+      mrcDyspnoeaScale: null,
+      speechRate: null,
+      speechRateTest: null,
+      testDuration: null,
+      audioURL: null,
+      supportCode: userSupportCode);
+}
+
+/// TODO: Edit the query for publishing
 void _publishData() async {
   final items = await UserWellbeingDB().getLastNWeeks(1);
   final item = items[0];
@@ -234,6 +314,7 @@ void _publishData() async {
       ? normalizedSteps - anonScore
       : anonScore - normalizedSteps;
 
+  /// TODO: ADD the most recent data here
   final body = jsonEncode({
     "postCode": item.postcode,
     "wellbeingScore": anonScore,

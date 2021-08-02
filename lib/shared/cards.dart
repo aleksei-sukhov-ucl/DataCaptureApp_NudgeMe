@@ -55,11 +55,86 @@ List<CardClass> cards = [
             child: Text(
                 "Sputum is produced when a person’s lungs are diseased or damaged. Sputum is not saliva but the thick mucus – sometimes called phlegm – which is coughed up from the lungs.\n\nThe body produces mucus to keep the thin, delicate tissues of the respiratory tract moist so that small particles of foreign matter that may pose a threat can be trapped and forced out.\n\nSometimes, such as when there is an infection in the lungs, an excess of mucus is produced. The body attempts to get rid of this excess by coughing it up as sputum."),
           ),
-          cardKey(color: Color.fromRGBO(246, 247, 249, 1), text: "1"),
-          cardKey(color: Color.fromRGBO(253, 250, 243, 1.0), text: "2"),
-          cardKey(color: Color.fromRGBO(252, 250, 227, 1), text: "3"),
-          cardKey(color: Color.fromRGBO(220, 219, 188, 1), text: "4"),
-          cardKey(color: Color.fromRGBO(211, 206, 125, 1), text: "5"),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Color.fromRGBO(246, 247, 249, 1),
+                    border: Border.all(color: Colors.grey)),
+                height: 50,
+                width: 50,
+                child: Center(
+                  child: Text(
+                    "1",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Color.fromRGBO(253, 250, 243, 1.0),
+                    border: Border.all(color: Colors.grey)),
+                height: 50,
+                width: 50,
+                child: Center(
+                  child: Text(
+                    "2",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Color.fromRGBO(252, 250, 227, 1),
+                    border: Border.all(color: Colors.grey)),
+                height: 50,
+                width: 50,
+                child: Center(
+                  child: Text(
+                    "3",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Color.fromRGBO(220, 219, 188, 1),
+                    border: Border.all(color: Colors.grey)),
+                height: 50,
+                width: 50,
+                child: Center(
+                  child: Text(
+                    "4",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Color.fromRGBO(211, 206, 125, 1),
+                    border: Border.all(color: Colors.grey)),
+                height: 50,
+                width: 50,
+                child: Center(
+                  child: Text(
+                    "5",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ),
+            ],
+          )
+          // cardKey(color: Color.fromRGBO(246, 247, 249, 1), text: "1"),
+          // cardKey(color: Color.fromRGBO(253, 250, 243, 1.0), text: "2"),
+          // cardKey(color: Color.fromRGBO(252, 250, 227, 1), text: "3"),
+          // cardKey(color: Color.fromRGBO(220, 219, 188, 1), text: "4"),
+          // cardKey(color: Color.fromRGBO(211, 206, 125, 1), text: "5"),
         ]),
   ),
 
@@ -78,14 +153,14 @@ List<CardClass> cards = [
 
       ///Text ref: https://mrc.ukri.org/research/facilities-and-resources-for-researchers/mrc-scales/mrc-dyspnoea-scale-mrc-breathlessness-scale/
       ),
-  CardClass(
-    cardId: 4,
-    cardIcon: Icon(Icons.record_voice_over),
-    titleOfCard: "Speech Rate",
-    units: "Words/min",
-    color: Color.fromRGBO(241, 139, 128, 1.0),
-    cardDescription: Text(""),
-  ),
+  // CardClass(
+  //   cardId: 4,
+  //   cardIcon: Icon(Icons.record_voice_over),
+  //   titleOfCard: "Speech Rate",
+  //   units: "Words/min",
+  //   color: Color.fromRGBO(241, 139, 128, 1.0),
+  //   cardDescription: Text(""),
+  // ),
   CardClass(
       cardId: 5,
       cardIcon: Icon(Icons.timeline_outlined),

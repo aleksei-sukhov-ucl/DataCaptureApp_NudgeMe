@@ -112,7 +112,7 @@ class TestingPage extends StatelessWidget {
               final List<DateTime> dateStrs = List<DateTime>.generate(
                   30,
                   (subtractingDay) => DateTime.now()
-                      .subtract(Duration(days: (30 - subtractingDay))));
+                      .subtract(Duration(days: (29 - subtractingDay))));
               DateTime.now().toIso8601String().substring(0, 10);
               dateStrs.forEach((dateStr) {
                 UserWellbeingDB().insert(WellbeingItem(

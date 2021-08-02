@@ -37,7 +37,7 @@ class _LineChartTrendsState extends State<LineChartTrends> {
 
   Future<List<WellbeingItem>> _getFutureTrends() async {
     return await Provider.of<UserWellbeingDB>(context, listen: true)
-        .getOverallTrendsForPastFourMonth(3);
+        .getOverallTrendsForPastNWeeks(5);
   }
 
   LineChartData lineChartData({data, minX, maxX, interval}) {
@@ -93,7 +93,7 @@ class _LineChartTrendsState extends State<LineChartTrends> {
         ),
       ),
       borderData: FlBorderData(
-        show: true,
+        show: false,
       ),
       minX: minX,
       maxX: maxX,

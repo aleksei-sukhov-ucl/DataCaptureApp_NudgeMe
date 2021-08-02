@@ -194,8 +194,7 @@ class UserWellbeingDB extends ChangeNotifier {
             .substring(0, 10);
       } else {
         endDate = DateTime.now()
-            .subtract(Duration(days: DateTime.now().weekday))
-            .subtract(Duration(days: 21))
+            .subtract(Duration(days: 29 - DateTime.now().weekday))
             .toIso8601String()
             .substring(0, 10);
       }
@@ -207,6 +206,13 @@ class UserWellbeingDB extends ChangeNotifier {
     }
 
     List<Map> wellbeingMaps = await db.rawQuery('''
+            SELECT STRFTIME('%$timeframe',date) as IsoSting, date, ${allNeededColumns.join(", ")}
+            FROM $_tableName
+            WHERE date BETWEEN '$endDate' AND '$startDate' 
+            GROUP BY STRFTIME('%$timeframe',date)
+            ORDER BY date
+            ''');
+    print('''
             SELECT STRFTIME('%$timeframe',date) as IsoSting, date, ${allNeededColumns.join(", ")}
             FROM $_tableName
             WHERE date BETWEEN '$endDate' AND '$startDate' 
@@ -227,12 +233,13 @@ class UserWellbeingDB extends ChangeNotifier {
   }
 
   ///Get overall trends for all the data - grouped by weeks
-  Future<List<WellbeingItem>> getOverallTrendsForPastFourMonth(
-      numbOfMonth) async {
+  Future<List<WellbeingItem>> getOverallTrendsForPastNWeeks(
+      int numOfWeeks) async {
     final db = await database;
     final startDate = DateTime.now().toIso8601String().substring(0, 10);
-    final endDate = DateTime.utc(DateTime.now().year,
-            DateTime.now().month - numbOfMonth, DateTime.now().day)
+    final endDate = DateTime.now()
+        .subtract(Duration(
+            days: ((numOfWeeks - 1) * 7 + 1) - (DateTime.now().weekday)))
         .toIso8601String()
         .substring(0, 10);
     List<Map> wellbeingMaps = await db.rawQuery('''

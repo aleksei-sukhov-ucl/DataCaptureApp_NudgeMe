@@ -98,8 +98,8 @@ class _ChartPageState extends State<ChartPage> {
 
   showEndDate({int cardId, int initialIndex}) {
     if (cardId == 5) {
-      return DateFormat.yMMMMd('en_US').format(DateTime.utc(
-          DateTime.now().year, DateTime.now().month - 4, DateTime.now().day));
+      return DateFormat.yMMMMd('en_US').format(DateTime.now()
+          .subtract(Duration(days: 29 - (DateTime.now().weekday))));
     } else {
       switch ((cardId == 0) ? initialIndex : (initialIndex + 1)) {
         case 0:
@@ -110,11 +110,11 @@ class _ChartPageState extends State<ChartPage> {
           if (DateTime.now().weekday == 7) {
             nextDate = DateTime.now();
           } else {
-            nextDate =
-                DateTime.now().subtract(Duration(days: DateTime.now().weekday));
+            nextDate = DateTime.now()
+                .subtract(Duration(days: DateTime.now().weekday - 1));
           }
           return DateFormat.yMMMMd('en_US')
-              .format(nextDate.subtract(Duration(days: 21)));
+              .format(nextDate.subtract(Duration(days: 28)));
         case 2:
           return DateFormat.yMMMMd('en_US').format(DateTime.utc(
               DateTime.now().year,

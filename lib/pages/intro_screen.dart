@@ -150,6 +150,7 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
 
     // only start tracking steps after user has done setup
     initBackground();
+    schedulePedometerInsert();
   }
 
   /// Called when intro screen finishes.

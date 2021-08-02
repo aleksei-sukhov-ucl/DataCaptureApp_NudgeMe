@@ -20,8 +20,8 @@ const URL_USER_MANUAL =
 /// Displays current Wellbeing Score, steps and all aditional metircs this week
 class WellbeingPage extends StatefulWidget {
   final List<CardClass> cards;
-  final Stream<int> stepValueStream;
-  const WellbeingPage({this.stepValueStream, this.cards});
+  final Stream<int> currentStepValueStream;
+  const WellbeingPage({this.currentStepValueStream, this.cards});
   @override
   State<WellbeingPage> createState() => _WellbeingPageState();
 }
@@ -32,7 +32,10 @@ class _WellbeingPageState extends State<WellbeingPage> {
   double lastSputumColour = 0;
   double lastmrcDyspnoeaScale = 0;
   double lastSpeechRate = 0;
-  Stream currentStepValueStream;
+
+  /// true if we should display a banner to warn that we cannot access the
+  /// pedometer
+  bool pedometerWarn = false;
 
   @override
   initState() {
@@ -42,10 +45,26 @@ class _WellbeingPageState extends State<WellbeingPage> {
   @override
   void didChangeDependencies() {
     setState(() {
+      /// TODO: DELETE THIS
+      _getAllshared();
       print("didChangeDependencies got triggered");
       _futureLatestData = _getFutureLatestData();
-      currentStepValueStream = widget.stepValueStream;
       super.didChangeDependencies();
+    });
+  }
+
+  /// TODO: DELETE THIS
+  _getAllshared() async {
+    final prefs = await SharedPreferences.getInstance();
+    final keys = prefs.getKeys();
+
+    final prefsMap = Map<String, dynamic>();
+    for (String key in keys) {
+      prefsMap[key] = prefs.get(key);
+    }
+
+    prefsMap.forEach((key, value) {
+      print("key: $key | value: $value");
     });
   }
 
@@ -53,10 +72,6 @@ class _WellbeingPageState extends State<WellbeingPage> {
     return await Provider.of<UserWellbeingDB>(context, listen: true)
         .getLastNWeeks(8);
   }
-
-  /// true if we should display a banner to warn that we cannot access the
-  /// pedometer
-  bool pedometerWarn = false;
 
   final Future<int> _lastTotalStepsFuture = SharedPreferences.getInstance()
       .then((prefs) => prefs.getInt(PREV_STEP_COUNT_KEY));
@@ -70,6 +85,8 @@ class _WellbeingPageState extends State<WellbeingPage> {
 
   @override
   Widget build(BuildContext context) {
+    print("05 11 * * 0 - 6");
+    print("Current Date and time: ${DateTime.now()}");
     // Provider.of<UserWellbeingDB>(context).getLastNWeeks(8).then((items) {
     //   double maxSpeehRate = 0.0;
     //   items.reversed.forEach((element) {
@@ -183,15 +200,17 @@ class _WellbeingPageState extends State<WellbeingPage> {
       if (card.cardId == 0) {
         return FutureBuilder(
             // key: _stepsTutorialKey,
-            future: _futureLatestData,
+            future: _lastTotalStepsFuture,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 final lastTotalSteps = snapshot.data;
                 return StreamBuilder(
-                  stream: currentStepValueStream,
+                  stream: widget.currentStepValueStream,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       final int currTotalSteps = snapshot.data;
+                      print("currTotalSteps: $currTotalSteps");
+                      print("lastTotalSteps: $lastTotalSteps");
                       final actualSteps = lastTotalSteps > currTotalSteps
                           ? currTotalSteps
                           : currTotalSteps - lastTotalSteps;
@@ -313,7 +332,8 @@ class _WellbeingPageState extends State<WellbeingPage> {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (context) => ChartPage(card: widget.cards[index])),
+                  builder: (context) => ChartPage(card: widget.cards[index]),
+                ),
               );
             },
           );

@@ -99,7 +99,7 @@ class _ChartPageState extends State<ChartPage> {
   showEndDate({int cardId, int initialIndex}) {
     if (cardId == 5) {
       return DateFormat.yMMMMd('en_US').format(DateTime.now()
-          .subtract(Duration(days: 29 - (DateTime.now().weekday))));
+          .subtract(Duration(days: 31 - (DateTime.now().weekday))));
     } else {
       switch ((cardId == 0) ? initialIndex : (initialIndex + 1)) {
         case 0:

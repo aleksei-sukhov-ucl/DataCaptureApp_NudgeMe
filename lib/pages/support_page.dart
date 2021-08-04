@@ -571,7 +571,8 @@ class SupportPageState extends State<SupportPage> {
     final friendKey =
         RSAKeyParser().parse(friend.publicKey) as pointyCastle.RSAPublicKey;
 
-    final List<WellbeingItem> items = await UserWellbeingDB().getLastNWeeks(5);
+    final List<WellbeingItem> items =
+        await UserWellbeingDB().getLastNDaysAvailable(5);
     final List<Map<String, int>> mapped = items
         .map((e) => {
               'week': e.id,

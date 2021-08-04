@@ -243,7 +243,7 @@ class _WellbeingGraphState extends State<WellbeingGraph> {
   Widget build(BuildContext context) {
     return FutureBuilder(
         // display the last five weeks
-        future: Provider.of<UserWellbeingDB>(context).getLastNWeeks(5),
+        future: Provider.of<UserWellbeingDB>(context).getLastNDaysAvailable(5),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             // TODO understand how to add generated data to the graphs

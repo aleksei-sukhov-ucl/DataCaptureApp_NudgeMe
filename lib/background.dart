@@ -217,9 +217,12 @@ void schedulePedometerInsert() {
 
 /// schedules a cron job to publish data
 void schedulePublish() {
-  final day = DateTime.monday;
+  // final day = DateTime.monday;
+  // final hour = 12;
+  // final minute = 0;
+  final day = DateTime.wednesday;
   final hour = 12;
-  final minute = 0;
+  final minute = 15;
 
   // This may help: https://crontab.guru/
   publishTask =
@@ -304,24 +307,33 @@ insertData({int numSteps}) async {
 
 /// TODO: Edit the query for publishing
 void _publishData() async {
-  final items = await UserWellbeingDB().getLastNWeeks(1);
+  /// Since we log the steps every day and allow the user to "add data"
+  /// we will be getting last week worth of data
+  print("Data Sent");
+  // final items = await UserWellbeingDB().getLastNDaysAvailable(8);
+  final items = await UserWellbeingDB().dataPastWeekToPublish();
   final item = items[0];
-  final int anonScore = _anonymizeScore(item.wellbeingScore);
-  // int1/int2 is a double in dart
-  final double normalizedSteps =
-      (item.numSteps / RECOMMENDED_STEPS_IN_WEEK) * 10.0;
-  final double errorRate = (normalizedSteps > anonScore)
-      ? normalizedSteps - anonScore
-      : anonScore - normalizedSteps;
 
-  /// TODO: ADD the most recent data here
+  /// Legacy code for "seeding accurate data 70% of the time
+  // final int anonScore = _anonymizeScore(item.wellbeingScore);
+  // int1/int2 is a double in dart
+  // final double normalizedSteps =
+  //     (item.numSteps / RECOMMENDED_STEPS_IN_WEEK) * 10.0;
+  // final double errorRate = (normalizedSteps > anonScore)
+  //     ? normalizedSteps - anonScore
+  //     : anonScore - normalizedSteps;
+
   final body = jsonEncode({
     "postCode": item.postcode,
-    "wellbeingScore": anonScore,
     "weeklySteps": item.numSteps,
-    "errorRate": errorRate.truncate(),
+    "wellbeingScore": item.wellbeingScore,
+    "sputumColour": item.sputumColour,
+    "mrcDyspnoeaScale": item.mrcDyspnoeaScale,
+    // "errorRate": errorRate.truncate(),
     "supportCode": item.supportCode,
     "date_sent": item.date,
+
+    ///N.B. The weeks are represented starting from monday of every week
   });
 
   print("Sending body $body");

@@ -30,7 +30,8 @@ void main() {
     SharedPreferences.setMockInitialValues(
         {'postcode': 'N6', 'support_code': '12345', PREV_STEP_COUNT_KEY: 0});
     final mockedDB = _MockedDB();
-    when(mockedDB.getLastNWeeks(3)).thenAnswer((_) async => <WellbeingItem>[]);
+    when(mockedDB.getLastNDaysAvailable(3))
+        .thenAnswer((_) async => <WellbeingItem>[]);
     final fakeStepStream = Stream.fromIterable([0]);
 
     await tester.pumpWidget(wrapAppProvider(
@@ -47,7 +48,7 @@ void main() {
         Clock.fixed(DateTime(2021)),
         () async => await tester.tap(find.byType(ElevatedButton)));
 
-    verify(mockedDB.getLastNWeeks(3));
+    verify(mockedDB.getLastNDaysAvailable(3));
     verify(mockedDB.insertWithData(
         date: "2021-01-01",
         postcode: 'N6',
@@ -60,7 +61,8 @@ void main() {
     SharedPreferences.setMockInitialValues(
         {'postcode': 'N6', 'support_code': '12345', PREV_STEP_COUNT_KEY: 6666});
     final mockedDB = _MockedDB();
-    when(mockedDB.getLastNWeeks(3)).thenAnswer((_) async => <WellbeingItem>[]);
+    when(mockedDB.getLastNDaysAvailable(3))
+        .thenAnswer((_) async => <WellbeingItem>[]);
     final fakeStepStream = Stream.fromIterable([0]);
 
     await tester.pumpWidget(
@@ -75,7 +77,7 @@ void main() {
         Clock.fixed(DateTime(2021)),
         () async => await tester.tap(find.byType(ElevatedButton)));
 
-    verify(mockedDB.getLastNWeeks(3));
+    verify(mockedDB.getLastNDaysAvailable(3));
     verify(mockedDB.insertWithData(
         date: "2021-01-01",
         postcode: 'N6',

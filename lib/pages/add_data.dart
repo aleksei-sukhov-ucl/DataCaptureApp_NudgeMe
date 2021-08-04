@@ -371,26 +371,26 @@ class _AddDataState extends State<AddData> {
     }
   }
 
-  // _selectDate(BuildContext context) async {
-  //   final DateTime picked = await showDatePicker(
-  //       context: context,
-  //       initialDate: selectedDate,
-  //       firstDate: DateTime(2000),
-  //       lastDate: DateTime.now(),
-  //       initialEntryMode: DatePickerEntryMode.calendarOnly,
-  //       builder: (BuildContext context, Widget child) {
-  //         return Theme(
-  //           data: ThemeData.light().copyWith(
-  //             colorScheme: ColorScheme.fromSwatch(),
-  //           ),
-  //           child: child,
-  //         );
-  //       });
-  //   if (picked != null && picked != selectedDate)
-  //     setState(() {
-  //       selectedDate = picked;
-  //     });
-  // }
+  _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime.now().subtract(Duration(days: 7)),
+        lastDate: DateTime.now(),
+        initialEntryMode: DatePickerEntryMode.calendarOnly,
+        builder: (BuildContext context, Widget child) {
+          return Theme(
+            data: ThemeData.light().copyWith(
+              colorScheme: ColorScheme.fromSwatch(),
+            ),
+            child: child,
+          );
+        });
+    if (picked != null && picked != selectedDate)
+      setState(() {
+        selectedDate = picked;
+      });
+  }
 
   insertData({int cardId}) async {
     switch (cardId) {
@@ -519,18 +519,18 @@ class _AddDataState extends State<AddData> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  // ElevatedButton(
-                  //   onPressed: () => _selectDate(context), // Refer step 3
-                  //   child: Text(
-                  //     'Select date',
-                  //     style: TextStyle(
-                  //         color: Colors.white, fontWeight: FontWeight.bold),
-                  //   ),
-                  // ),
-                  // Text(
-                  //   "${selectedDate.toLocal()}".split(' ')[0],
-                  //   style: Theme.of(context).textTheme.subtitle1,
-                  // ),
+                  ElevatedButton(
+                    onPressed: () => _selectDate(context), // Refer step 3
+                    child: Text(
+                      'Select date',
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Text(
+                    "${selectedDate.toLocal()}".split(' ')[0],
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
                 ],
               ),
               addingIndividualData(cardId: widget.card.cardId),

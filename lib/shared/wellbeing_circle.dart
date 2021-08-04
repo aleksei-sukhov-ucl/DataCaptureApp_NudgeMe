@@ -26,7 +26,7 @@ class _WellbeingCircleState extends State<WellbeingCircle> {
     super.initState();
 
     // it must be delayed by some amount for it to animate
-    Future.delayed(Duration(milliseconds: 100),
+    Future.delayed(Duration(milliseconds: 50),
         () => setState(() => _currScore = widget.score));
   }
 
@@ -67,7 +67,7 @@ class _WellbeingCircleState extends State<WellbeingCircle> {
       alignment: Alignment.center, // aligns all to center by default
       children: [
         bgCircle,
-        Text(_currScore == null ? "N/A" : _currScore.toString(),
+        Text(widget.score == null ? "N/A" : widget.score.toString(),
             style: TextStyle(
                 color: Colors.white,
                 fontSize: MediaQuery.of(context).size.width / 7),

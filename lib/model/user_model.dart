@@ -44,6 +44,8 @@ class UserWellbeingDB extends ChangeNotifier {
     return id;
   }
 
+  /// Updates a wellbeing record.
+  /// returns the id of the newly updated record
   Future<int> update({int columnId, value, String Date}) async {
     final db = await database;
     // row to update
@@ -53,7 +55,7 @@ class UserWellbeingDB extends ChangeNotifier {
         where: '${_columns[1]} = ?', whereArgs: [Date]);
 
     notifyListeners();
-    print("count from SQL: $count");
+    print("SQL number of rows updated: $count");
     return count;
   }
 
@@ -117,13 +119,16 @@ class UserWellbeingDB extends ChangeNotifier {
   }
 
   /// returns up to n wellbeing items
-  Future<List<WellbeingItem>> getLastNWeeks(int n) async {
+  /// USE CASES:
+  ///   - Home Screen
+  ///   - Sending data to server - needs to be changed
+  Future<List<WellbeingItem>> getLastNDaysAvailable(int n) async {
     final db = await database;
     List<Map> wellbeingMaps = await db.query(_tableName,
         columns: _columns, orderBy: "${_columns[1]} DESC", limit: n);
 
     for (var value in wellbeingMaps) {
-      print("getLastNWeeks: $value");
+      print("getLastNDays: $value");
     }
     final itemList = wellbeingMaps
         .map((wellbeingMap) => WellbeingItem.fromMap(wellbeingMap))
@@ -134,6 +139,8 @@ class UserWellbeingDB extends ChangeNotifier {
   }
 
   /// returns last week day-by-day data
+  /// USE CASES:
+  ///   - Week barchart - returns data for day-by-day
   Future<List<WellbeingItem>> getLastWeekOfSpecificColumns({int id}) async {
     final db = await database;
 
@@ -169,6 +176,8 @@ class UserWellbeingDB extends ChangeNotifier {
   ///  input W for week
   ///  input m for month (keep lowercase)
   ///  Shows month data by default
+  /// USE CASES:
+  ///   - Month & Year barcharts
   Future<List<WellbeingItem>> getLastMonthYearSpecificColumns(
       {List<int> ids, String timeframe = "W"}) async {
     final db = await database;
@@ -212,15 +221,8 @@ class UserWellbeingDB extends ChangeNotifier {
             GROUP BY STRFTIME('%$timeframe',date)
             ORDER BY date
             ''');
-    print('''
-            SELECT STRFTIME('%$timeframe',date) as IsoSting, date, ${allNeededColumns.join(", ")}
-            FROM $_tableName
-            WHERE date BETWEEN '$endDate' AND '$startDate' 
-            GROUP BY STRFTIME('%$timeframe',date)
-            ORDER BY date
-            ''');
 
-    print(startDate);
+    print("startDate: $startDate");
     wellbeingMaps.forEach((element) {
       print("$element");
     });
@@ -233,13 +235,15 @@ class UserWellbeingDB extends ChangeNotifier {
   }
 
   ///Get overall trends for all the data - grouped by weeks
+  /// USE CASES:
+  ///   - Trends barcharts
   Future<List<WellbeingItem>> getOverallTrendsForPastNWeeks(
       int numOfWeeks) async {
     final db = await database;
     final startDate = DateTime.now().toIso8601String().substring(0, 10);
     final endDate = DateTime.now()
         .subtract(Duration(
-            days: ((numOfWeeks - 1) * 7 + 1) - (DateTime.now().weekday)))
+            days: ((numOfWeeks - 1) * 7 - 1) + (DateTime.now().weekday)))
         .toIso8601String()
         .substring(0, 10);
     List<Map> wellbeingMaps = await db.rawQuery('''
@@ -252,6 +256,44 @@ class UserWellbeingDB extends ChangeNotifier {
     avg(speechRate) as speechRate
     FROM $_tableName
     WHERE date BETWEEN '$endDate' AND '$startDate' 
+    GROUP BY STRFTIME('%W',date)
+    ''');
+
+    wellbeingMaps.forEach((element) {
+      print("$element");
+    });
+
+    final itemList = wellbeingMaps
+        .map((wellbeingMap) => WellbeingItem.fromMap(wellbeingMap))
+        .toList(growable: false);
+
+    return itemList;
+  }
+
+  ///Get data explicitly for the past week from Mon to Sun to send to global DB
+  /// USE CASES:
+  ///   - Sending data to Global DB
+  Future<List<WellbeingItem>> dataPastWeekToPublish() async {
+    final db = await database;
+    final currentDateTime = DateTime.now();
+    final startDate = currentDateTime
+        .subtract(Duration(days: currentDateTime.weekday))
+        .toIso8601String()
+        .substring(0, 10);
+    final endDate = currentDateTime
+        .subtract(Duration(days: 6 + currentDateTime.weekday))
+        .toIso8601String()
+        .substring(0, 10);
+    List<Map> wellbeingMaps = await db.rawQuery('''
+    SELECT STRFTIME('%W',date) as IsoSting,
+    date,
+    sum(numSteps) as numSteps,
+    avg(wellbeingScore) as wellbeingScore,
+    avg(sputumColour) as sputumColour,
+    avg(mrcDyspnoeaScale) as mrcDyspnoeaScale,
+    avg(speechRate) as speechRate
+    FROM $_tableName
+    WHERE date BETWEEN '$endDate' AND '$startDate'
     GROUP BY STRFTIME('%W',date)
     ''');
 

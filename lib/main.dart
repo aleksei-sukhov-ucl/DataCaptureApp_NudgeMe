@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -48,6 +49,9 @@ void main() {
     }
   };
 
+  /// Cahanges the color of status bar i.e. battery % and time to dark
+  SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(statusBarBrightness: Brightness.light));
   // run app in a special environment to capture errors
   runZonedGuarded(() async {
     runApp(MyApp());

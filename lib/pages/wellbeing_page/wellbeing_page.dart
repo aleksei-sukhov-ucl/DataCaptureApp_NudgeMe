@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../background.dart';
 import '../../main.dart';
 
 const URL_USER_MANUAL =
@@ -46,7 +47,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
   void didChangeDependencies() {
     setState(() {
       /// TODO: DELETE THIS
-      _getAllshared();
+      // _getAllshared();
       print("didChangeDependencies got triggered");
       _futureLatestData = _getFutureLatestData();
       super.didChangeDependencies();
@@ -54,23 +55,23 @@ class _WellbeingPageState extends State<WellbeingPage> {
   }
 
   /// TODO: DELETE THIS
-  _getAllshared() async {
-    final prefs = await SharedPreferences.getInstance();
-    final keys = prefs.getKeys();
-
-    final prefsMap = Map<String, dynamic>();
-    for (String key in keys) {
-      prefsMap[key] = prefs.get(key);
-    }
-
-    prefsMap.forEach((key, value) {
-      print("key: $key | value: $value");
-    });
-  }
+  // _getAllshared() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final keys = prefs.getKeys();
+  //
+  //   final prefsMap = Map<String, dynamic>();
+  //   for (String key in keys) {
+  //     prefsMap[key] = prefs.get(key);
+  //   }
+  //
+  //   prefsMap.forEach((key, value) {
+  //     print("key: $key | value: $value");
+  //   });
+  // }
 
   _getFutureLatestData() async {
     return await Provider.of<UserWellbeingDB>(context, listen: true)
-        .getLastNWeeks(8);
+        .getLastNDaysAvailable(8);
   }
 
   final Future<int> _lastTotalStepsFuture = SharedPreferences.getInstance()
@@ -85,8 +86,8 @@ class _WellbeingPageState extends State<WellbeingPage> {
 
   @override
   Widget build(BuildContext context) {
-    print("05 11 * * 0 - 6");
-    print("Current Date and time: ${DateTime.now()}");
+    // print("05 11 * * 0 - 6");
+    // print("Current Date and time: ${DateTime.now()}");
     // Provider.of<UserWellbeingDB>(context).getLastNWeeks(8).then((items) {
     //   double maxSpeehRate = 0.0;
     //   items.reversed.forEach((element) {
@@ -117,8 +118,10 @@ class _WellbeingPageState extends State<WellbeingPage> {
 
     Widget _getCardVisualisation(CardClass card) {
       ///Returning Default "N/A" graphs in case of Future fails
-      Widget _defaultGraph([CardClass card]) {
-        switch (card.cardId) {
+      Widget _defaultGraph([int cardId]) {
+        switch (cardId) {
+          case 0:
+            return CirclePercentIndicator(color: card.color);
           case 1:
             return WellbeingCircle();
           case 2:
@@ -149,7 +152,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
                 lastWellbeingScore = element.wellbeingScore;
               }
             });
-            print("print(lastWellbeingScore): $lastWellbeingScore");
+            // print("print(lastWellbeingScore): $lastWellbeingScore");
             return WellbeingCircle(
               score: lastWellbeingScore.truncate(),
             );
@@ -162,7 +165,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
               }
             });
 
-            print("lastSputumColour: $lastSputumColour");
+            //print("lastSputumColour: $lastSputumColour");
             return WellbeingCircle(
                 score: lastSputumColour.truncate(),
                 firstColor: card.color,
@@ -208,9 +211,12 @@ class _WellbeingPageState extends State<WellbeingPage> {
                   stream: widget.currentStepValueStream,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
+                      print("Card.cardId == 0 Snapshot has data!");
                       final int currTotalSteps = snapshot.data;
+
                       print("currTotalSteps: $currTotalSteps");
                       print("lastTotalSteps: $lastTotalSteps");
+
                       final actualSteps = lastTotalSteps > currTotalSteps
                           ? currTotalSteps
                           : currTotalSteps - lastTotalSteps;
@@ -227,10 +233,16 @@ class _WellbeingPageState extends State<WellbeingPage> {
                       // no case where the pedometer throws an error but no
                       // banner is shown.
                       pedometerWarn = true;
+                      print("Circular process indicator for the error....");
                       return CirclePercentIndicator(
                           color: card.color, units: card.units);
+                    } else {
+                      print(
+                          "Circular process indicator displayed because no data from pedometer available...");
+
+                      /// In the case that there will be no data from pedometer
+                      return _defaultGraph(card.cardId);
                     }
-                    return CircularProgressIndicator();
                   },
                 );
               } else if (snapshot.hasError) {
@@ -247,7 +259,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
                 final List<WellbeingItem> lastItemList = snapshot.data;
                 return lastItemList.isNotEmpty
                     ? _dataGraph(card: card, lastItems: lastItemList)
-                    : _defaultGraph(card);
+                    : _defaultGraph(card.cardId);
               } else if (snapshot.hasError) {
                 print(snapshot.error);
                 return Text("Something went wrong.",
@@ -338,6 +350,8 @@ class _WellbeingPageState extends State<WellbeingPage> {
             },
           );
         });
+
+    schedulePublish();
 
     return Scaffold(
         body: SafeArea(

@@ -136,8 +136,8 @@ class _HomePageState extends State<HomePage> {
                   key: _lastWeekWBTutorialKey,
                 ),
                 FutureBuilder(
-                    future:
-                        Provider.of<UserWellbeingDB>(context).getLastNWeeks(1),
+                    future: Provider.of<UserWellbeingDB>(context)
+                        .getLastNDaysAvailable(1),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         final List<WellbeingItem> lastItemList = snapshot.data;

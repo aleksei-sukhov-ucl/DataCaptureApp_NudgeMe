@@ -13,7 +13,7 @@ void main() {
         {PREV_STEP_COUNT_KEY: 0, HOME_TUTORIAL_DONE_KEY: true});
     final mockedDB = _MockedDB();
     final wellbeingScore = 10.0;
-    when(mockedDB.getLastNWeeks(any)).thenAnswer((_) async => [
+    when(mockedDB.getLastNDaysAvailable(any)).thenAnswer((_) async => [
           WellbeingItem(
             id: 0,
             date: "2021-02-27",
@@ -37,7 +37,7 @@ void main() {
     SharedPreferences.setMockInitialValues(
         {PREV_STEP_COUNT_KEY: 0, HOME_TUTORIAL_DONE_KEY: true});
     final mockedDB = _MockedDB();
-    when(mockedDB.getLastNWeeks(any)).thenAnswer((_) async => []);
+    when(mockedDB.getLastNDaysAvailable(any)).thenAnswer((_) async => []);
     final fakeStepStream = Stream.fromIterable([0]);
 
     await tester

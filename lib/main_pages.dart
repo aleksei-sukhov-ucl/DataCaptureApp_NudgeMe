@@ -23,7 +23,7 @@ import 'main.dart';
 /// URL of the server running back-end code. This should be changed
 /// if the domain has changed.
 /// Also ensure 'https' is used since we want to securely send data.
-const BASE_URL = "https://comp0016.cyberchris.xyz";
+const BASE_URL = "https://health.nudgemehealth.co.uk";
 
 /// defines the index of a page
 enum NavBarIndex {

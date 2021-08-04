@@ -123,6 +123,12 @@ class _LineChartTrendsState extends State<LineChartTrends> {
   @override
   Widget build(BuildContext context) {
     // Provider.of<UserWellbeingDB>(context).getOverallTrendsForPastFourMonth();
+    Provider.of<UserWellbeingDB>(context, listen: true)
+        .dataPastWeekToPublish()
+        .then((value) {
+      print(
+          "${value[0].numSteps} || ${value[0].wellbeingScore} || ${value[0].sputumColour}");
+    });
 
     /// Future Builder
     final lineChartTrends = FutureBuilder(

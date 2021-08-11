@@ -25,6 +25,21 @@ const _columns = [
   "support_code"
 ];
 
+const _columns2 = [
+  "id",
+  "date(date) as date",
+  "postcode",
+  "numSteps",
+  "wellbeingScore",
+  "sputumColour",
+  "mrcDyspnoeaScale",
+  "speechRate",
+  "speechRateTest",
+  "testDuration",
+  "audioURL",
+  "support_code"
+];
+
 /// Singleton [ChangeNotifier] to read/write to DB.
 /// Stores the user's wellbeing scores and steps.
 class UserWellbeingDB extends ChangeNotifier {
@@ -121,11 +136,12 @@ class UserWellbeingDB extends ChangeNotifier {
   /// returns up to n wellbeing items
   /// USE CASES:
   ///   - Home Screen
-  ///   - Sending data to server - needs to be changed
   Future<List<WellbeingItem>> getLastNDaysAvailable(int n) async {
     final db = await database;
     List<Map> wellbeingMaps = await db.query(_tableName,
-        columns: _columns, orderBy: "${_columns[1]} DESC", limit: n);
+        columns: _columns2,
+        orderBy: " strftime('%d-%m-%Y', ${_columns[1]}) DESC",
+        limit: n);
 
     for (var value in wellbeingMaps) {
       print("getLastNDays: $value");
@@ -286,12 +302,14 @@ class UserWellbeingDB extends ChangeNotifier {
         .substring(0, 10);
     List<Map> wellbeingMaps = await db.rawQuery('''
     SELECT STRFTIME('%W',date) as IsoSting,
+    postcode,
     date,
     sum(numSteps) as numSteps,
     avg(wellbeingScore) as wellbeingScore,
     avg(sputumColour) as sputumColour,
     avg(mrcDyspnoeaScale) as mrcDyspnoeaScale,
-    avg(speechRate) as speechRate
+    avg(speechRate) as speechRate, 
+    support_code
     FROM $_tableName
     WHERE date BETWEEN '$endDate' AND '$startDate'
     GROUP BY STRFTIME('%W',date)

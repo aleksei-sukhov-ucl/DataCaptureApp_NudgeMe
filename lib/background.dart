@@ -9,7 +9,6 @@ import 'package:nudge_me/main_pages.dart';
 import 'package:nudge_me/model/friends_model.dart';
 import 'package:nudge_me/model/user_model.dart';
 import 'package:nudge_me/notification.dart';
-import 'package:nudge_me/shared/wellbeing_graph.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
@@ -205,31 +204,37 @@ Future<Null> _handleGoalCompleted(Friend friend) async {
 void schedulePedometerInsert() {
   print("Cron executes background tasks");
 
-  // final adToDBhour = 23;
   final addToDBhour = 23;
   final addToDBminute = 58;
   addDataToDB = Cron().schedule(
       Schedule.parse("$addToDBminute $addToDBhour * * 0-6"), () async {
     print("Schedule has been set");
-    await _addStepsDaily();
+    _addStepsDaily();
   });
 }
 
 /// schedules a cron job to publish data
 void schedulePublish() {
+  ///TODO: Uncomment the above lines to make data sending take place on Mon
   // final day = DateTime.monday;
   // final hour = 12;
   // final minute = 0;
   final day = DateTime.wednesday;
-  final hour = 12;
-  final minute = 15;
+  final hour = 8;
+  final minute = 52;
 
   // This may help: https://crontab.guru/
   publishTask =
       Cron().schedule(Schedule.parse("$minute $hour * * $day"), () async {
     if (!await UserWellbeingDB().empty) {
       // publish if there is at least one wellbeing item saved
-      _publishData();
+      if (!await UserWellbeingDB()
+          .dataPastWeekToPublish()
+          .then((list) => list.isEmpty)) {
+        _publishData();
+      } else {
+        print("No data for the past week");
+      }
     }
   });
 }
@@ -256,12 +261,10 @@ void _addStepsDaily() async {
   final actualSteps = prevTotal > currTotal ? currTotal : currTotal - prevTotal;
   print("actualSteps $actualSteps");
   if (await _checkIfDataExists()) {
-    await updateData(numSteps: 8888);
-    // await updateData(numSteps: actualSteps.toInt());
+    await updateData(numSteps: actualSteps.toInt());
     print("Steps updated for ${DateTime.now().toIso8601String()}");
   } else {
-    await insertData(numSteps: 8888);
-    // await insertData(numSteps:actualSteps.toInt());
+    await insertData(numSteps: actualSteps.toInt());
     print("Steps added for ${DateTime.now().toIso8601String()}");
   }
 
@@ -305,12 +308,10 @@ insertData({int numSteps}) async {
       supportCode: userSupportCode);
 }
 
-/// TODO: Edit the query for publishing
 void _publishData() async {
   /// Since we log the steps every day and allow the user to "add data"
   /// we will be getting last week worth of data
   print("Data Sent");
-  // final items = await UserWellbeingDB().getLastNDaysAvailable(8);
   final items = await UserWellbeingDB().dataPastWeekToPublish();
   final item = items[0];
 

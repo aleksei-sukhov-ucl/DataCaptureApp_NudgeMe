@@ -67,7 +67,7 @@ List<CardClass> cards = [
                 width: 50,
                 child: Center(
                   child: Text(
-                    "1",
+                    "0",
                     style: TextStyle(color: Colors.black),
                   ),
                 ),
@@ -81,7 +81,7 @@ List<CardClass> cards = [
                 width: 50,
                 child: Center(
                   child: Text(
-                    "2",
+                    "1",
                     style: TextStyle(color: Colors.black),
                   ),
                 ),
@@ -95,7 +95,7 @@ List<CardClass> cards = [
                 width: 50,
                 child: Center(
                   child: Text(
-                    "3",
+                    "2",
                     style: TextStyle(color: Colors.black),
                   ),
                 ),
@@ -109,7 +109,7 @@ List<CardClass> cards = [
                 width: 50,
                 child: Center(
                   child: Text(
-                    "4",
+                    "3",
                     style: TextStyle(color: Colors.black),
                   ),
                 ),
@@ -123,7 +123,7 @@ List<CardClass> cards = [
                 width: 50,
                 child: Center(
                   child: Text(
-                    "5",
+                    "4",
                     style: TextStyle(color: Colors.black),
                   ),
                 ),

@@ -16,8 +16,8 @@ class AddData extends StatefulWidget {
 
 class _AddDataState extends State<AddData> {
   double _currentSliderValueWellbeing = 0;
-  double _currentSliderValueSputumColor = 1;
-  double _currentSliderValueMRCDyspnoeaScale = 1;
+  double _currentSliderValueSputumColor = 0;
+  double _currentSliderValueMRCDyspnoeaScale = 0;
   int _currentValueSpeechRateTest = 0;
   double _currentValueTestDuration = 30;
   double _currentValueSpeechRate = 0;
@@ -225,8 +225,8 @@ class _AddDataState extends State<AddData> {
                         valueIndicatorShape: PaddleSliderValueIndicatorShape()),
                     child: Slider(
                       value: _currentSliderValueSputumColor,
-                      min: 1,
-                      max: 5,
+                      min: 0,
+                      max: 4,
                       divisions: 4,
                       label: _currentSliderValueSputumColor.round().toString(),
                       activeColor: Theme.of(context).colorScheme.primary,
@@ -327,8 +327,7 @@ class _AddDataState extends State<AddData> {
                         padding: const EdgeInsets.all(4.0),
                         child: Text(
                             descriptionsMRCDyspnoeaScale[
-                                _currentSliderValueMRCDyspnoeaScale.toInt() -
-                                    1],
+                                _currentSliderValueMRCDyspnoeaScale.toInt()],
                             style: TextStyle(color: Colors.white),
                             textAlign: TextAlign.center),
                       ),
@@ -343,8 +342,8 @@ class _AddDataState extends State<AddData> {
                               TextStyle(overflow: TextOverflow.ellipsis)),
                       child: Slider(
                         value: _currentSliderValueMRCDyspnoeaScale,
-                        min: 1,
-                        max: 5,
+                        min: 0,
+                        max: 4,
                         divisions: 4,
                         activeColor: Theme.of(context).colorScheme.primary,
                         inactiveColor: Color.fromARGB(189, 189, 189, 255),
@@ -352,7 +351,7 @@ class _AddDataState extends State<AddData> {
                           setState(() {
                             _currentSliderValueMRCDyspnoeaScale = newValue;
                             print(
-                                "_currentSliderValueSputumColor: $_currentSliderValueMRCDyspnoeaScale");
+                                "_currentSliderValueMRCDyspnoeaScale: $_currentSliderValueMRCDyspnoeaScale");
                           });
                         },
                       ),
@@ -464,7 +463,7 @@ class _AddDataState extends State<AddData> {
             .update(
                 columnId: 4,
                 value: _currentSliderValueWellbeing,
-                Date: DateTime.now().toIso8601String().substring(0, 10));
+                Date: selectedDate.toIso8601String().substring(0, 10));
         print(id);
         return id;
       case 2:
@@ -472,14 +471,14 @@ class _AddDataState extends State<AddData> {
             .update(
                 columnId: 5,
                 value: _currentSliderValueSputumColor,
-                Date: DateTime.now().toIso8601String().substring(0, 10));
+                Date: selectedDate.toIso8601String().substring(0, 10));
         return id;
       case 3:
         int id = await Provider.of<UserWellbeingDB>(context, listen: false)
             .update(
                 columnId: 6,
                 value: _currentSliderValueMRCDyspnoeaScale,
-                Date: DateTime.now().toIso8601String().substring(0, 10));
+                Date: selectedDate.toIso8601String().substring(0, 10));
         return id;
       case 4:
         int id = await Provider.of<UserWellbeingDB>(context, listen: false)
@@ -488,7 +487,7 @@ class _AddDataState extends State<AddData> {
                 currentValueTestDuration: _currentValueTestDuration,
                 currentValueSpeechRate: _currentValueSpeechRate,
                 currentValueAudioURL: _currentValueAudioURL,
-                Date: DateTime.now().toIso8601String().substring(0, 10));
+                Date: selectedDate.toIso8601String().substring(0, 10));
         return id;
     }
   }
@@ -538,7 +537,7 @@ class _AddDataState extends State<AddData> {
                 onPressed: () async {
                   bool check = await _checkIfDataExists(
                       checkDate:
-                          DateTime.now().toIso8601String().substring(0, 10));
+                          selectedDate.toIso8601String().substring(0, 10));
                   (check)
                       ? updateData(cardId: widget.card.cardId)
                       : insertData(cardId: widget.card.cardId);

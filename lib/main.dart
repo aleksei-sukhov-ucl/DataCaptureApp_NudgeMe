@@ -49,7 +49,7 @@ void main() {
     }
   };
 
-  /// Cahanges the color of status bar i.e. battery % and time to dark
+  /// Cahanges the color of status bar i.e. battery % and time to darklastTotalSteps
   SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(statusBarBrightness: Brightness.light));
   // run app in a special environment to capture errors

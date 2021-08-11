@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nudge_me/model/user_model.dart';
@@ -47,7 +49,8 @@ class _WellbeingPageState extends State<WellbeingPage> {
   void didChangeDependencies() {
     setState(() {
       /// TODO: DELETE THIS
-      // _getAllshared();
+      _getAllshared();
+      // schedulePedometerInsert();
       print("didChangeDependencies got triggered");
       _futureLatestData = _getFutureLatestData();
       super.didChangeDependencies();
@@ -55,27 +58,28 @@ class _WellbeingPageState extends State<WellbeingPage> {
   }
 
   /// TODO: DELETE THIS
-  // _getAllshared() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final keys = prefs.getKeys();
-  //
-  //   final prefsMap = Map<String, dynamic>();
-  //   for (String key in keys) {
-  //     prefsMap[key] = prefs.get(key);
-  //   }
-  //
-  //   prefsMap.forEach((key, value) {
-  //     print("key: $key | value: $value");
-  //   });
-  // }
+  _getAllshared() async {
+    final prefs = await SharedPreferences.getInstance();
+    final keys = prefs.getKeys();
+
+    final prefsMap = Map<String, dynamic>();
+    for (String key in keys) {
+      prefsMap[key] = prefs.get(key);
+    }
+
+    prefsMap.forEach((key, value) {
+      print("key: $key | value: $value");
+    });
+  }
 
   _getFutureLatestData() async {
     return await Provider.of<UserWellbeingDB>(context, listen: true)
         .getLastNDaysAvailable(8);
   }
 
-  final Future<int> _lastTotalStepsFuture = SharedPreferences.getInstance()
-      .then((prefs) => prefs.getInt(PREV_STEP_COUNT_KEY));
+  final Future<List<String>> _lastTotalStepsFuture =
+      SharedPreferences.getInstance()
+          .then((prefs) => prefs.getStringList(PREV_PEDOMETER_PAIR_KEY));
 
   /// Wellbeing page tutorial keys tutorial keys
   // GlobalKey _lastWeekWBTutorialKey = GlobalObjectKey("laskweek_wb");
@@ -143,29 +147,29 @@ class _WellbeingPageState extends State<WellbeingPage> {
       // }
 
       Widget _dataGraph({CardClass card, List<WellbeingItem> lastItems}) {
+        final lastItemsList = lastItems.reversed;
         switch (card.cardId) {
 
           /// Wellbeing Circle
           case 1:
-            lastItems.forEach((element) {
+            lastItemsList.forEach((element) {
               if (element.wellbeingScore != null) {
                 lastWellbeingScore = element.wellbeingScore;
               }
             });
-            // print("print(lastWellbeingScore): $lastWellbeingScore");
+            print("print(lastWellbeingScore): $lastWellbeingScore");
             return WellbeingCircle(
               score: lastWellbeingScore.truncate(),
             );
 
           /// Sputum Colour
           case 2:
-            lastItems.forEach((element) {
+            lastItemsList.forEach((element) {
               if (element.sputumColour != null) {
                 lastSputumColour = element.sputumColour;
               }
             });
-
-            //print("lastSputumColour: $lastSputumColour");
+            print("lastSputumColour: $lastSputumColour");
             return WellbeingCircle(
                 score: lastSputumColour.truncate(),
                 firstColor: card.color,
@@ -173,7 +177,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
 
           /// MRC Dyspnoea Scale
           case 3:
-            lastItems.forEach((element) {
+            lastItemsList.forEach((element) {
               if (element.mrcDyspnoeaScale != null) {
                 lastmrcDyspnoeaScale = element.mrcDyspnoeaScale;
               }
@@ -186,7 +190,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
 
           /// Speech Rate
           case 4:
-            lastItems.forEach((element) {
+            lastItemsList.forEach((element) {
               if (element.speechRate != null) {
                 lastSpeechRate = element.speechRate;
               }
@@ -206,7 +210,8 @@ class _WellbeingPageState extends State<WellbeingPage> {
             future: _lastTotalStepsFuture,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                final lastTotalSteps = snapshot.data;
+                print("snapshot.hasData");
+                final lastTotalSteps = int.parse(snapshot.data.first);
                 return StreamBuilder(
                   stream: widget.currentStepValueStream,
                   builder: (context, snapshot) {
@@ -223,6 +228,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
                       return CirclePercentIndicator(
                           color: card.color,
                           score: actualSteps,
+                          goal: 10000,
                           units: card.units);
                       // return Text(actualSteps.toString());
                     } else if (snapshot.hasError) {
@@ -237,10 +243,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
                       return CirclePercentIndicator(
                           color: card.color, units: card.units);
                     } else {
-                      print(
-                          "Circular process indicator displayed because no data from pedometer available...");
-
-                      /// In the case that there will be no data from pedometer
+                      print("Pedometer is working");
                       return _defaultGraph(card.cardId);
                     }
                   },
@@ -352,6 +355,26 @@ class _WellbeingPageState extends State<WellbeingPage> {
         });
 
     schedulePublish();
+
+    // UserWellbeingDB().dataPastWeekToPublish().then((items) {
+    //   print(UserWellbeingDB);
+    //   final item = items.first;
+    //   print("UserWellbeingDB().dataPastWeekToPublish(): $item");
+    //   final body = jsonEncode({
+    //     "postCode": item.postcode,
+    //     "weeklySteps": item.numSteps,
+    //     "wellbeingScore": item.wellbeingScore,
+    //     "sputumColour": item.sputumColour,
+    //     "mrcDyspnoeaScale": item.mrcDyspnoeaScale,
+    //     // "errorRate": errorRate.truncate(),
+    //     "supportCode": item.supportCode,
+    //     "date_sent": item.date,
+    //
+    //     ///N.B. The weeks are represented starting from monday of every week
+    //   });
+    //
+    //   print("Sending body $body");
+    // });
 
     return Scaffold(
         body: SafeArea(

@@ -54,8 +54,8 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
 
   /// Default values for silder, switch, and notification day, hour and min.
   double _currentSliderValueWellbeing = 0;
-  double _currentSliderValueSputumColor = 1;
-  double _currentSliderValueMRCDyspnoeaScale = 1;
+  double _currentSliderValueSputumColor = 0;
+  double _currentSliderValueMRCDyspnoeaScale = 0;
   int _currentValueSpeechRateTest = 0;
   double _currentValueTestDuration = 30;
   double _currentValueSpeechRate = 0;
@@ -457,8 +457,8 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
                                   PaddleSliderValueIndicatorShape()),
                           child: Slider(
                             value: _currentSliderValueSputumColor,
-                            min: 1,
-                            max: 5,
+                            min: 0,
+                            max: 4,
                             divisions: 4,
                             label: _currentSliderValueSputumColor
                                 .round()
@@ -558,8 +558,7 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
                           padding: const EdgeInsets.all(4.0),
                           child: Text(
                               descriptionsMRCDyspnoeaScale[
-                                  _currentSliderValueMRCDyspnoeaScale.toInt() -
-                                      1],
+                                  _currentSliderValueMRCDyspnoeaScale.toInt()],
                               style: TextStyle(color: Colors.white),
                               textAlign: TextAlign.center),
                         ),
@@ -574,8 +573,8 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
                                   TextStyle(overflow: TextOverflow.ellipsis)),
                           child: Slider(
                             value: _currentSliderValueMRCDyspnoeaScale,
-                            min: 1,
-                            max: 5,
+                            min: 0,
+                            max: 4,
                             divisions: 4,
                             // label: _currentSliderValueMRCDyspnoeaScale.toString(),
                             // label: descriptionsMRCDyspnoeaScale[

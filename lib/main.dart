@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nudge_me/model/friends_model.dart';
 import 'package:nudge_me/model/user_model.dart';
+import 'package:nudge_me/pages/charts_page/graph_page.dart';
 import 'package:nudge_me/pages/intro_screen.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:provider/provider.dart';
@@ -97,6 +98,7 @@ void appInit() async {
   initNotification();
 
   if (await _isFirstTime()) {
+    print("_isFirstTime() == true");
     _setupStepCountTotal();
   }
 }
@@ -125,12 +127,15 @@ Future initNotification() async {
 
 /// Initialize the 'previous' step count total to the current value.
 void _setupStepCountTotal() async {
+  print(
+      "_setupStepCountTotal is getting executed thus we should have PREV_PEDOMETER_PAIR_KEY");
   final prefs = await SharedPreferences.getInstance();
   final int totalSteps = await Pedometer.stepCountStream.first
       .then((value) => value.steps)
       .catchError((_) => 0);
-
+  // print("prefs.getKeys(): ${prefs.getKeys()}");
   if (!prefs.containsKey(PREV_STEP_COUNT_KEY)) {
+    // print("prefs.setInt(PREV_STEP_COUNT_KEY, totalSteps)");
     prefs.setInt(PREV_STEP_COUNT_KEY, totalSteps);
   }
   if (!prefs.containsKey(PREV_PEDOMETER_PAIR_KEY)) {
@@ -138,6 +143,7 @@ void _setupStepCountTotal() async {
         // ISO date format allows easier parsing
         [totalSteps.toString(), DateTime.now().toIso8601String()]);
   }
+  // print(prefs.getStringList(PREV_PEDOMETER_PAIR_KEY));
 }
 
 /// [StatelessWidget] that is the top level widget for the app.

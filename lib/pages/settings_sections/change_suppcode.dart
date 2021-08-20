@@ -26,7 +26,8 @@ class _ChangeSupportCodeState extends State<ChangeSupportCode> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Change Support Code")),
+        appBar: AppBar(
+            brightness: Brightness.light, title: Text("Change Support Code")),
         body: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           SizedBox(height: 30),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [

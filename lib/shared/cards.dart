@@ -175,7 +175,7 @@ List<CardClass> cards = [
         cardKey(
             color: Color.fromRGBO(138, 127, 245, 1),
             text: "MRC Dyspnoea Scale"),
-        cardKey(color: Color.fromRGBO(241, 139, 128, 1.0), text: "Speech Rate")
+        // cardKey(color: Color.fromRGBO(241, 139, 128, 1.0), text: "Speech Rate")
       ]))
 ];
 

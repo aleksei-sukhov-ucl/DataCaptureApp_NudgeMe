@@ -212,7 +212,8 @@ class _RescheduleWBCheckNotifState extends State<RescheduleWBCheckNotif> {
     ]);
 
     return Scaffold(
-        appBar: AppBar(title: Text("Wellbeing Check")),
+        appBar: AppBar(
+            brightness: Brightness.light, title: Text("Wellbeing Check")),
         body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [_selectorInstructions, NotificationSelector()]));

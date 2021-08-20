@@ -6,6 +6,8 @@ import 'package:flutter/widgets.dart';
 import 'package:nudge_me/pages/add_data.dart';
 import 'package:nudge_me/pages/wellbeing_page/wellbeing_page.dart';
 import 'package:nudge_me/shared/cards.dart';
+import 'package:nudge_me/shared/share_export_page.dart';
+import 'package:nudge_me/shared/share_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:intl/intl.dart';
@@ -21,80 +23,7 @@ class ChartPage extends StatefulWidget {
 }
 
 class _ChartPageState extends State<ChartPage> {
-  timeFrame _timeFrame = timeFrame.Week;
-  dataToExport _dataToExport = dataToExport.Steps;
   int initialIndex = 0;
-
-  /// Data sharing preferences Modal
-  Future<Null> _sharingPreferences() async {
-    switch (await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            title: Text("Share Preferences"),
-            // content: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 10, 0, 10),
-                child: Text(
-                  "Select Time Frame",
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-              for (var value in timeFrame.values)
-                ListTile(
-                  title: Text(value.toString().split('.').elementAt(1)),
-                  leading: Radio(
-                      value: value,
-                      groupValue: _timeFrame,
-                      onChanged: (timeFrame selectedTimeFrame) {
-                        _timeFrame = selectedTimeFrame;
-                      }),
-                ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 0, 10),
-                child: Text(
-                  "Select Data to Export",
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-              for (var value in dataToExport.values)
-                ListTile(
-                  title: Text(value.toString().split('.').elementAt(1)),
-                  leading: Radio(
-                      value: value,
-                      groupValue: _dataToExport,
-                      onChanged: (dataToExport selectedDataToExport) {
-                        _dataToExport = selectedDataToExport;
-                      }),
-                ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 24, 0, 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    SimpleDialogOption(
-                      onPressed: () {},
-                      child: const Text('Cancel'),
-                    ),
-                    SimpleDialogOption(
-                      onPressed: () {},
-                      child: const Text('Export'),
-                    )
-                  ],
-                ),
-              )
-            ],
-          );
-        })) {
-      case timeFrame.Week:
-        break;
-      case timeFrame.Month:
-        break;
-      case timeFrame.Year:
-        break;
-    }
-  }
 
   showEndDate({int cardId, int initialIndex}) {
     if (cardId == 5) {
@@ -129,8 +58,8 @@ class _ChartPageState extends State<ChartPage> {
     /// Share data button
     /// Ref: https://flutter.dev/docs/release/breaking-changes/buttons
     TextButton shareDataButton = TextButton(
-      onPressed: () {
-        _sharingPreferences();
+      onPressed: () async {
+        await showDataSharingDialog(context);
       },
       child:
           Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
@@ -192,13 +121,16 @@ class _ChartPageState extends State<ChartPage> {
 
     return Scaffold(
       appBar: AppBar(
+        brightness: Brightness.light,
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
                 icon: const Icon(Icons.arrow_back_ios_rounded),
                 onPressed: () {
-                  Navigator.pop(context,
-                      MaterialPageRoute(builder: (context) => WellbeingPage()));
+                  Navigator.pop(
+                    context,
+                    MaterialPageRoute(builder: (context) => WellbeingPage()),
+                  );
                 });
           },
         ),
@@ -377,11 +309,3 @@ class _ChartPageState extends State<ChartPage> {
     );
   }
 }
-
-enum timeFrame {
-  Week,
-  Month,
-  Year,
-}
-
-enum dataToExport { Steps, Wellbeing, Breathlessness, SpeechRate, SputumColor }

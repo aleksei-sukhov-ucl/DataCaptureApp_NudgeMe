@@ -180,7 +180,7 @@ class _LineChartTrendsState extends State<LineChartTrends> {
                 List<double> dataWellbeingScore = [];
                 List<double> datasputumColour = [];
                 List<double> datamrcDyspnoeaScale = [];
-                List<double> dataspeechRate = [];
+                // List<double> dataspeechRate = [];
 
                 /// With Moving Average
                 dataFromDB.forEach((wellbeingItem) {
@@ -190,7 +190,7 @@ class _LineChartTrendsState extends State<LineChartTrends> {
                   datasputumColour.add(wellbeingItem.sputumColour.toDouble());
                   datamrcDyspnoeaScale
                       .add(wellbeingItem.mrcDyspnoeaScale.toDouble());
-                  dataspeechRate.add(wellbeingItem.speechRate.toDouble());
+                  // dataspeechRate.add(wellbeingItem.speechRate.toDouble());
                 });
 
                 /// Function to workout 2 Week moving average
@@ -210,7 +210,7 @@ class _LineChartTrendsState extends State<LineChartTrends> {
                     twoWeekMovingAverage(datasputumColour);
                 final mAdatamrcDyspnoeaScale =
                     twoWeekMovingAverage(datamrcDyspnoeaScale);
-                final mAdataspeechRate = twoWeekMovingAverage(dataspeechRate);
+                // final mAdataspeechRate = twoWeekMovingAverage(dataspeechRate);
 
                 /// No Moving Average
                 // print("mADataSteps: ${mADataSteps.reduce(min)}");
@@ -351,18 +351,18 @@ class _LineChartTrendsState extends State<LineChartTrends> {
                   );
 
                   /// Speech Rate
-                  lineChartBarDataspeechRate.add(
-                    FlSpot(
-                        DateTime.parse(dataFromDB[i].date)
-                            .millisecondsSinceEpoch
-                            .toDouble(),
-                        (mAdataspeechRate[i] == null)
-                            ? 0
-                            : ((mAdataspeechRate[i] -
-                                    mAdataspeechRate.reduce(min)) /
-                                (mAdataspeechRate.reduce(max) -
-                                    mAdataspeechRate.reduce(min)))),
-                  );
+                  // lineChartBarDataspeechRate.add(
+                  //   FlSpot(
+                  //       DateTime.parse(dataFromDB[i].date)
+                  //           .millisecondsSinceEpoch
+                  //           .toDouble(),
+                  //       (mAdataspeechRate[i] == null)
+                  //           ? 0
+                  //           : ((mAdataspeechRate[i] -
+                  //                   mAdataspeechRate.reduce(min)) /
+                  //               (mAdataspeechRate.reduce(max) -
+                  //                   mAdataspeechRate.reduce(min)))),
+                  // );
                 }
 
                 /// No Moving Average
@@ -429,6 +429,7 @@ class _LineChartTrendsState extends State<LineChartTrends> {
                 //   );
                 // });
                 // print(lineChartBarDataSteps);
+
                 List<LineChartBarData> data = [
                   makeLinesBarData(
                     spots: lineChartBarDataSteps,

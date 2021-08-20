@@ -26,7 +26,8 @@ class _ChangePostcodeState extends State<ChangePostcode> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Change Postcode")),
+        appBar: AppBar(
+            brightness: Brightness.light, title: Text("Change Postcode")),
         body: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           SizedBox(height: 30),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [

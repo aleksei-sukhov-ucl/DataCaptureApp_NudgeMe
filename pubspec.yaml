@@ -31,6 +31,7 @@ dependencies:
   timezone: ^0.7.0 # needed for scheduling notifications
   workmanager: ^0.2.3
   pdf: ^3.4.0
+  flutter_full_pdf_viewer: ^1.0.6
   printing: ^5.3.0
   clock: ^1.0.1 # useful for testing
   permission_handler: ^8.1.1
@@ -72,6 +73,8 @@ dependencies:
   week_of_year: ^2.0.0
   ml_preprocessing: ^5.1.0
   moving_average: ^0.3.0
+  flutter_sound_lite: ^8.3.9
+  record: ^3.0.0
 
 dev_dependencies:
   flutter_test:

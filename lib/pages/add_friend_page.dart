@@ -157,6 +157,7 @@ class AddFriendPageState extends State<AddFriendPage> {
 
     return Scaffold(
       appBar: AppBar(
+        brightness: Brightness.light,
         title: Text("Add to Network"),
       ),
       body: SafeArea(

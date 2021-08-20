@@ -163,6 +163,14 @@ class SupportPageState extends State<SupportPage> {
   Widget build(BuildContext context) {
     final friendsList = _getFriendsList(context);
 
+    Provider.of<FriendDB>(context)
+        .getFriends()
+        .then((value) => print("value:$value")
+            // value.forEach((element) {
+            //       print("element: $element");
+            //     }
+            //     ),
+            );
     // NOTE: since we are using nested Scaffolds (there is one above this), we need
     // to wrap a ScaffoldMessenger in between them to avoid showing duplicate
     // snackbars, or rather, to avoid getting an exception since we were *about*

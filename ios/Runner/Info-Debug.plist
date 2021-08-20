@@ -54,6 +54,8 @@
 	<array>
 		<string>processing</string>
 	</array>
+	<key>NSMicrophoneUsageDescription</key>
+    <string>This sample uses the microphone to record your speech when performing tests.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

@@ -1,5 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ucl.nudge_me">
+    <!-- this gets permission to record audio-->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- this gets permission to schedule notifications-->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 

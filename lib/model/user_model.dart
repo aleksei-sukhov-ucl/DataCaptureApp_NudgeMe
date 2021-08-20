@@ -143,9 +143,9 @@ class UserWellbeingDB extends ChangeNotifier {
         orderBy: " strftime('%d-%m-%Y', ${_columns[1]}) DESC",
         limit: n);
 
-    for (var value in wellbeingMaps) {
-      print("getLastNDays: $value");
-    }
+    // for (var value in wellbeingMaps) {
+    //   print("getLastNDays: $value");
+    // }
     final itemList = wellbeingMaps
         .map((wellbeingMap) => WellbeingItem.fromMap(wellbeingMap))
         .toList(growable: false);
@@ -179,7 +179,7 @@ class UserWellbeingDB extends ChangeNotifier {
     );
 
     wellbeingMaps.forEach((element) {
-      print("getLastWeekOfSpecificColumns: $element");
+      // print("getLastWeekOfSpecificColumns: $element");
     });
 
     final itemList = wellbeingMaps
@@ -238,10 +238,10 @@ class UserWellbeingDB extends ChangeNotifier {
             ORDER BY date
             ''');
 
-    print("startDate: $startDate");
-    wellbeingMaps.forEach((element) {
-      print("$element");
-    });
+    // print("startDate: $startDate");
+    // wellbeingMaps.forEach((element) {
+    //   print("$element");
+    // });
 
     final itemList = wellbeingMaps
         .map((wellbeingMap) => WellbeingItem.fromMap(wellbeingMap))
@@ -275,9 +275,9 @@ class UserWellbeingDB extends ChangeNotifier {
     GROUP BY STRFTIME('%W',date)
     ''');
 
-    wellbeingMaps.forEach((element) {
-      print("$element");
-    });
+    // wellbeingMaps.forEach((element) {
+    //   print("$element");
+    // });
 
     final itemList = wellbeingMaps
         .map((wellbeingMap) => WellbeingItem.fromMap(wellbeingMap))
@@ -308,16 +308,18 @@ class UserWellbeingDB extends ChangeNotifier {
     avg(wellbeingScore) as wellbeingScore,
     avg(sputumColour) as sputumColour,
     avg(mrcDyspnoeaScale) as mrcDyspnoeaScale,
-    avg(speechRate) as speechRate, 
+    speechRateTest,
+    testDuration,
+    audioURL,
     support_code
     FROM $_tableName
     WHERE date BETWEEN '$endDate' AND '$startDate'
     GROUP BY STRFTIME('%W',date)
     ''');
 
-    wellbeingMaps.forEach((element) {
-      print("$element");
-    });
+    // wellbeingMaps.forEach((element) {
+    //   print("$element");
+    // });
 
     final itemList = wellbeingMaps
         .map((wellbeingMap) => WellbeingItem.fromMap(wellbeingMap))

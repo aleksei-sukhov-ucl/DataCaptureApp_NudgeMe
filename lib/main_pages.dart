@@ -9,7 +9,7 @@ import 'package:nudge_me/pages/checkup.dart';
 import 'package:nudge_me/pages/nudge_screen.dart';
 import 'package:nudge_me/pages/support_page.dart';
 import 'package:nudge_me/pages/testing_page.dart';
-import 'package:nudge_me/pages/text_to_speech_page.dart';
+import 'package:nudge_me/shared/AudioRecording.dart';
 import 'package:nudge_me/shared/cards.dart';
 import 'package:nudge_me/pages/wellbeing_page/wellbeing_page.dart';
 import 'package:nudge_me/pages/settings_page.dart';
@@ -28,7 +28,8 @@ const BASE_URL = "https://health.nudgemehealth.co.uk";
 /// defines the index of a page
 enum NavBarIndex {
   wellbeing,
-  /*home,*/ /*textToSpeech,*/
+  /*home,*/
+  /*textToSpeech,*/
   network,
   settings,
   testing
@@ -134,7 +135,7 @@ class _MainPagesState extends State<MainPages> {
             Pedometer.stepCountStream.map((event) => event.steps),
         cards: cards,
       ),
-      // textToSpeechPage(),
+      // AudioRecording(),
       // HomePage(Pedometer.stepCountStream.map((event) => event.steps)),
       SupportPage(),
       SettingsPage(),

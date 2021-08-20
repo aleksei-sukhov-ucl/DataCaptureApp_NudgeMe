@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nudge_me/model/user_model.dart';
@@ -20,7 +18,7 @@ const URL_USER_MANUAL =
     'https://uclcomputerscience.github.io/COMP0016_2020_21_Team26/'
     'pdfs/usermanual.pdf';
 
-/// Displays current Wellbeing Score, steps and all aditional metircs this week
+/// Displays current Wellbeing Score, steps and all additional metrics this week
 class WellbeingPage extends StatefulWidget {
   final List<CardClass> cards;
   final Stream<int> currentStepValueStream;
@@ -49,7 +47,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
   void didChangeDependencies() {
     setState(() {
       /// TODO: DELETE THIS
-      _getAllshared();
+      // _getAllshared();
       // schedulePedometerInsert();
       print("didChangeDependencies got triggered");
       _futureLatestData = _getFutureLatestData();
@@ -87,21 +85,28 @@ class _WellbeingPageState extends State<WellbeingPage> {
 
   /// TODO: Add tutorial to the wellbeing page
   /// Card specific visualisations
-
   @override
   Widget build(BuildContext context) {
     // print("05 11 * * 0 - 6");
     // print("Current Date and time: ${DateTime.now()}");
-    // Provider.of<UserWellbeingDB>(context).getLastNWeeks(8).then((items) {
-    //   double maxSpeehRate = 0.0;
+    // Provider.of<UserWellbeingDB>(context)
+    //     .getLastNDaysAvailable(8)
+    //     .then((items) {
     //   items.reversed.forEach((element) {
-    //     if (element.wellbeingScore != null) {
-    //       maxSpeehRate = element.wellbeingScore;
-    //     }
+    //     print(
+    //         "${element.date} || ${element.speechRateTest} || ${element.testDuration} || ${element.audioURL}");
     //   });
-    //
-    //   print("maxSpeehRate: $maxSpeehRate");
     // });
+    // Provider.of<UserWellbeingDB>(context)
+    //     .getLastNDaysAvailable(1)
+    //     .then((items) {
+    //   items.forEach((element) {
+    //     print(
+    //         "${element.date} || ${element.speechRateTest} || ${element.testDuration} || ${element.audioURL}");
+    //   });
+    // });
+
+    publishData();
 
     /// Pop-up banner (widget) to notify of the pedometer not working
     final Widget warningBanner = MaterialBanner(
@@ -185,7 +190,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
             return CirclePercentIndicator(
                 score: lastmrcDyspnoeaScale.truncate(),
                 color: card.color,
-                goal: 5,
+                goal: 4,
                 units: "");
 
           /// Speech Rate
@@ -210,7 +215,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
             future: _lastTotalStepsFuture,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                print("snapshot.hasData");
+                print("Future Builder snapshot.hasData = True");
                 final lastTotalSteps = int.parse(snapshot.data.first);
                 return StreamBuilder(
                   stream: widget.currentStepValueStream,
@@ -232,14 +237,14 @@ class _WellbeingPageState extends State<WellbeingPage> {
                           units: card.units);
                       // return Text(actualSteps.toString());
                     } else if (snapshot.hasError) {
-                      print(snapshot.error);
+                      print("snapshot.error:${snapshot.error}");
                       // NOTE: we do not have to worry about using setState here
                       // since whenever it builds it will execute this first and
                       // then the [Visibility] banner widget. Therefore, there is
                       // no case where the pedometer throws an error but no
                       // banner is shown.
                       pedometerWarn = true;
-                      print("Circular process indicator for the error....");
+                      print("In the case that pedometer is unavailable");
                       return CirclePercentIndicator(
                           color: card.color, units: card.units);
                     } else {
@@ -252,6 +257,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
                 print(snapshot.error);
                 return Text("Error");
               }
+              print("Future Builder has no data:");
               return CircularProgressIndicator();
             });
       } else {

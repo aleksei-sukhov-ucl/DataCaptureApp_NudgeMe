@@ -76,6 +76,7 @@ class PDFExport {
                       child: pw.Image(
                         flutterImgs[index],
                         width: pageTheme.pageFormat.availableWidth * 0.8,
+                        height: pageTheme.pageFormat.availableHeight * 0.99,
                       ),
                     );
                   })

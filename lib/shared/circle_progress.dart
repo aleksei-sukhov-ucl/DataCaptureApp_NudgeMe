@@ -10,7 +10,11 @@ class CirclePercentIndicator extends StatefulWidget {
   final int goal;
   final String units;
   const CirclePercentIndicator(
-      {Key key, this.color, this.score = null, this.goal = 70000, this.units})
+      {Key key,
+      this.color = Colors.deepOrangeAccent,
+      this.score,
+      this.goal = 70000,
+      this.units})
       : super(key: key);
 
   @override

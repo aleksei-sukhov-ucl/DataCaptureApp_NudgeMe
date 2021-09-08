@@ -10,6 +10,7 @@ import 'package:nudge_me/shared/share_button.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+////////// LEGACY GRAPH ////////////////
 /// an upper bound for the recommended number of steps to walk in a week
 const RECOMMENDED_STEPS_IN_WEEK = 70000;
 

@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +16,7 @@ import 'package:nudge_me/pages/contact_share_page.dart';
 import 'package:nudge_me/pages/nudge_progress_page.dart';
 import 'package:nudge_me/pages/send_nudge_page.dart';
 import 'package:nudge_me/shared/friend_graph.dart';
+import 'package:nudge_me/shared/generate_hashmap.dart';
 import 'package:nudge_me/shared/wellbeing_graph.dart';
 import 'package:pointycastle/pointycastle.dart' as pointyCastle;
 import 'package:permission_handler/permission_handler.dart';
@@ -37,6 +40,7 @@ Future<bool> getLatest([BuildContext ctx]) async {
     "identifier": prefs.getString(USER_IDENTIFIER_KEY),
     "password": prefs.getString(USER_PASSWORD_KEY),
   });
+  stderr.writeln("body: $body");
 
   bool hasNewData = false;
   await http
@@ -60,6 +64,7 @@ Future<bool> getLatest([BuildContext ctx]) async {
         String encrypted = message['data'];
         String decrypted = encrypter.decrypt64(encrypted);
         message['data'] = decrypted;
+        print(decrypted);
       }
       await friendDB.updateWellbeingData(messages);
     }
@@ -129,18 +134,19 @@ class SupportPageState extends State<SupportPage> {
         style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all<Color>(
                 Theme.of(context).primaryColor)),
-        onPressed: () async {
-          if (await Permission.contacts.request().isGranted) {
-            final message = await _getShareMessage();
-            return Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ContactSharePage(message)));
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text("Need permission to share with contacts.")));
-          }
-        },
+        onPressed: () async => Share.share(await _getShareMessage()),
+        //     () async {
+        //   if (await Permission.contacts.request().isGranted) {
+        //     final message = await _getShareMessage();
+        //     return Navigator.push(
+        //         context,
+        //         MaterialPageRoute(
+        //             builder: (context) => ContactSharePage(message)));
+        //   } else {
+        //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        //         content: Text("Need permission to share with contacts.")));
+        //   }
+        // },
         child: Text("Share identity link \nusing SMS",
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.white)));
@@ -386,6 +392,7 @@ class SupportPageState extends State<SupportPage> {
             child: CustomScrollView(
               slivers: [
                 SliverAppBar(
+                  brightness: Brightness.light,
                   pinned: true,
                   backgroundColor: Colors.white,
                   expandedHeight: 350,
@@ -425,28 +432,130 @@ class SupportPageState extends State<SupportPage> {
           );
   }
 
-  void _showWellbeingSendDialog(BuildContext context, Friend friend) =>
-      showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-                title: Text("Send data?"),
-                content: WellbeingGraph(
-                  displayShare: false,
-                  shouldShowTutorial: false,
-                ),
-                actions: [
-                  TextButton(
-                    child: Text('No'),
-                    onPressed: () => Navigator.pop(context),
+  Future<void> _showWellbeingSendDialog(
+      BuildContext context, Friend friend) async {
+    final List<WellbeingItem> dataFromDB =
+        await UserWellbeingDB().getOverallTrendsForPastNWeeks(5);
+    return await showDialog(
+        context: context,
+        builder: (context) {
+          bool _exportSteps = false;
+          bool _exportWellbeing = false;
+          bool _exportBreathlessness = false;
+          bool _exportSputumColor = false;
+          bool _exportOverallTrends = false;
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              title: Text(
+                "Share Preferences",
+                style: Theme.of(context).textTheme.headline2,
+              ),
+
+              /// Timeframe selection
+              content: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  /// Selection of what data to export
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      "Select Data to Export\n(Past Month)",
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
                   ),
-                  TextButton(
-                      child: Text('Yes'),
-                      onPressed: () {
-                        Navigator.pop(context);
-                        _sendWellbeingData(context, friend);
-                      }),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      CheckboxListTile(
+                        title:
+                            const Text('Steps', style: TextStyle(fontSize: 16)),
+                        value: _exportSteps,
+                        onChanged: (bool value) {
+                          setState(() {
+                            _exportSteps = !_exportSteps;
+                          });
+                        },
+                      ),
+                      CheckboxListTile(
+                        title: const Text('Wellbeing Score',
+                            style: TextStyle(fontSize: 16)),
+                        value: _exportWellbeing,
+                        onChanged: (bool value) {
+                          setState(() {
+                            _exportWellbeing = !_exportWellbeing;
+                          });
+                        },
+                      ),
+                      CheckboxListTile(
+                        title: const Text('Sputum Color',
+                            style: TextStyle(fontSize: 16)),
+                        value: _exportSputumColor,
+                        onChanged: (bool value) {
+                          setState(() {
+                            _exportSputumColor = !_exportSputumColor;
+                          });
+                        },
+                      ),
+                      CheckboxListTile(
+                        title: const Text('MRC Dyspnoea Scale Score',
+                            style: TextStyle(fontSize: 16)),
+                        value: _exportBreathlessness,
+                        onChanged: (bool value) {
+                          setState(() {
+                            _exportBreathlessness = !_exportBreathlessness;
+                          });
+                        },
+                      ),
+                      (dataFromDB.length < 5)
+                          ? SizedBox.shrink()
+                          : CheckboxListTile(
+                              title: const Text('Overall Trends (Past 5 weeks)',
+                                  style: TextStyle(fontSize: 16)),
+                              value: _exportOverallTrends,
+                              onChanged: (bool value) {
+                                setState(() {
+                                  _exportOverallTrends = !_exportOverallTrends;
+                                });
+                              },
+                            )
+                    ],
+                  ),
                 ],
-              ));
+              ),
+              actions: <Widget>[
+                SimpleDialogOption(
+                  onPressed: () async {
+                    if ((_exportSteps ||
+                        _exportWellbeing ||
+                        _exportBreathlessness ||
+                        _exportSputumColor ||
+                        _exportOverallTrends)) {
+                      ///TODO Add a call to function to share data
+
+                      _sendWellbeingData(
+                          context,
+                          friend,
+                          _exportSteps,
+                          _exportWellbeing,
+                          _exportSputumColor,
+                          _exportBreathlessness,
+                          _exportOverallTrends);
+                    }
+                  },
+                  child: const Text('Export'),
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text("Cancel"))
+              ],
+            );
+          });
+        });
+  }
 
   Future<Null> _pushGoalPage(BuildContext context, Friend friend) {
     return Navigator.push(context,
@@ -528,6 +637,7 @@ class SupportPageState extends State<SupportPage> {
                       builder: (context) => NudgeProgressPage(friend)));
             } else {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  backgroundColor: Colors.yellow,
                   content:
                       Text("${friend.name} has not sent you any goal yet.")));
             }
@@ -542,6 +652,7 @@ class SupportPageState extends State<SupportPage> {
 
     // friend.read might be null
     final unread = friend.read == 0;
+    print("friend.name: ${friend.name}");
     return Slidable(
       actionPane: SlidableDrawerActionPane(),
       child: ListTile(
@@ -575,24 +686,147 @@ class SupportPageState extends State<SupportPage> {
     );
   }
 
-  Future<void> _sendWellbeingData(BuildContext context, Friend friend) async {
+  /// Edit this function to get appropriate data
+  Future<void> _sendWellbeingData(
+      BuildContext context,
+      Friend friend,
+      bool exportSteps,
+      bool exportWellbeing,
+      bool exportSputumColor,
+      bool exportBreathlessness,
+      bool exportOverallTrends) async {
     final friendKey =
         RSAKeyParser().parse(friend.publicKey) as pointyCastle.RSAPublicKey;
 
-    final List<WellbeingItem> items =
-        await UserWellbeingDB().getLastNDaysAvailable(5);
-    final List<Map<String, int>> mapped = items
-        .map((e) => {
-              'week': e.id,
-              'score': e.wellbeingScore.truncate(),
-              'steps': e.numSteps
-            })
-        .toList(growable: false);
+    String timeMonthYear;
+    Map<String, List<double>> dataHashMap = generateMonthlyHashMapExport();
+    print(dataHashMap);
+    timeMonthYear = 'W';
+
+    List<int> cardIds = [];
+    List<int> queryIds = [];
+
+    if (exportOverallTrends) {
+      queryIds.addAll([0, 1, 2, 3]);
+    }
+    if (exportSteps) {
+      cardIds.add(0);
+      if (!queryIds.contains(0)) {
+        queryIds.add(0);
+      }
+    }
+    if (exportWellbeing) {
+      cardIds.add(1);
+      if (!queryIds.contains(1)) {
+        queryIds.add(1);
+      }
+    }
+    if (exportSputumColor) {
+      cardIds.add(2);
+      if (!queryIds.contains(2)) {
+        queryIds.add(2);
+      }
+    }
+    if (exportBreathlessness) {
+      cardIds.add(3);
+      if (!queryIds.contains(3)) {
+        queryIds.add(3);
+      }
+    }
+
+    double doubuleToTwoSf(double number) {
+      return double.parse(number.toStringAsFixed(2));
+    }
+
+    exportAllData(
+        Map<String, List<double>> hashMap, List<WellbeingItem> dataFromDB) {
+      dataFromDB.forEach((wellbeingItem) {
+        String matchDate = wellbeingItem.date;
+        DateTime dateFromDb = DateTime.parse(wellbeingItem.date);
+        // print("dateFromDb: $dateFromDb");
+
+        if (dateFromDb.weekday != 1) {
+          matchDate = dateFromDb
+              .subtract(Duration(days: dateFromDb.weekday - 1))
+              .toIso8601String()
+              .substring(0, 10);
+        } else {
+          matchDate = dateFromDb.toIso8601String().substring(0, 10);
+        }
+
+        hashMap[matchDate]
+          ..addAll([
+            doubuleToTwoSf((wellbeingItem.numSteps == null)
+                ? 0
+                : wellbeingItem.numSteps / 1000),
+            doubuleToTwoSf((wellbeingItem.wellbeingScore == null)
+                ? 0
+                : wellbeingItem.wellbeingScore),
+            doubuleToTwoSf((wellbeingItem.sputumColour == null)
+                ? 0
+                : wellbeingItem.sputumColour),
+            doubuleToTwoSf((wellbeingItem.mrcDyspnoeaScale == null)
+                ? 0
+                : wellbeingItem.mrcDyspnoeaScale)
+          ]);
+      });
+
+      return hashMap;
+    }
+
+    final List<WellbeingItem> dataFromDB = await UserWellbeingDB()
+        .getLastMonthYearSpecificColumns(
+            ids: queryIds.map((e) => e + 3).toList(), timeframe: timeMonthYear);
+
+    if (exportOverallTrends ||
+        (exportSteps &
+            exportWellbeing &
+            exportSputumColor &
+            exportBreathlessness)) {
+      print("exportAllData got triggered");
+      dataHashMap = exportAllData(dataHashMap, dataFromDB);
+    } else {
+      cardIds.forEach((id) {
+        switch (id) {
+          case 0:
+            dataHashMap = populateWeeklyHashMapWithDataFromDB(
+                dataHashMap, dataFromDB, id);
+            return dataHashMap;
+          case 1:
+            dataHashMap = populateWeeklyHashMapWithDataFromDB(
+                dataHashMap, dataFromDB, id);
+            return dataHashMap;
+          case 2:
+            dataHashMap = populateWeeklyHashMapWithDataFromDB(
+                dataHashMap, dataFromDB, id);
+            return dataHashMap;
+          case 3:
+            dataHashMap = populateWeeklyHashMapWithDataFromDB(
+                dataHashMap, dataFromDB, id);
+            return dataHashMap;
+          case 4:
+        }
+      });
+    }
+
+    if (exportOverallTrends) {
+      cardIds.add(5);
+    }
+
+    print("cardIds: $cardIds");
+    final Map<String, String> mapped = {
+      'ids': cardIds.toString(),
+      'data': json.encode(dataHashMap)
+    };
+
     final jsonString = json.encode(mapped);
+    // print("jsonString: $jsonString");
+    // var test = json.decode(json.decode(jsonString)['data']);
+    // print("test: $test");
 
     final encrypter = Encrypter(RSA(publicKey: friendKey));
     final data = encrypter.encrypt(jsonString).base64;
-
+    print(data);
     final prefs = await SharedPreferences.getInstance();
     final body = json.encode({
       'identifier_from': prefs.getString(USER_IDENTIFIER_KEY),
@@ -600,13 +834,19 @@ class SupportPageState extends State<SupportPage> {
       'identifier_to': friend.identifier,
       'data': data
     });
+    print(body);
+
     http
         .post(Uri.parse(BASE_URL + "/user/message/new"),
             headers: {"Content-Type": "application/json"}, body: body)
         .then((response) {
       final body = json.decode(response.body);
       print(body);
+      Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          elevation: 10,
+          backgroundColor:
+              (body['success'] == false) ? Colors.red : Colors.green,
           content: body['success'] == false
               ? Text("Failed to send.")
               : Text("Sent data to ${friend.name}.")));

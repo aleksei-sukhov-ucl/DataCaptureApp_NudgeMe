@@ -139,9 +139,7 @@ class UserWellbeingDB extends ChangeNotifier {
   Future<List<WellbeingItem>> getLastNDaysAvailable(int n) async {
     final db = await database;
     List<Map> wellbeingMaps = await db.query(_tableName,
-        columns: _columns2,
-        orderBy: " strftime('%d-%m-%Y', ${_columns[1]}) DESC",
-        limit: n);
+        columns: _columns2, orderBy: "${_columns[1]} DESC", limit: n);
 
     // for (var value in wellbeingMaps) {
     //   print("getLastNDays: $value");
@@ -150,7 +148,6 @@ class UserWellbeingDB extends ChangeNotifier {
         .map((wellbeingMap) => WellbeingItem.fromMap(wellbeingMap))
         .toList(growable: false);
 
-    itemList.sort((a, b) => a.id.compareTo(b.id));
     return itemList;
   }
 
@@ -178,9 +175,9 @@ class UserWellbeingDB extends ChangeNotifier {
       // groupBy: "[date]"
     );
 
-    wellbeingMaps.forEach((element) {
-      // print("getLastWeekOfSpecificColumns: $element");
-    });
+    // wellbeingMaps.forEach((element) {
+    //   print("getLastWeekOfSpecificColumns: $element");
+    // });
 
     final itemList = wellbeingMaps
         .map((wellbeingMap) => WellbeingItem.fromMap(wellbeingMap))
@@ -212,17 +209,10 @@ class UserWellbeingDB extends ChangeNotifier {
     final startDate = DateTime.now().toIso8601String().substring(0, 10);
     String endDate = "";
     if (timeframe == "W") {
-      if (DateTime.now().weekday == 7) {
-        endDate = DateTime.now()
-            .subtract(Duration(days: 21))
-            .toIso8601String()
-            .substring(0, 10);
-      } else {
-        endDate = DateTime.now()
-            .subtract(Duration(days: 29 - DateTime.now().weekday))
-            .toIso8601String()
-            .substring(0, 10);
-      }
+      endDate = DateTime.now()
+          .subtract(Duration(days: 27 + DateTime.now().weekday))
+          .toIso8601String()
+          .substring(0, 10);
     } else {
       endDate = DateTime.utc(
               DateTime.now().year - 1, DateTime.now().month, DateTime.now().day)
@@ -238,10 +228,18 @@ class UserWellbeingDB extends ChangeNotifier {
             ORDER BY date
             ''');
 
-    // print("startDate: $startDate");
-    // wellbeingMaps.forEach((element) {
-    //   print("$element");
-    // });
+    print('''
+            SELECT STRFTIME('%$timeframe',date) as IsoSting, date, ${allNeededColumns.join(", ")}
+            FROM $_tableName
+            WHERE date BETWEEN '$endDate' AND '$startDate' 
+            GROUP BY STRFTIME('%$timeframe',date)
+            ORDER BY date
+            ''');
+
+    // print("endDate: $endDate");
+    wellbeingMaps.forEach((element) {
+      print("$element");
+    });
 
     final itemList = wellbeingMaps
         .map((wellbeingMap) => WellbeingItem.fromMap(wellbeingMap))
@@ -275,9 +273,9 @@ class UserWellbeingDB extends ChangeNotifier {
     GROUP BY STRFTIME('%W',date)
     ''');
 
-    // wellbeingMaps.forEach((element) {
-    //   print("$element");
-    // });
+    wellbeingMaps.forEach((element) {
+      print("$element");
+    });
 
     final itemList = wellbeingMaps
         .map((wellbeingMap) => WellbeingItem.fromMap(wellbeingMap))
@@ -317,9 +315,26 @@ class UserWellbeingDB extends ChangeNotifier {
     GROUP BY STRFTIME('%W',date)
     ''');
 
-    // wellbeingMaps.forEach((element) {
-    //   print("$element");
-    // });
+    print('''
+    SELECT STRFTIME('%W',date) as IsoSting,
+    postcode,
+    date,
+    sum(numSteps) as numSteps,
+    avg(wellbeingScore) as wellbeingScore,
+    avg(sputumColour) as sputumColour,
+    avg(mrcDyspnoeaScale) as mrcDyspnoeaScale,
+    speechRateTest,
+    testDuration,
+    audioURL,
+    support_code
+    FROM $_tableName
+    WHERE date BETWEEN '$endDate' AND '$startDate'
+    GROUP BY STRFTIME('%W',date)
+    ''');
+
+    wellbeingMaps.forEach((element) {
+      print("$element");
+    });
 
     final itemList = wellbeingMaps
         .map((wellbeingMap) => WellbeingItem.fromMap(wellbeingMap))
@@ -460,4 +475,6 @@ class WellbeingItem {
     }
     return map;
   }
+
+  add(WellbeingItem wellbeingItem) {}
 }

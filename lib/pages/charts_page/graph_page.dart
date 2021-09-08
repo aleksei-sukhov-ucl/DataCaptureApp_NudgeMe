@@ -6,7 +6,6 @@ import 'package:flutter/widgets.dart';
 import 'package:nudge_me/pages/add_data.dart';
 import 'package:nudge_me/pages/wellbeing_page/wellbeing_page.dart';
 import 'package:nudge_me/shared/cards.dart';
-import 'package:nudge_me/shared/share_export_page.dart';
 import 'package:nudge_me/shared/share_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -27,23 +26,17 @@ class _ChartPageState extends State<ChartPage> {
 
   showEndDate({int cardId, int initialIndex}) {
     if (cardId == 5) {
-      return DateFormat.yMMMMd('en_US').format(DateTime.now()
-          .subtract(Duration(days: 31 - (DateTime.now().weekday))));
+      return DateFormat.yMMMMd('en_US').format(
+          DateTime.now().subtract(Duration(days: 27 + DateTime.now().weekday)));
     } else {
       switch ((cardId == 0) ? initialIndex : (initialIndex + 1)) {
         case 0:
           return DateFormat.yMMMd('en_US')
               .format(DateTime.now().subtract(Duration(days: 6)));
         case 1:
-          DateTime nextDate;
-          if (DateTime.now().weekday == 7) {
-            nextDate = DateTime.now();
-          } else {
-            nextDate = DateTime.now()
-                .subtract(Duration(days: DateTime.now().weekday - 1));
-          }
-          return DateFormat.yMMMMd('en_US')
-              .format(nextDate.subtract(Duration(days: 28)));
+          DateTime nextDate = DateTime.now()
+              .subtract(Duration(days: 27 + DateTime.now().weekday));
+          return DateFormat.yMMMMd('en_US').format(nextDate);
         case 2:
           return DateFormat.yMMMMd('en_US').format(DateTime.utc(
               DateTime.now().year,
@@ -55,6 +48,8 @@ class _ChartPageState extends State<ChartPage> {
 
   @override
   Widget build(BuildContext context) {
+    print("current card id: ${widget.card.cardId}");
+
     /// Share data button
     /// Ref: https://flutter.dev/docs/release/breaking-changes/buttons
     TextButton shareDataButton = TextButton(
@@ -94,6 +89,7 @@ class _ChartPageState extends State<ChartPage> {
 
     /// Toggle Button
     ToggleSwitch timeFrameSelector = ToggleSwitch(
+      key: Key("Toggle"),
       initialLabelIndex: initialIndex,
       minWidth: MediaQuery.of(context).size.width * 0.95,
       minHeight: MediaQuery.of(context).size.height * 0.04,
@@ -159,6 +155,7 @@ class _ChartPageState extends State<ChartPage> {
                       height: MediaQuery.of(context).size.height * 0.5,
                       width: MediaQuery.of(context).size.width * 0.95,
                       child: Card(
+                        key: Key("Graph Card"),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15)),
                         color: Colors.grey[100],
@@ -227,8 +224,7 @@ class _ChartPageState extends State<ChartPage> {
                                           ? Padding(
                                               padding:
                                                   const EdgeInsets.all(15.0),
-                                              child: LineChartTrends(
-                                                  card: widget.card),
+                                              child: LineChartTrends(),
                                             )
                                           : Provider.value(
                                               value: initialIndex,
@@ -254,6 +250,7 @@ class _ChartPageState extends State<ChartPage> {
                 Container(
                   width: MediaQuery.of(context).size.width * 0.95,
                   child: Card(
+                    key: Key("Card Description"),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),

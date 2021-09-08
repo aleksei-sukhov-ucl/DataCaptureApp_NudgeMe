@@ -18,6 +18,7 @@ class SendNudgePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        brightness: Brightness.light,
         title: Text("Nudge ${friend.name} to walk"),
       ),
       body: Center(
@@ -88,14 +89,15 @@ class _StepSelectorState extends State<StepSelector> {
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(
                       Theme.of(context).primaryColor)),
-              onPressed: () {
+              onPressed: () async {
                 final rounded = _roundedStep(value);
                 if (rounded > 0) {
+                  await _nudgeFriend(rounded);
                   Navigator.pop(context);
-                  _nudgeFriend(rounded);
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Cannot set a goal of 0.")));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      backgroundColor: Colors.yellow,
+                      content: Text("Cannot set a goal of 0.")));
                 }
               },
               child: Text("Send"),
@@ -129,7 +131,7 @@ class _StepSelectorState extends State<StepSelector> {
       if (body['success'] == true) {
         // set the goal active (so the sender cannot send another and overwrite
         // their current goal)
-        Provider.of<FriendDB>(context)
+        Provider.of<FriendDB>(context, listen: false)
             .updateActiveNudge(widget.friend.identifier, true);
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Nudged ${widget.friend.name}.")));

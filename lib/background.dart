@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -38,56 +39,92 @@ ScheduledTask prevStepCountKeyInsert;
 /// and refresh friend data
 void initBackground() {
   Workmanager.initialize(callbackDispatcher, isInDebugMode: kDebugMode);
-
-  Workmanager.registerPeriodicTask("pedometer_check_task", PEDOMETER_CHECK_KEY,
-      frequency: Duration(minutes: 15));
-  Workmanager.registerPeriodicTask("refresh_friend_task", REFRESH_FRIEND_KEY,
-      frequency: Duration(minutes: 15), initialDelay: Duration(seconds: 10));
-  Workmanager.registerPeriodicTask("nudge_check_task", NUDGE_CHECK_KEY,
-      frequency: Duration(minutes: 15), initialDelay: Duration(minutes: 1));
+  if (Platform.isAndroid) {
+    try {
+      print("Android initBackground works correctly");
+      Workmanager.registerPeriodicTask(
+          "pedometer_check_task", PEDOMETER_CHECK_KEY,
+          frequency: Duration(minutes: 15));
+      Workmanager.registerPeriodicTask(
+          "refresh_friend_task", REFRESH_FRIEND_KEY,
+          frequency: Duration(minutes: 15),
+          initialDelay: Duration(seconds: 10));
+      Workmanager.registerPeriodicTask("nudge_check_task", NUDGE_CHECK_KEY,
+          frequency: Duration(minutes: 15), initialDelay: Duration(minutes: 1));
+    } catch (e) {
+      stderr.writeln(e);
+    }
+  } else {
+    stderr.writeln("Workmanager task can not run on IOS");
+  }
 }
 
 /// sets up the callback handler for background tasks
 void callbackDispatcher() {
   Workmanager.executeTask((taskName, inputData) async {
     switch (taskName) {
+      case Workmanager.iOSBackgroundTask:
+        stderr.writeln("The iOS background fetch was triggered");
+        pedometer_check();
+        // Timer(Duration(seconds: 10), () {
+        refresh_friend();
+        stderr.writeln("Yeah, refresh_friend() was called after 10 seconds");
+        // });
+        // Timer(Duration(seconds: 60), () {
+        nudge_check();
+        stderr.writeln(
+            "Yeah, nudge_check() was called after 6pod install 10 seconds");
+        // });
+        break;
       case PEDOMETER_CHECK_KEY:
-        final prefs = await SharedPreferences.getInstance();
-        final pedometerPair = prefs.getStringList(PREV_PEDOMETER_PAIR_KEY);
-        assert(pedometerPair.length == 2);
-        final prevTotal = int.parse(pedometerPair.first);
-        final prevDateTime = DateTime.parse(pedometerPair.last);
-        final int currTotal = await Pedometer.stepCountStream.first
-            .then((value) => value.steps)
-            .catchError((_) => 0);
-        if (currTotal > prevTotal || currTotal < prevTotal) {
-          // if steps have increased or the device has been rebooted
-          prefs.setStringList(PREV_PEDOMETER_PAIR_KEY,
-              [currTotal.toString(), DateTime.now().toIso8601String()]);
-        } else if (currTotal == prevTotal &&
-            DateTime.now().difference(prevDateTime) >= Duration(days: 2)) {
-          // if step count hasn't changed in 2 days
-          await initNotification(); // needs to be done since outside app
-          await scheduleNudge();
-          prefs.setStringList(PREV_PEDOMETER_PAIR_KEY,
-              [currTotal.toString(), DateTime.now().toIso8601String()]);
-        }
+        pedometer_check();
         break;
       case REFRESH_FRIEND_KEY:
-        final bool newData = await getLatest();
-
-        if (newData) {
-          await initNotification();
-          await scheduleNewFriendData();
-        }
         break;
       case NUDGE_CHECK_KEY:
-        await refreshNudge(true);
-        await checkIfGoalsCompleted();
+        nudge_check();
         break;
     }
     return Future.value(true); // task handled successfully
   });
+}
+
+void pedometer_check() async {
+  final prefs = await SharedPreferences.getInstance();
+  final pedometerPair = prefs.getStringList(PREV_PEDOMETER_PAIR_KEY);
+  stderr.writeln("pedometerPair: $pedometerPair");
+  assert(pedometerPair.length == 2);
+  final prevTotal = int.parse(pedometerPair.first);
+  final prevDateTime = DateTime.parse(pedometerPair.last);
+  final int currTotal = await Pedometer.stepCountStream.first
+      .then((value) => value.steps)
+      .catchError((_) => 0);
+  if (currTotal > prevTotal || currTotal < prevTotal) {
+    // if steps have increased or the device has been rebooted
+    prefs.setStringList(PREV_PEDOMETER_PAIR_KEY,
+        [currTotal.toString(), DateTime.now().toIso8601String()]);
+  } else if (currTotal == prevTotal &&
+      DateTime.now().difference(prevDateTime) >= Duration(days: 2)) {
+    // if step count hasn't changed in 2 days
+    await initNotification(); // needs to be done since outside app
+    await scheduleNudge();
+    prefs.setStringList(PREV_PEDOMETER_PAIR_KEY,
+        [currTotal.toString(), DateTime.now().toIso8601String()]);
+  }
+}
+
+void refresh_friend() async {
+  final bool newData = await getLatest();
+
+  if (newData) {
+    await initNotification();
+    await scheduleNewFriendData();
+  }
+}
+
+void nudge_check() async {
+  await refreshNudge(true);
+  await checkIfGoalsCompleted();
 }
 
 /// POSTs to the back-end and updates the local DB if needed
@@ -97,6 +134,7 @@ Future<Null> refreshNudge(bool shouldInitNotifications) async {
     'identifier': prefs.getString(USER_IDENTIFIER_KEY),
     'password': prefs.getString(USER_PASSWORD_KEY),
   });
+  stderr.writeln("body: $body");
 
   await http
       .post(Uri.parse(BASE_URL + "/user/nudge"),
@@ -254,13 +292,13 @@ void schedulePublish() {
       if (!await UserWellbeingDB()
           .dataPastWeekToPublish()
           .then((list) => list.isEmpty)) {
-        _publishData();
+        publishData();
       } else {
         print("DB is empty");
       }
     }
   });
-  _publishData();
+  publishData();
 }
 
 void cancelPublish() {
@@ -332,12 +370,12 @@ insertData({int numSteps}) async {
       supportCode: userSupportCode);
 }
 
-void _publishData() async {
+void publishData() async {
   /// Since we log the steps every day and allow the user to "add data"
   /// we will be getting last week worth of data
   String serverAudioUrl;
   print("Data Sent");
-  final items = await UserWellbeingDB().getLastNDaysAvailable(1);
+  final items = await UserWellbeingDB().dataPastWeekToPublish();
   print("items: $items");
   try {
     final item = items[0];
@@ -345,8 +383,8 @@ void _publishData() async {
       print("item.audioURL: ${item.audioURL}");
       if (await File(item.audioURL).exists()) {
         print("File Exists");
-        var request = http.MultipartRequest('POST',
-            Uri.parse("https://health.nudgemehealth.co.uk/upload_audio"));
+        var request = http.MultipartRequest(
+            'POST', Uri.parse(BASE_URL + "/upload_audio"));
 
         request.files
             .add(await http.MultipartFile.fromPath('audioFile', item.audioURL));
@@ -393,7 +431,7 @@ void _publishData() async {
     print("No data for the past week to be send up to the server!");
   }
 
-  /// Legacy code for "seeding accurate data 70% of the time
+  /// Legacy code for sending accurate data 70% of the time
   // final int anonScore = _anonymizeScore(item.wellbeingScore);
   // int1/int2 is a double in dart
   // final double normalizedSteps =
@@ -405,78 +443,79 @@ void _publishData() async {
 
 /// Lies 30% of the time. Okay technically it lies 3/10 * 10/11 = 3/11 of the
 /// time since there's a chance it could just pick the true score anyway
-int _anonymizeScore(double score) {
-  final random = Random();
-  return (random.nextInt(100) > 69) ? random.nextInt(11) : score.truncate();
-}
+// int _anonymizeScore(double score) {
+//   final random = Random();
+//   return (random.nextInt(100) > 69) ? random.nextInt(11) : score.truncate();
+// }
 
-publishData() async {
-  /// Since we log the steps every day and allow the user to "add data"
-  /// we will be getting last week worth of data
-  String serverAudioUrl;
-  print("Data Sent");
-  final items = await UserWellbeingDB().getLastNDaysAvailable(1);
-  print("items: $items");
-  try {
-    final item = items[0];
-    if (item.audioURL != null) {
-      print("item.audioURL: ${item.audioURL}");
-      if (await File(item.audioURL).exists()) {
-        print("File Exists");
-        var request = http.MultipartRequest('POST',
-            Uri.parse("https://health.nudgemehealth.co.uk/upload_audio"));
-
-        request.files
-            .add(await http.MultipartFile.fromPath('audioFile', item.audioURL));
-
-        var res = await request.send();
-        print("res.statusCode:${res.statusCode}");
-        var resBody = await http.Response.fromStream(res);
-        serverAudioUrl = jsonDecode(resBody.body);
-        print("serverAudioUrl:$serverAudioUrl");
-      }
-    }
-
-    final body = jsonEncode({
-      "postCode": item.postcode,
-      "weeklySteps": item.numSteps,
-      "wellbeingScore": item.wellbeingScore,
-      "sputumColour": item.sputumColour,
-      "mrcDyspnoeaScale": item.mrcDyspnoeaScale,
-      // "errorRate": errorRate.truncate(),
-      "supportCode": item.supportCode,
-      "date_sent": item.date,
-      "speechRateTest": item.speechRateTest,
-      "testDuration": item.testDuration,
-      "audioUrl": serverAudioUrl
-
-      ///N.B. The weeks are represented starting from monday of every week
-    });
-
-    print("Sending body $body");
-    http
-        .post(Uri.parse(BASE_URL + "/add-wellbeing-record"),
-            headers: {"Content-Type": "application/json"}, body: body)
-        .then((response) {
-      print("Response status: ${response.statusCode}");
-      print("Response body: ${response.body}");
-      final asJson = jsonDecode(response.body);
-      // could be null:
-      if (asJson['success'] != true) {
-        print("Something went wrong.");
-      }
-    });
-  } catch (err) {
-    print(err);
-    print("No data for the past week to be send up to the server!");
-  }
-
-  /// Legacy code for "seeding accurate data 70% of the time
-  // final int anonScore = _anonymizeScore(item.wellbeingScore);
-  // int1/int2 is a double in dart
-  // final double normalizedSteps =
-  //     (item.numSteps / RECOMMENDED_STEPS_IN_WEEK) * 10.0;
-  // final double errorRate = (normalizedSteps > anonScore)
-  //     ? normalizedSteps - anonScore
-  //     : anonScore - normalizedSteps;
-}
+///TODO: Delete This
+// publishData() async {
+//   /// Since we log the steps every day and allow the user to "add data"
+//   /// we will be getting last week worth of data
+//   String serverAudioUrl;
+//   print("Data Sent");
+//   final items = await UserWellbeingDB().getLastNDaysAvailable(1);
+//   print("items: $items");
+//   try {
+//     final item = items[0];
+//     if (item.audioURL != null) {
+//       print("item.audioURL: ${item.audioURL}");
+//       if (await File(item.audioURL).exists()) {
+//         print("File Exists");
+//         var request = http.MultipartRequest('POST',
+//             Uri.parse("https://health.nudgemehealth.co.uk/upload_audio"));
+//
+//         request.files
+//             .add(await http.MultipartFile.fromPath('audioFile', item.audioURL));
+//
+//         var res = await request.send();
+//         print("res.statusCode:${res.statusCode}");
+//         var resBody = await http.Response.fromStream(res);
+//         serverAudioUrl = jsonDecode(resBody.body);
+//         print("serverAudioUrl:$serverAudioUrl");
+//       }
+//     }
+//
+//     final body = jsonEncode({
+//       "postCode": item.postcode,
+//       "weeklySteps": item.numSteps,
+//       "wellbeingScore": item.wellbeingScore,
+//       "sputumColour": item.sputumColour,
+//       "mrcDyspnoeaScale": item.mrcDyspnoeaScale,
+//       // "errorRate": errorRate.truncate(),
+//       "supportCode": item.supportCode,
+//       "date_sent": item.date,
+//       "speechRateTest": item.speechRateTest,
+//       "testDuration": item.testDuration,
+//       "audioUrl": serverAudioUrl
+//
+//       ///N.B. The weeks are represented starting from monday of every week
+//     });
+//
+//     print("Sending body $body");
+//     http
+//         .post(Uri.parse(BASE_URL + "/add-wellbeing-record"),
+//             headers: {"Content-Type": "application/json"}, body: body)
+//         .then((response) {
+//       print("Response status: ${response.statusCode}");
+//       print("Response body: ${response.body}");
+//       final asJson = jsonDecode(response.body);
+//       // could be null:
+//       if (asJson['success'] != true) {
+//         print("Something went wrong.");
+//       }
+//     });
+//   } catch (err) {
+//     print(err);
+//     print("No data for the past week to be send up to the server!");
+//   }
+//
+//   /// Legacy code for "seeding accurate data 70% of the time
+//   // final int anonScore = _anonymizeScore(item.wellbeingScore);
+//   // int1/int2 is a double in dart
+//   // final double normalizedSteps =
+//   //     (item.numSteps / RECOMMENDED_STEPS_IN_WEEK) * 10.0;
+//   // final double errorRate = (normalizedSteps > anonScore)
+//   //     ? normalizedSteps - anonScore
+//   //     : anonScore - normalizedSteps;
+// }

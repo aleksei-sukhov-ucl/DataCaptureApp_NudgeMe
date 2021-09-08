@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:nudge_me/pages/charts_page/bar_graph.dart';
 import 'package:nudge_me/pages/charts_page/line_graph.dart';
 import 'package:nudge_me/shared/pdf_page.dart';
@@ -53,7 +54,7 @@ class PDFExportPage extends StatelessWidget {
               child: Stack(children: [
                 Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: LineChartTrends(card: cards[4]),
+                  child: LineChartTrends(),
                 )
               ]),
             ),
@@ -61,18 +62,20 @@ class PDFExportPage extends StatelessWidget {
           Container(
             width: 340,
             child: Card(
+              key: Key("Card Description"),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
               ),
               color: Colors.grey[100],
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [cards[4].cardDescription],
-                ),
-              ),
+                  padding: const EdgeInsets.all(20.0),
+                  child: Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [cards[4].cardDescription],
+                    ),
+                  )),
             ),
           )
         ],
@@ -170,43 +173,60 @@ class PDFExportPage extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) async => await getImages(await _getAllKeys()),
     );
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              CardToImage(builder: (key) {
-                this.exportStepsKey = key;
-                return (exportSteps)
-                    ? barGraph(0, (timeFrame + 1))
-                    : SizedBox.shrink();
-              }),
-              CardToImage(builder: (key) {
-                this.exportWellbeingKey = key;
-                return (exportWellbeing)
-                    ? barGraph(1, timeFrame)
-                    : SizedBox.shrink();
-              }),
-              CardToImage(builder: (key) {
-                this.exportSputumColorKey = key;
-                return (exportSputumColor)
-                    ? barGraph(2, timeFrame)
-                    : SizedBox.shrink();
-              }),
-              CardToImage(builder: (key) {
-                this.exportBreathlessnessKey = key;
-                return (exportBreathlessness)
-                    ? barGraph(3, timeFrame)
-                    : SizedBox.shrink();
-              }),
-              CardToImage(builder: (key) {
-                this.exportOverallTrendsKey = key;
-                return (exportOverallTrends)
-                    ? trendsCardLayout()
-                    : SizedBox.shrink();
-              }),
-            ],
+
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarBrightness: Brightness.light));
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark,
+      child: Scaffold(
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                CardToImage(
+                    key: Key("exportSteps"),
+                    builder: (key) {
+                      this.exportStepsKey = key;
+                      return (exportSteps)
+                          ? barGraph(0, (timeFrame + 1))
+                          : SizedBox.shrink();
+                    }),
+                CardToImage(
+                    key: Key("exportWellbeing"),
+                    builder: (key) {
+                      this.exportWellbeingKey = key;
+                      return (exportWellbeing)
+                          ? barGraph(1, timeFrame)
+                          : SizedBox.shrink();
+                    }),
+                CardToImage(
+                    key: Key("exportSputumColor"),
+                    builder: (key) {
+                      this.exportSputumColorKey = key;
+                      return (exportSputumColor)
+                          ? barGraph(2, timeFrame)
+                          : SizedBox.shrink();
+                    }),
+                CardToImage(
+                    key: Key("exportBreathlessness"),
+                    builder: (key) {
+                      this.exportBreathlessnessKey = key;
+                      return (exportBreathlessness)
+                          ? barGraph(3, timeFrame)
+                          : SizedBox.shrink();
+                    }),
+                CardToImage(
+                    key: Key("exportOverallTrends"),
+                    builder: (key) {
+                      this.exportOverallTrendsKey = key;
+                      return (exportOverallTrends)
+                          ? trendsCardLayout()
+                          : SizedBox.shrink();
+                    }),
+              ],
+            ),
           ),
         ),
       ),

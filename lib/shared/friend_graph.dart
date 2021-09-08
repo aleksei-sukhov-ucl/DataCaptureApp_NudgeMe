@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:charts_flutter/flutter.dart' as charts;
 
 import 'package:flutter/material.dart';
+import 'package:nudge_me/shared/bar_graph_shared.dart';
+import 'package:nudge_me/shared/cards.dart';
+import 'package:nudge_me/shared/line_graph_shared.dart';
 
 /// [StatelessWidget] that behaves very similarly to [WellbeingGraph].
 /// It mainly parses and interprets the wellbeing data differently. Also there
@@ -18,57 +21,156 @@ class FriendGraph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final keyCardForLineGraph = Container(
+      height: MediaQuery.of(context).size.height * 0.3,
+      width: MediaQuery.of(context).size.width * 0.95,
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        color: Colors.grey[100],
+        child: Stack(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Trends",
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Padding(
+                  //   padding:
+                  //   const EdgeInsets.fromLTRB(0, 10, 0, 20),
+                  //   child: Row(
+                  //     children: [
+                  //       Text(
+                  //           showEndDate(
+                  //               cardId: widget.card.cardId,
+                  //               initialIndex: initialIndex),
+                  //           style: Theme.of(context)
+                  //               .textTheme
+                  //               .bodyText2),
+                  //       Icon(Icons.arrow_forward),
+                  //       Text(
+                  //           DateFormat.yMMMMd('en_US')
+                  //               .format(DateTime.now()),
+                  //           style: Theme.of(context)
+                  //               .textTheme
+                  //               .bodyText2),
+                  //     ],
+                  //   ),
+                  // ),
+                  Container(
+                    child: Expanded(
+                      child: cards[4].cardDescription,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
     return FutureBuilder(
       future: friendData,
       builder: (ctx, dat) {
         if (dat.hasData) {
           String data = dat.data;
+          // print("data: $data");
           if (data == "") {
             return Text("They haven't sent you anything.");
           }
-          List<Map<String, dynamic>> decoded = (jsonDecode(data) as List)
-              // need to typecast each item
-              .map((it) => it as Map<String, dynamic>)
-              .toList();
-          final seriesList = _getSeriesList(decoded);
+          List<Widget> graphs = [];
+          Map<String, dynamic> dataReceived = jsonDecode(data);
+          // print(dataReceived);
 
-          return charts.BarChart(
-            seriesList,
-            animate: animate,
-            barGroupingType: charts.BarGroupingType.grouped,
-            // 'tick counts' used to match grid lines
-            primaryMeasureAxis: charts.NumericAxisSpec(
-                tickProviderSpec:
-                    charts.BasicNumericTickProviderSpec(desiredTickCount: 3)),
-            secondaryMeasureAxis: charts.NumericAxisSpec(
-              tickProviderSpec:
-                  charts.BasicNumericTickProviderSpec(desiredTickCount: 2),
-            ),
-            behaviors: [
-              new charts.SeriesLegend(), // adds labels to colors
-              // This should force the wellbeing score axis to go up to 10:
-              charts.RangeAnnotation([
-                charts.RangeAnnotationSegment(
-                  8,
-                  10,
-                  charts.RangeAnnotationAxisType.measure,
-                  color: charts.MaterialPalette.transparent,
-                ),
-                charts.RangeAnnotationSegment(
-                  7000, // min recommended weekly steps
-                  70000, // upper bound recommended weekly steps
-                  charts.RangeAnnotationAxisType.measure,
-                  color: charts.MaterialPalette.green.makeShades(10)[7],
-                  axisId: 'secondaryMeasureAxisId', // for steps axis
-                ),
-              ]),
-              // using title as axes label:
-              new charts.ChartTitle('Week Number',
-                  behaviorPosition: charts.BehaviorPosition.bottom,
-                  titleOutsideJustification:
-                      charts.OutsideJustification.middleDrawArea),
-              new charts.PanAndZoomBehavior(),
-            ],
+          final List<dynamic> ids = jsonDecode(dataReceived['ids']).toList();
+          final Map<String, dynamic> rawDataForBarchart =
+              json.decode(dataReceived['data']);
+
+          print("ids: $ids");
+
+          List<int> zeros = List.filled(ids.length, 0);
+          rawDataForBarchart.forEach((key, value) {
+            if (value.isEmpty) {
+              rawDataForBarchart[key] = zeros;
+            }
+          });
+
+          ///Check if all data export exists
+          int idsLength;
+          if (ids.contains(5)) {
+            idsLength = ids.length - 1;
+          } else {
+            idsLength = ids.length;
+          }
+
+          if (ids.contains(5)) {
+            Map<String, List<double>> hashMapForBarChart = {};
+
+            rawDataForBarchart.forEach((key, value) {
+              // print(List<double>.from(rawDataForBarchart[key]));
+              hashMapForBarChart[key] =
+                  List<double>.from(rawDataForBarchart[key]);
+            });
+            graphs.add(
+                LineChartTrendsShared(hashMapForLineChart: hashMapForBarChart));
+            graphs.add(keyCardForLineGraph);
+          }
+
+          if (ids.contains(0) ||
+              ids.contains(1) ||
+              ids.contains(2) ||
+              ids.contains(3)) {
+            print("idsLength:$idsLength");
+            print(rawDataForBarchart);
+            for (var i = 0; i < idsLength; i++) {
+              print("i:$i");
+              Map<String, double> hashMapForBarChart = {};
+              rawDataForBarchart.forEach((key, value) {
+                print("value[$i]: ${value[i]}");
+                if (ids.contains(5)) {
+                  hashMapForBarChart[key] =
+                      double.parse(value[ids[i]].toString());
+                } else {
+                  hashMapForBarChart[key] = double.parse(value[i].toString());
+                }
+              });
+              print("hashMapForBarChart: $hashMapForBarChart");
+              // print(hashMapForBarChart);
+              graphs.add(SharedBarChart(
+                  cardId: ids[i],
+                  hashMapForBarChart: hashMapForBarChart,
+                  card: cards[ids[i]]));
+            }
+          }
+
+          print("ids.length: ${ids.length}");
+          print("graphs:$graphs");
+
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.65,
+            width: MediaQuery.of(context).size.width * 0.95,
+            child: ListView.builder(
+                itemCount: graphs.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                      height: MediaQuery.of(context).size.height * 0.4,
+                      width: MediaQuery.of(context).size.width * 0.95,
+                      child: graphs[index]);
+                }),
           );
         } else if (dat.hasError) {
           print(dat.error);
@@ -77,27 +179,5 @@ class FriendGraph extends StatelessWidget {
         return LinearProgressIndicator();
       },
     );
-  }
-
-  /// Returns the series that the charting library can use to graph the data
-  List<charts.Series<Map, String>> _getSeriesList(
-      List<Map<String, dynamic>> json) {
-    final scoreSeries = new charts.Series<Map, String>(
-      id: 'Score',
-      colorFn: (_, __) =>
-          charts.ColorUtil.fromDartColor(Color.fromARGB(255, 182, 125, 226)),
-      domainFn: (Map item, _) => item['week'].toString(),
-      measureFn: (Map item, _) => item['score'],
-      data: json,
-    );
-    final stepSeries = new charts.Series<Map, String>(
-      id: 'Steps',
-      colorFn: (_, __) =>
-          charts.ColorUtil.fromDartColor(Color.fromARGB(255, 0, 74, 173)),
-      domainFn: (Map a, _) => a['week'].toString(),
-      measureFn: (Map a, _) => a['steps'],
-      data: json,
-    )..setAttribute(charts.measureAxisIdKey, 'secondaryMeasureAxisId');
-    return [scoreSeries, stepSeries];
   }
 }

@@ -29,7 +29,7 @@ class LineChartTileState extends State<LineChartTile> {
         bottomTitles: SideTitles(
           showTitles: false,
           reservedSize: 22,
-          getTextStyles: (value) => const TextStyle(
+          getTextStyles: (context, value) => const TextStyle(
             color: Color.fromRGBO(1, 1, 1, 1),
             fontWeight: FontWeight.bold,
             fontSize: 16,
@@ -49,7 +49,7 @@ class LineChartTileState extends State<LineChartTile> {
         ),
         leftTitles: SideTitles(
           showTitles: false,
-          getTextStyles: (value) => const TextStyle(
+          getTextStyles: (context, value) => const TextStyle(
             color: Color(0xff75729e),
             fontWeight: FontWeight.bold,
             fontSize: 14,

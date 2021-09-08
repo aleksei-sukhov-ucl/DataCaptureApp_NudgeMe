@@ -16,7 +16,6 @@ void main() {
     ));
 
     expect(find.text("Scan their QR code"), findsOneWidget);
-    expect(find.text("Enter their name"), findsOneWidget);
   });
 
   testWidgets('Displays QR view by default', (WidgetTester tester) async {

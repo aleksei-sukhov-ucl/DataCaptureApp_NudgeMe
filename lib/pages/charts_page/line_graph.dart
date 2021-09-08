@@ -3,7 +3,6 @@ import 'dart:ui';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:nudge_me/model/user_model.dart';
@@ -16,11 +15,6 @@ import 'package:ml_preprocessing/ml_preprocessing.dart';
 import 'package:moving_average/moving_average.dart';
 
 class LineChartTrends extends StatefulWidget {
-  final CardClass card;
-  final int initialIndex;
-  const LineChartTrends({Key key, this.card, this.initialIndex})
-      : super(key: key);
-
   @override
   _LineChartTrendsState createState() => _LineChartTrendsState();
 }
@@ -62,7 +56,7 @@ class _LineChartTrendsState extends State<LineChartTrends> {
             rotateAngle: 45,
             showTitles: true,
             reservedSize: MediaQuery.of(context).size.width * 0.07,
-            getTextStyles: (value) => TextStyle(
+            getTextStyles: (context, value) => TextStyle(
                   color: Color.fromRGBO(1, 1, 1, 1),
                   fontSize: 12,
                 ),
@@ -80,7 +74,7 @@ class _LineChartTrendsState extends State<LineChartTrends> {
           margin: 20,
           reservedSize: MediaQuery.of(context).size.width * 0.055,
           interval: 0.25,
-          getTextStyles: (value) => const TextStyle(
+          getTextStyles: (context, value) => const TextStyle(
             color: Color(0xff75729e),
             fontWeight: FontWeight.bold,
             fontSize: 12,
@@ -122,14 +116,6 @@ class _LineChartTrendsState extends State<LineChartTrends> {
 
   @override
   Widget build(BuildContext context) {
-    // Provider.of<UserWellbeingDB>(context).getOverallTrendsForPastFourMonth();
-    Provider.of<UserWellbeingDB>(context, listen: true)
-        .dataPastWeekToPublish()
-        .then((value) {
-      print(
-          "${value[0].numSteps} || ${value[0].wellbeingScore} || ${value[0].sputumColour}");
-    });
-
     /// Future Builder
     final lineChartTrends = FutureBuilder(
         future: _getFutureTrends(),
@@ -139,7 +125,8 @@ class _LineChartTrendsState extends State<LineChartTrends> {
           /// Process indicator for data to be loaded up
           while (snapshot.connectionState == ConnectionState.waiting) {
             print("Snapshot is waiting....");
-            return loadingIndicator();
+            return Container(
+                height: 100, width: 100, child: loadingIndicator());
           }
 
           if (snapshot.hasData) {
@@ -184,12 +171,19 @@ class _LineChartTrendsState extends State<LineChartTrends> {
 
                 /// With Moving Average
                 dataFromDB.forEach((wellbeingItem) {
-                  dataSteps.add(wellbeingItem.numSteps.toDouble());
-                  dataWellbeingScore
-                      .add(wellbeingItem.wellbeingScore.toDouble());
-                  datasputumColour.add(wellbeingItem.sputumColour.toDouble());
-                  datamrcDyspnoeaScale
-                      .add(wellbeingItem.mrcDyspnoeaScale.toDouble());
+                  dataSteps.add((wellbeingItem.numSteps == null)
+                      ? 0
+                      : wellbeingItem.numSteps.toDouble());
+                  dataWellbeingScore.add((wellbeingItem.wellbeingScore == null)
+                      ? 0
+                      : wellbeingItem.wellbeingScore.toDouble());
+                  datasputumColour.add((wellbeingItem.sputumColour == null)
+                      ? 0
+                      : wellbeingItem.sputumColour.toDouble());
+                  datamrcDyspnoeaScale.add(
+                      (wellbeingItem.mrcDyspnoeaScale == null)
+                          ? 0
+                          : wellbeingItem.mrcDyspnoeaScale.toDouble());
                   // dataspeechRate.add(wellbeingItem.speechRate.toDouble());
                 });
 
@@ -235,7 +229,7 @@ class _LineChartTrendsState extends State<LineChartTrends> {
                 List<FlSpot> lineChartBarDataWellbeingScore = [];
                 List<FlSpot> lineChartBarDatasputumColour = [];
                 List<FlSpot> lineChartBarDatamrcDyspnoeaScale = [];
-                List<FlSpot> lineChartBarDataspeechRate = [];
+                // List<FlSpot> lineChartBarDataspeechRate = [];
 
                 /// No Moving Average
                 // List listOfMin = [
@@ -447,12 +441,11 @@ class _LineChartTrendsState extends State<LineChartTrends> {
                     spots: lineChartBarDatamrcDyspnoeaScale,
                     color: Color.fromRGBO(138, 127, 245, 1),
                   ),
-                  makeLinesBarData(
-                    spots: lineChartBarDataspeechRate,
-                    color: Color.fromRGBO(241, 139, 128, 1.0),
-                  )
+                  // makeLinesBarData(
+                  //   spots: lineChartBarDataspeechRate,
+                  //   color: Color.fromRGBO(241, 139, 128, 1.0),
+                  // )
                 ];
-                print(DateTime.parse(dataFromDB.last.date));
                 return LineChart(lineChartData(
                     data: data,
                     minX: minX,

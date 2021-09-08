@@ -60,7 +60,7 @@ class AddFriendPageState extends State<AddFriendPage> {
       Step(
           title: Text("Scan their QR code"),
           subtitle: Text(
-              "1. Ask the person to click ‘My Identity’ on their NudgeMe Network page.\n" +
+              "1. Ask the person to click ‘My Identity’ on their NudgeShare Network page.\n" +
                   "2. Point the camera below at their code.\n"),
           content: widget.identifier == null
               ? Container(
@@ -108,6 +108,7 @@ class AddFriendPageState extends State<AddFriendPage> {
 
                     if (identifier.length == 0 || publicKey.length == 0) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        backgroundColor: Colors.yellow,
                         content: Text("Invalid QR code or URL."),
                       ));
                       return;
@@ -116,12 +117,14 @@ class AddFriendPageState extends State<AddFriendPage> {
                     if (await Provider.of<FriendDB>(context, listen: false)
                         .isIdentifierPresent(identifier)) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        backgroundColor: Colors.yellow,
                         content: Text("This person has already been added."),
                       ));
                     } else if (identifier ==
                         await SharedPreferences.getInstance().then(
                             (value) => value.getString(USER_IDENTIFIER_KEY))) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        backgroundColor: Colors.yellow,
                         content: Text("You cannot add yourself."),
                       ));
                     } else {
@@ -152,7 +155,7 @@ class AddFriendPageState extends State<AddFriendPage> {
     final stepper = Stepper(
       steps: _steps,
       currentStep: _currentStep,
-      controlsBuilder: _getControls,
+      // controlsBuilder: _getControls,
     );
 
     return Scaffold(

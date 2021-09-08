@@ -6,17 +6,17 @@ import 'package:nudge_me/shared/cards.dart';
 import 'package:nudge_me/shared/circle_progress.dart';
 import 'package:nudge_me/pages/wellbeing_page/speech_rate_tile.dart';
 import 'package:nudge_me/pages/wellbeing_page/trends_tile.dart';
+import 'package:nudge_me/shared/loading_indicator.dart';
 import 'package:nudge_me/shared/wellbeing_circle.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../background.dart';
+// import '../../background.dart';
 import '../../main.dart';
 
 const URL_USER_MANUAL =
-    'https://uclcomputerscience.github.io/COMP0016_2020_21_Team26/'
-    'pdfs/usermanual.pdf';
+    'https://aleksei-sukhov-ucl.github.io/NudgeMe_User_Manual.pdf';
 
 /// Displays current Wellbeing Score, steps and all additional metrics this week
 class WellbeingPage extends StatefulWidget {
@@ -56,19 +56,19 @@ class _WellbeingPageState extends State<WellbeingPage> {
   }
 
   /// TODO: DELETE THIS
-  _getAllshared() async {
-    final prefs = await SharedPreferences.getInstance();
-    final keys = prefs.getKeys();
-
-    final prefsMap = Map<String, dynamic>();
-    for (String key in keys) {
-      prefsMap[key] = prefs.get(key);
-    }
-
-    prefsMap.forEach((key, value) {
-      print("key: $key | value: $value");
-    });
-  }
+  // _getAllshared() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final keys = prefs.getKeys();
+  //
+  //   final prefsMap = Map<String, dynamic>();
+  //   for (String key in keys) {
+  //     prefsMap[key] = prefs.get(key);
+  //   }
+  //
+  //   prefsMap.forEach((key, value) {
+  //     print("key: $key | value: $value");
+  //   });
+  // }
 
   _getFutureLatestData() async {
     return await Provider.of<UserWellbeingDB>(context, listen: true)
@@ -83,31 +83,10 @@ class _WellbeingPageState extends State<WellbeingPage> {
   // GlobalKey _lastWeekWBTutorialKey = GlobalObjectKey("laskweek_wb");
   // GlobalKey _stepsTutorialKey = GlobalObjectKey("steps");
 
-  /// TODO: Add tutorial to the wellbeing page
+  /// Additionally a tutorial to the wellbeing page can be added
   /// Card specific visualisations
   @override
   Widget build(BuildContext context) {
-    // print("05 11 * * 0 - 6");
-    // print("Current Date and time: ${DateTime.now()}");
-    // Provider.of<UserWellbeingDB>(context)
-    //     .getLastNDaysAvailable(8)
-    //     .then((items) {
-    //   items.reversed.forEach((element) {
-    //     print(
-    //         "${element.date} || ${element.speechRateTest} || ${element.testDuration} || ${element.audioURL}");
-    //   });
-    // });
-    // Provider.of<UserWellbeingDB>(context)
-    //     .getLastNDaysAvailable(1)
-    //     .then((items) {
-    //   items.forEach((element) {
-    //     print(
-    //         "${element.date} || ${element.speechRateTest} || ${element.testDuration} || ${element.audioURL}");
-    //   });
-    // });
-
-    publishData();
-
     /// Pop-up banner (widget) to notify of the pedometer not working
     final Widget warningBanner = MaterialBanner(
       backgroundColor: Colors.white,
@@ -159,10 +138,11 @@ class _WellbeingPageState extends State<WellbeingPage> {
           case 1:
             lastItemsList.forEach((element) {
               if (element.wellbeingScore != null) {
+                // print("element.wellbeingScore: ${element.wellbeingScore}");
                 lastWellbeingScore = element.wellbeingScore;
               }
             });
-            print("print(lastWellbeingScore): $lastWellbeingScore");
+            // print("print(lastWellbeingScore): $lastWellbeingScore");
             return WellbeingCircle(
               score: lastWellbeingScore.truncate(),
             );
@@ -174,7 +154,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
                 lastSputumColour = element.sputumColour;
               }
             });
-            print("lastSputumColour: $lastSputumColour");
+            // print("lastSputumColour: $lastSputumColour");
             return WellbeingCircle(
                 score: lastSputumColour.truncate(),
                 firstColor: card.color,
@@ -217,6 +197,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
               if (snapshot.hasData) {
                 print("Future Builder snapshot.hasData = True");
                 final lastTotalSteps = int.parse(snapshot.data.first);
+                print(lastTotalSteps);
                 return StreamBuilder(
                   stream: widget.currentStepValueStream,
                   builder: (context, snapshot) {
@@ -258,7 +239,8 @@ class _WellbeingPageState extends State<WellbeingPage> {
                 return Text("Error");
               }
               print("Future Builder has no data:");
-              return CircularProgressIndicator();
+              return loadingIndicator();
+              // return Text("Pedometer is unavailable! Future Builder Error");
             });
       } else {
         return FutureBuilder(
@@ -285,7 +267,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: MediaQuery.of(context).size.width /
-              (MediaQuery.of(context).size.height / 1.7),
+              (MediaQuery.of(context).size.height / 1.53),
         ),
         itemBuilder: (BuildContext context, int index) {
           // print(cards[index].units);
@@ -299,54 +281,59 @@ class _WellbeingPageState extends State<WellbeingPage> {
               margin: EdgeInsets.fromLTRB(8, 8, 8, 8),
 
               /// Padding for card contents
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Container(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          widget.cards[index].cardIcon,
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(6, 0, 0, 0),
-                              child: Text(
-                                widget.cards[index].titleOfCard,
-                                style:
-                                    Theme.of(context).textTheme.bodyText2.merge(
-                                          TextStyle(
-                                            fontWeight: FontWeight.w800,
-                                          ),
+              child: Container(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Container(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            widget.cards[index].cardIcon,
+                            Expanded(
+                              flex: 1,
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(6, 0, 0, 0),
+                                child: Text(
+                                  widget.cards[index].titleOfCard,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText2
+                                      .merge(
+                                        TextStyle(
+                                          fontWeight: FontWeight.w800,
                                         ),
+                                      ),
+                                ),
                               ),
                             ),
+                          ],
+                        ),
+                        height: 40,
+                      ),
+
+                      /// Padding for visualisation
+                      _getCardVisualisation(widget.cards[index]),
+
+                      ///"View more >" text
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Text(
+                            'View More',
+                            style: TextStyle(fontSize: 8),
+                          ),
+                          Icon(
+                            Icons.keyboard_arrow_right,
+                            size: 8,
                           ),
                         ],
                       ),
-                      height: 40,
-                    ),
-
-                    /// Padding for visualisation
-                    _getCardVisualisation(widget.cards[index]),
-
-                    ///"View more >" text
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        Text(
-                          'View More',
-                          style: TextStyle(fontSize: 8),
-                        ),
-                        Icon(
-                          Icons.keyboard_arrow_right,
-                          size: 8,
-                        ),
-                      ],
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -359,8 +346,6 @@ class _WellbeingPageState extends State<WellbeingPage> {
             },
           );
         });
-
-    schedulePublish();
 
     // UserWellbeingDB().dataPastWeekToPublish().then((items) {
     //   print(UserWellbeingDB);
@@ -389,26 +374,27 @@ class _WellbeingPageState extends State<WellbeingPage> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("NudgeMe",
-                        style: Theme.of(context).textTheme.headline1),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(150, 0, 0, 0),
-                      child: IconButton(
-                        onPressed: () => launch(URL_USER_MANUAL),
-                        icon: Icon(Icons.help_outline),
-                        color: Colors.blue,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Text("NudgeShare",
+                          style: Theme.of(context).textTheme.headline1),
+                    ),
+                    IconButton(
+                      onPressed: () => launch(URL_USER_MANUAL),
+                      icon: Icon(Icons.help_outline),
+                      color: Colors.blue,
                     )
                   ],
                 ),
               ),
+
               Visibility(
                 visible: pedometerWarn == true,
                 child: warningBanner,
               ),
-              Flexible(child: _homePageGridView),
+              Flexible(flex: 1, child: _homePageGridView),
 
               /// Legacy Wellbeing Graph
               // WellbeingGraph(

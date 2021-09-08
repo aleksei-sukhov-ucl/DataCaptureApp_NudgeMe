@@ -46,6 +46,7 @@ class _AudioRecordingState extends State<AudioRecording> {
   @override
   void initState() {
     _isRecording = 0;
+    // _checkingPermission();
     super.initState();
   }
 
@@ -93,7 +94,7 @@ class _AudioRecordingState extends State<AudioRecording> {
             padding: const EdgeInsets.fromLTRB(0, 10, 0, 20),
             child: Text(
               (_currentValueSpeechRateTest == 0)
-                  ? "In this test, you will be asked to say \"Hippopotamus\" as many times as possible in a selected time "
+                  ? "In this test, you will be asked to say \"Hippopotamus\" as many times as possible in a selected time"
                   : "In this test, you will be asked to count from one onwards until the time runs out",
               textAlign: TextAlign.center,
             ),
@@ -111,7 +112,7 @@ class _AudioRecordingState extends State<AudioRecording> {
                 child: DropdownButton<int>(
                   value: _currentValueTestDuration.toInt(),
                   icon: const Icon(Icons.arrow_drop_down,
-                      color: Color.fromRGBO(113, 101, 226, 1)),
+                      color: Color.fromRGBO(113, 101, 226, 1.0)),
                   iconSize: 24,
                   elevation: 16,
                   style: const TextStyle(color: Colors.black),
@@ -172,6 +173,18 @@ class _AudioRecordingState extends State<AudioRecording> {
     }
   }
 
+  // _checkingPermission() async {
+  //   final status = await Permission.microphone.request();
+  //   print("status: $status");
+  //   if (status == PermissionStatus.permanentlyDenied) {
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //         elevation: 10,
+  //         backgroundColor: Colors.yellow,
+  //         content: Text(
+  //             "Please enable access to the microphone in your device settings")));
+  //   }
+  // }
+
   iconColorSelect(int _isRecording) {
     switch (_isRecording) {
       case 0:
@@ -197,10 +210,11 @@ class _AudioRecordingState extends State<AudioRecording> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15),
       child: RawMaterialButton(
+        key: Key("AudioRecordingButton"),
         fillColor: buttonColor,
         shape: CircleBorder(),
         padding: EdgeInsets.all(20),
-        onPressed: () {
+        onPressed: () async {
           switch (_isRecording) {
             case 0:
               _start();
@@ -268,6 +282,7 @@ class _AudioRecordingState extends State<AudioRecording> {
 
   Future<void> _start() async {
     String _path = await getFileName();
+    // }
     try {
       if (await _audioRecorder.hasPermission()) {
         print("_path: $_path");

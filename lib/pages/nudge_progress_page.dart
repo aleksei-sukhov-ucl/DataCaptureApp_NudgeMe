@@ -36,6 +36,7 @@ class _NudgeProgressPageState extends State<NudgeProgressPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        brightness: Brightness.light,
         title: Text("Step Goal Progress"),
       ),
       body: Column(

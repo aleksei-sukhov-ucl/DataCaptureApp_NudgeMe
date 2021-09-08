@@ -69,6 +69,7 @@ class _ContactSharePageState extends State<ContactSharePage> {
 
     return Scaffold(
       appBar: AppBar(
+        brightness: Brightness.light,
         title: Text("Select contacts"),
         actions: [
           IconButton(

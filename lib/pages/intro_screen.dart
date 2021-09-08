@@ -9,20 +9,18 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_sound_lite/public/flutter_sound_recorder.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:nudge_me/background.dart';
 import 'package:nudge_me/crypto.dart';
 import 'package:nudge_me/main.dart';
 import 'package:nudge_me/main_pages.dart';
-import 'package:nudge_me/shared/AudioRecording.dart';
+import 'package:nudge_me/shared/audio_recording.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nudge_me/notification.dart';
 import 'package:nudge_me/model/user_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:nudge_me/pages/settings_sections/reschedule_wb.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Screen that displays to faciliate the user setup.
@@ -41,6 +39,18 @@ class IntroScreenWidgets extends StatefulWidget {
 }
 
 class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
+  @override
+  initState() {
+    _permissionsRequest();
+    super.initState();
+  }
+
+  void _permissionsRequest() async {
+    await Permission.sensors.request();
+    await Permission.activityRecognition.request();
+    await Permission.microphone.request();
+  }
+
   /// Keeps track of the postcode [TextField]
   final postcodeController = TextEditingController();
 
@@ -51,9 +61,9 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
   final List<String> descriptionsMRCDyspnoeaScale = [
     "Not troubled by breathless except on strenuous exercise",
     "Short of breath when hurrying on a level or when walking up a slight hill",
-    "	Walks slower than most people on the level, stops after a mile or so, or stops after 15 minutes walking at own pace",
+    "Walks slower than most people on the level, stops after a mile or so, or stops after 15 minutes walking at own pace",
     "Stops for breath after walking 100 yards, or after a few minutes on level ground",
-    "Too breathless to leave the house, or breathless when dressing/undressing  "
+    "Too breathless to leave the house, or breathless when dressing/undressing"
   ];
 
   /// Default values for silder, switch, and notification day, hour and min.
@@ -63,7 +73,7 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
   int _currentValueSpeechRateTest = 0;
   double _currentValueTestDuration = 30;
   double _currentValueSpeechRate = 0;
-  String _currentValueAudioURL = "url/test";
+  String _currentValueAudioURL;
   bool _currentSwitchValue = false;
   int _wbCheckNotifDay = DateTime.sunday;
   int _wbCheckNotifHour = 12;
@@ -157,8 +167,6 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
     initBackground();
     schedulePedometerInsert();
     schedulePrevStepCountKeyInsert();
-
-    /// TODO:Add weekly step reset
   }
 
   /// Called when intro screen finishes.
@@ -180,6 +188,7 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
       supportCodeController.text,
     )) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.yellow,
         content: Text("Invalid postcode or support code."),
       ));
       return;
@@ -211,9 +220,6 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
     // NOTE: this is the 'proper' way of requesting permissions (instead of
     // just lowering the targetSdkVersion) but it doesn't seem to work and
     // I don't have access to an Android 10 device to further test it
-    await Permission.sensors.request();
-    await Permission.activityRecognition.request();
-    await Permission.microphone.request();
 
     await _finishSetup(_currentSwitchValue, _wbCheckNotifTime);
 
@@ -350,6 +356,7 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
 
   @override
   Widget build(BuildContext context) {
+    /// Introduction pages - page design settings
     double width = MediaQuery.of(context).size.width;
     TextStyle introTextStyle =
         TextStyle(fontSize: width * 0.045, color: Colors.black);
@@ -363,516 +370,390 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
         imagePadding: EdgeInsets.zero,
         footerPadding: EdgeInsets.symmetric(vertical: 10.0));
 
+    /// Introduction pages - progress dots design settings
+    const dotIndicatorSettings = DotsDecorator(
+      size: Size.square(4.4),
+      spacing: const EdgeInsets.symmetric(horizontal: 3.0),
+      color: Color(0xFFBDBDBD),
+      activeColor: Color.fromARGB(255, 0, 74, 173),
+      activeSize: Size.square(7.0),
+      activeShape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(25.0)),
+      ),
+    );
+
+    Widget sputumColourDescription = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: Color.fromRGBO(246, 247, 249, 1),
+              border: Border.all(color: Colors.grey)),
+          height: 50,
+          width: 50,
+        ),
+        Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: Color.fromRGBO(253, 250, 243, 1.0),
+              border: Border.all(color: Colors.grey)),
+          height: 50,
+          width: 50,
+        ),
+        Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: Color.fromRGBO(252, 250, 227, 1),
+              border: Border.all(color: Colors.grey)),
+          height: 50,
+          width: 50,
+        ),
+        Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: Color.fromRGBO(220, 219, 188, 1),
+              border: Border.all(color: Colors.grey)),
+          height: 50,
+          width: 50,
+        ),
+        Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: Color.fromRGBO(211, 206, 125, 1),
+              border: Border.all(color: Colors.grey)),
+          height: 50,
+          width: 50,
+        ),
+      ],
+    );
+
     /// First Page
-    PageViewModel firstPage() {
-      return PageViewModel(
-          title: "Welcome",
-          image: Image.asset("lib/images/IntroLogo.png"),
-          bodyWidget: Text(
-              "It is recognised that people often forget to look after themselves. \n\n " +
-                  "This app has been designed to encourage you to do this. \n \n",
-              style: introTextStyle,
-              textAlign: TextAlign.center),
-          decoration: pageDecoration);
-    }
+    PageViewModel firstPage = PageViewModel(
+        title: "Welcome",
+        image: Image.asset("lib/images/IntroLogo.png"),
+        // image: Image.asset("lib/images/launcher/logo.png"),
+        bodyWidget: Text(
+            "It is recognised that people often forget to look after themselves. \n\n " +
+                "NudgeShare has been designed to encourage you to do this. \n \n",
+            style: introTextStyle,
+            textAlign: TextAlign.center),
+        decoration: pageDecoration);
 
     /// Second Page
-    PageViewModel secondPage() {
-      return PageViewModel(
-          title: "How?",
-          image: Image.asset("lib/images/IntroLogo.png"),
-          bodyWidget: Text(
-              "Occasionally, it will nudge you to keep in contact with people you like to speak to. " +
-                  "It will also make you aware of opportunities to share your wellbeing with this group. " +
-                  "\n\nIf you consent to this, swipe left.",
-              style: introTextStyle,
-              textAlign: TextAlign.center),
-          decoration: pageDecoration);
-    }
+    PageViewModel secondPage = PageViewModel(
+        title: "How?",
+        image: Image.asset("lib/images/IntroLogo.png"),
+        bodyWidget: Text(
+            "Occasionally, it will nudge you to keep in contact with people you like to speak to. " +
+                "It will also make you aware of opportunities to share your wellbeing with this group. " +
+                "\n\nIf you consent to this, swipe left.",
+            style: introTextStyle,
+            textAlign: TextAlign.center),
+        decoration: pageDecoration);
 
     ///Third Page
-    PageViewModel wellbeingPage() {
-      return PageViewModel(
-          title: "Wellbeing Check",
-          image: Center(
-              child: Icon(
-            Icons.emoji_people_rounded,
-            size: 225,
-            color: Theme.of(context).colorScheme.secondary,
-          )),
-          bodyWidget:
-              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Text(
-                "This is your first wellbeing check. NudgeMe will enable you to keep a weekly record of your wellbeing and allow you to understand the importance of movement in your life.",
-                style: introTextStyle,
+    PageViewModel wellbeingPage = PageViewModel(
+        title: "Wellbeing Check",
+        image: Center(
+            child: Icon(
+          Icons.emoji_people_rounded,
+          size: 225,
+          color: Theme.of(context).colorScheme.secondary,
+        )),
+        bodyWidget:
+            Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Text(
+              "This is your first wellbeing check. NudgeShare will enable you to keep a weekly record of your wellbeing and allow you to understand the importance of movement in your life.",
+              style: introTextStyle,
+              textAlign: TextAlign.center),
+          Text(
+              "\n Over the past 7 days, rate how well you have felt out of 10. ",
+              style: introTextStyle,
+              textAlign: TextAlign.center),
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Text("Confused? Find additional instructions below.",
+                style: Theme.of(context).textTheme.caption,
                 textAlign: TextAlign.center),
-            Text(
-                "\n Over the past 7 days, rate how well you have felt out of 10. ",
-                style: introTextStyle,
-                textAlign: TextAlign.center),
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Text("Confused? Find additional instructions below.",
-                  style: Theme.of(context).textTheme.caption,
-                  textAlign: TextAlign.center),
-            ),
-            Container(
-                child: SliderTheme(
-                  data: SliderTheme.of(context).copyWith(
-                      valueIndicatorShape: PaddleSliderValueIndicatorShape()),
-                  child: Slider(
-                    value: _currentSliderValueWellbeing,
-                    min: 0,
-                    max: 10,
-                    divisions: 10,
-                    label: _currentSliderValueWellbeing.round().toString(),
-                    activeColor: Theme.of(context).primaryColor,
-                    inactiveColor: Color.fromARGB(189, 189, 189, 255),
-                    onChanged: (double value) {
-                      setState(() {
-                        _currentSliderValueWellbeing = value;
-                      });
-                    },
-                  ),
+          ),
+          Container(
+              child: SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                    valueIndicatorShape: PaddleSliderValueIndicatorShape()),
+                child: Slider(
+                  value: _currentSliderValueWellbeing,
+                  min: 0,
+                  max: 10,
+                  divisions: 10,
+                  label: _currentSliderValueWellbeing.round().toString(),
+                  activeColor: Theme.of(context).primaryColor,
+                  inactiveColor: Color.fromARGB(189, 189, 189, 255),
+                  onChanged: (double value) {
+                    setState(() {
+                      _currentSliderValueWellbeing = value;
+                    });
+                  },
                 ),
-                width: 300.0),
-            Text(
-                "Move the purple circle up or down the scale to log how you feel." +
-                    " (On the scale, 0 is the lowest score and 10 is the highest score)",
-                style: introTextStyle,
-                textAlign: TextAlign.center),
-            SizedBox(height: 15),
-          ]),
-          decoration: pageDecoration);
-    }
+              ),
+              width: 300.0),
+          Text(
+              "Move the purple circle up or down the scale to log how you feel." +
+                  " (On the scale, 0 is the lowest score and 10 is the highest score)",
+              style: introTextStyle,
+              textAlign: TextAlign.center),
+          SizedBox(height: 15),
+        ]),
+        decoration: pageDecoration);
 
     ///Fourth Page
-    PageViewModel sputumColorPage() {
-      return PageViewModel(
-          title: "Sputum Color Check",
-          image: ColorFiltered(
+    PageViewModel sputumColorPage = PageViewModel(
+        title: "Sputum Color Check",
+        image: ColorFiltered(
             child: Image.asset(
               "lib/images/Lungs.png",
               scale: 2,
             ),
             colorFilter: ColorFilter.mode(
-                Theme.of(context).colorScheme.secondary, BlendMode.srcATop),
-          ),
-          bodyWidget:
-              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Text(
-                "This is your first sputum color check.\nSputum that is a different color from saliva may be a sign of a Respiratory Tract Infections (RTIs).",
-                style: introTextStyle,
-                textAlign: TextAlign.center),
-            Text("\n Over the past 7 days, rate what color your sputum was. ",
-                style: introTextStyle, textAlign: TextAlign.center),
-            Container(
-                child: SliderTheme(
-                  data: SliderTheme.of(context).copyWith(
-                      valueIndicatorShape: PaddleSliderValueIndicatorShape()),
-                  child: Slider(
-                    value: _currentSliderValueSputumColor,
-                    min: 0,
-                    max: 4,
-                    divisions: 4,
-                    label: _currentSliderValueSputumColor.round().toString(),
-                    activeColor: Theme.of(context).colorScheme.primary,
-                    inactiveColor: Color.fromARGB(189, 189, 189, 255),
-                    onChanged: (double value) {
-                      setState(() {
-                        _currentSliderValueSputumColor = value;
-                      });
-                    },
-                  ),
+                Theme.of(context).colorScheme.secondary, BlendMode.srcATop)),
+        bodyWidget:
+            Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Text(
+              "This is your first sputum color check.\nSputum that is a "
+              "different color from saliva may be a sign of a "
+              "Respiratory Tract Infections (RTIs).",
+              style: introTextStyle,
+              textAlign: TextAlign.center),
+          Text("\n Over the past 7 days, rate what color your sputum was. ",
+              style: introTextStyle, textAlign: TextAlign.center),
+          Container(
+              child: SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                    valueIndicatorShape: PaddleSliderValueIndicatorShape()),
+                child: Slider(
+                  value: _currentSliderValueSputumColor,
+                  min: 0,
+                  max: 4,
+                  divisions: 4,
+                  label: _currentSliderValueSputumColor.round().toString(),
+                  activeColor: Theme.of(context).colorScheme.primary,
+                  inactiveColor: Color.fromARGB(189, 189, 189, 255),
+                  onChanged: (double value) {
+                    setState(() {
+                      _currentSliderValueSputumColor = value;
+                    });
+                  },
                 ),
-                width: 340.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: Color.fromRGBO(246, 247, 249, 1),
-                      border: Border.all(color: Colors.grey)),
-                  height: 50,
-                  width: 50,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: Color.fromRGBO(253, 250, 243, 1.0),
-                      border: Border.all(color: Colors.grey)),
-                  height: 50,
-                  width: 50,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: Color.fromRGBO(252, 250, 227, 1),
-                      border: Border.all(color: Colors.grey)),
-                  height: 50,
-                  width: 50,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: Color.fromRGBO(220, 219, 188, 1),
-                      border: Border.all(color: Colors.grey)),
-                  height: 50,
-                  width: 50,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: Color.fromRGBO(211, 206, 125, 1),
-                      border: Border.all(color: Colors.grey)),
-                  height: 50,
-                  width: 50,
-                ),
-              ],
-            )
-          ]),
-          decoration: pageDecoration);
-    }
+              ),
+              width: 340.0),
+          sputumColourDescription
+        ]),
+        decoration: pageDecoration);
 
     ///Fifth Page - MRC Dysonea Scale
-    PageViewModel mrcDysoneaScalePage() {
-      return PageViewModel(
-          title: "Breathlessness Check",
-          image: Center(
-              child: Icon(
-            Icons.directions_walk_rounded,
-            size: 225,
-            color: Theme.of(context).colorScheme.secondary,
-          )),
-          bodyWidget: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                    "This is your first breathlessness check.\nThe Dyspnoea Scale is used for grading the effect of breathlessness on daily activities.",
-                    style: introTextStyle,
-                    textAlign: TextAlign.center),
-                Text(
-                    "\n Over the past 7 days, rate your level of breathlessness.",
-                    style: introTextStyle,
-                    textAlign: TextAlign.center),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 5),
-                  child: Container(
-                    width: 340,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(15),
-                        ),
-                        color: Theme.of(context).colorScheme.primary),
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Text(
-                          descriptionsMRCDyspnoeaScale[
-                              _currentSliderValueMRCDyspnoeaScale.toInt()],
-                          style: TextStyle(color: Colors.white),
-                          textAlign: TextAlign.center),
-                    ),
+    PageViewModel mrcDysoneaScalePage = PageViewModel(
+        title: "Breathlessness Check",
+        image: Center(
+            child: Icon(
+          Icons.directions_walk_rounded,
+          size: 225,
+          color: Theme.of(context).colorScheme.secondary,
+        )),
+        bodyWidget: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                  "This is your first breathlessness check.\nThe Dyspnoea Scale is used for grading the effect of breathlessness on daily activities.",
+                  style: introTextStyle,
+                  textAlign: TextAlign.center),
+              Text(
+                  "\n Over the past 7 days, rate your level of breathlessness.",
+                  style: introTextStyle,
+                  textAlign: TextAlign.center),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 15, 0, 5),
+                child: Container(
+                  width: 340,
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(15),
+                      ),
+                      color: Theme.of(context).colorScheme.primary),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Text(
+                        descriptionsMRCDyspnoeaScale[
+                            _currentSliderValueMRCDyspnoeaScale.toInt()],
+                        style: TextStyle(color: Colors.white),
+                        textAlign: TextAlign.center),
                   ),
                 ),
-                Container(
-                    child: SliderTheme(
-                      data: SliderTheme.of(context).copyWith(
-                          valueIndicatorShape:
-                              PaddleSliderValueIndicatorShape(),
-                          valueIndicatorTextStyle:
-                              TextStyle(overflow: TextOverflow.ellipsis)),
-                      child: Slider(
-                        value: _currentSliderValueMRCDyspnoeaScale,
-                        min: 0,
-                        max: 4,
-                        divisions: 4,
-                        // label: _currentSliderValueMRCDyspnoeaScale.toString(),
-                        // label: descriptionsMRCDyspnoeaScale[
-                        //     _currentSliderValueMRCDyspnoeaScale.toInt() -
-                        //         1],
-                        activeColor: Theme.of(context).colorScheme.primary,
-                        inactiveColor: Color.fromARGB(189, 189, 189, 255),
-                        onChanged: (double newValue) {
-                          setState(() {
-                            _currentSliderValueMRCDyspnoeaScale = newValue;
-                            print(
-                                "_currentSliderValueSputumColor: $_currentSliderValueMRCDyspnoeaScale");
-                          });
-                        },
-                      ),
+              ),
+              Container(
+                  child: SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                        valueIndicatorShape: PaddleSliderValueIndicatorShape(),
+                        valueIndicatorTextStyle:
+                            TextStyle(overflow: TextOverflow.ellipsis)),
+                    child: Slider(
+                      value: _currentSliderValueMRCDyspnoeaScale,
+                      min: 0,
+                      max: 4,
+                      divisions: 4,
+                      // label: _currentSliderValueMRCDyspnoeaScale.toString(),
+                      // label: descriptionsMRCDyspnoeaScale[
+                      //     _currentSliderValueMRCDyspnoeaScale.toInt() -
+                      //         1],
+                      activeColor: Theme.of(context).colorScheme.primary,
+                      inactiveColor: Color.fromARGB(189, 189, 189, 255),
+                      onChanged: (double newValue) {
+                        setState(() {
+                          _currentSliderValueMRCDyspnoeaScale = newValue;
+                          print(
+                              "_currentSliderValueMRCDyspnoeaScale: $_currentSliderValueMRCDyspnoeaScale");
+                        });
+                      },
                     ),
-                    width: 340.0),
-              ]),
-          decoration: pageDecoration);
-    }
+                  ),
+                  width: 340.0),
+            ]),
+        decoration: pageDecoration);
 
     ///SixthPage - Speech Rate
-    PageViewModel speechRatePage() {
-      // bool isRecordingSpeech = recorder.isRecordingSpeech;
-      bool isRecordingSpeech = false;
-      return PageViewModel(
-          title: "Speech Rate Check",
-          image: Center(
-              child: Icon(
-            Icons.record_voice_over_rounded,
-            size: 225,
-            color: Theme.of(context).colorScheme.secondary,
-          )),
-          bodyWidget: AudioRecording(
-              audioFileLocationURL: _currentValueAudioURL,
-              currentValueSpeechRateTest: _currentValueSpeechRateTest,
-              currentValueTestDuration: _currentValueTestDuration,
-              callback: callback),
-          // Column(
-          //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //     crossAxisAlignment: CrossAxisAlignment.center,
-          //     children: [
-          //       Padding(
-          //         padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-          //         child: Text("Please select the type of test:",
-          //             style: Theme.of(context).textTheme.bodyText1,
-          //             textAlign: TextAlign.center),
-          //       ),
-          //       ToggleSwitch(
-          //         fontSize: Theme.of(context).textTheme.bodyText1.fontSize,
-          //         initialLabelIndex: _currentValueSpeechRateTest,
-          //         minWidth: MediaQuery.of(context).size.width * 0.35,
-          //         minHeight: MediaQuery.of(context).size.height * 0.04,
-          //         activeBgColors: [
-          //           [Theme.of(context).colorScheme.primary],
-          //           [Theme.of(context).colorScheme.secondary]
-          //         ],
-          //         inactiveBgColor: Colors.grey[100],
-          //         totalSwitches: 2,
-          //         labels: ["Text", "Numbers"],
-          //         // with just animate set to true, default curve = Curves.easeIn
-          //         radiusStyle: true,
-          //         cornerRadius: 15.0,
-          //         onToggle: (index) {
-          //           setState(() {
-          //             _currentValueSpeechRateTest = index;
-          //           });
-          //         },
-          //       ),
-          //       Padding(
-          //         padding: const EdgeInsets.fromLTRB(0, 10, 0, 20),
-          //         child: Text(
-          //           (_currentValueSpeechRateTest == 0)
-          //               ? "In this test, you will be asked to say \"Hippopotamus\" as many times as possible in a selected time "
-          //               : "In this test, you will be asked to count from one onwards until the time runs out",
-          //           textAlign: TextAlign.center,
-          //         ),
-          //       ),
-          //       Padding(
-          //         padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-          //         child: Text("Please select the duration of test:",
-          //             style: Theme.of(context).textTheme.bodyText1,
-          //             textAlign: TextAlign.center),
-          //       ),
-          //       Row(
-          //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //         children: [
-          //           Container(
-          //             child: DropdownButton<int>(
-          //               value: _currentValueTestDuration.toInt(),
-          //               icon: const Icon(Icons.arrow_drop_down,
-          //                   color: Color.fromRGBO(113, 101, 226, 1)),
-          //               iconSize: 24,
-          //               elevation: 16,
-          //               style: const TextStyle(color: Colors.black),
-          //               underline: Container(
-          //                 height: 2,
-          //                 color: Colors.deepPurpleAccent,
-          //               ),
-          //               onChanged: (int newValue) {
-          //                 setState(() {
-          //                   _currentValueTestDuration = newValue.toDouble();
-          //                   print(
-          //                       "_currentValueTestDuration: $_currentValueTestDuration");
-          //                 });
-          //               },
-          //               items: <int>[
-          //                 30,
-          //                 60,
-          //                 90,
-          //                 120,
-          //               ].map<DropdownMenuItem<int>>((int value) {
-          //                 return DropdownMenuItem<int>(
-          //                   value: value,
-          //                   child: Text(value.toString(),
-          //                       style: Theme.of(context).textTheme.bodyText1,
-          //                       textAlign: TextAlign.center),
-          //                 );
-          //               }).toList(),
-          //             ),
-          //           ),
-          //           Text("Seconds",
-          //               style: Theme.of(context).textTheme.bodyText1,
-          //               textAlign: TextAlign.center),
-          //         ],
-          //       ),
-          //       Padding(
-          //         padding: const EdgeInsets.all(8.0),
-          //         child: Text(
-          //             "Press the microphone button to start the recording!",
-          //             textAlign: TextAlign.center),
-          //       ),
-          //       Padding(
-          //         padding: const EdgeInsets.symmetric(vertical: 15),
-          //         child: RawMaterialButton(
-          //           fillColor: (isRecordingSpeech)
-          //               ? Colors.red
-          //               : Theme.of(context).colorScheme.secondary,
-          //           shape: CircleBorder(),
-          //           padding: EdgeInsets.all(20),
-          //           onPressed: () async {
-          //             // recorder.switchRecording();
-          //             // await _askPermission();
-          //             // setState(() async {
-          //             //   isRecordingSpeech = await recorder.switchRecording();
-          //             // });
-          //           },
-          //           child: Icon(
-          //             (isRecordingSpeech) ? Icons.stop : Icons.mic_none_rounded,
-          //             color: Colors.white,
-          //             size: 40,
-          //           ),
-          //         ),
-          //       )
-          //     ]),
-          decoration: pageDecoration);
-    }
+    PageViewModel speechRatePage = PageViewModel(
+        title: "Speech Rate Check",
+        image: Center(
+            child: Icon(
+          Icons.record_voice_over_rounded,
+          size: 225,
+          color: Theme.of(context).colorScheme.secondary,
+        )),
+        bodyWidget: AudioRecording(
+            audioFileLocationURL: _currentValueAudioURL,
+            currentValueSpeechRateTest: _currentValueSpeechRateTest,
+            currentValueTestDuration: _currentValueTestDuration,
+            callback: callback),
+        decoration: pageDecoration);
+
+    PageViewModel shareData = PageViewModel(
+        title: "Share Data",
+        image: Center(
+            child: Image.asset("lib/images/IntroShare.png", height: 225.0)),
+        bodyWidget:
+            Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Switch(
+              value: _currentSwitchValue,
+              onChanged: (value) {
+                setState(() {
+                  _currentSwitchValue = value;
+                });
+              }),
+          Text(
+              "Click the toggle to consent to the creation of a map that enables you and other app " +
+                  "users to understand the effect of movement and social contact has on people's wellbeing. " +
+                  "By consenting, you will not be sharing personally identifiable data. " +
+                  "All data used to create the map will be anonymised to protect privacy.\n",
+              style: introTextStyle,
+              textAlign: TextAlign.center),
+        ]),
+        decoration: pageDecoration);
+
+    PageViewModel postCodeSupportCode = PageViewModel(
+        title: "Postcode and Support Code",
+        image: Center(
+            child: Image.asset("lib/images/IntroPostcode.png", height: 225.0)),
+        bodyWidget:
+            (Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Text("What is your support code?",
+              style: introTextStyle, textAlign: TextAlign.center),
+          TextField(
+            controller: supportCodeController,
+            textAlign: TextAlign.center,
+            decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: "Enter support code here",
+                hintStyle: introHintStyle),
+          ),
+          Text("If you do not have a support code, type selfhelp",
+              style: Theme.of(context).textTheme.caption,
+              textAlign: TextAlign.center),
+          SizedBox(height: 20),
+          Text("What is the first half of your postcode?",
+              style: introTextStyle, textAlign: TextAlign.center),
+          TextField(
+            controller: postcodeController,
+            textAlign: TextAlign.center,
+            // https://github.com/flutter/flutter/issues/67236
+            maxLength: 4, // length of a postcode prefix
+            decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: "Enter postcode here",
+                hintStyle: introHintStyle),
+          ),
+          RichText(
+              text: new TextSpan(children: [
+                new TextSpan(
+                    text:
+                        "This will help app users to understand the general wellbeing of people in a region - ",
+                    style: Theme.of(context).textTheme.caption),
+                new TextSpan(
+                    text: "see here",
+                    style: TextStyle(
+                        fontFamily: 'Rosario',
+                        fontSize: 12,
+                        decoration: TextDecoration.underline,
+                        color: Colors.black),
+                    recognizer: new TapGestureRecognizer()
+                      ..onTap = () {
+                        launch(BASE_URL + '/map');
+                      })
+              ]),
+              textAlign: TextAlign.center),
+          SizedBox(height: 10),
+        ])),
+        decoration: pageDecoration);
 
     return IntroductionScreen(
-      pages: [
-        firstPage(),
-        secondPage(),
-        wellbeingPage(),
-        sputumColorPage(),
-        mrcDysoneaScalePage(),
-        speechRatePage(),
-        _getWBCheckNotificationPage(context, introTextStyle, pageDecoration),
-
-        PageViewModel(
-            title: "Share Data",
-            image: Center(
-                child: Image.asset("lib/images/IntroShare.png", height: 225.0)),
-            bodyWidget: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Switch(
-                      value: _currentSwitchValue,
-                      onChanged: (value) {
-                        setState(() {
-                          _currentSwitchValue = value;
-                        });
-                      }),
-                  Text(
-                      "Click the toggle to consent to the creation of a map that enables you and other app " +
-                          "users to understand the effect of movement and social contact has on people's wellbeing. " +
-                          "By consenting, you will not be sharing personally identifiable data. " +
-                          "All data used to create the map will be anonymised to protect privacy.\n",
-                      style: introTextStyle,
-                      textAlign: TextAlign.center),
-                ]),
-            decoration: pageDecoration),
-
-        /// Final Page of Intro Screen
-        PageViewModel(
-            title: "Postcode and Support Code",
-            image: Center(
-                child:
-                    Image.asset("lib/images/IntroPostcode.png", height: 225.0)),
-            bodyWidget:
-                (Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Text("What is your support code?",
-                  style: introTextStyle, textAlign: TextAlign.center),
-              TextField(
-                controller: supportCodeController,
-                textAlign: TextAlign.center,
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: "Enter support code here",
-                    hintStyle: introHintStyle),
-              ),
-              Text("If you do not have a support code, type selfhelp",
-                  style: Theme.of(context).textTheme.caption,
-                  textAlign: TextAlign.center),
-              SizedBox(height: 20),
-              Text("What is the first half of your postcode?",
-                  style: introTextStyle, textAlign: TextAlign.center),
-              TextField(
-                controller: postcodeController,
-                textAlign: TextAlign.center,
-                // https://github.com/flutter/flutter/issues/67236
-                maxLength: 4, // length of a postcode prefix
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: "Enter postcode here",
-                    hintStyle: introHintStyle),
-              ),
-              RichText(
-                  text: new TextSpan(children: [
-                    new TextSpan(
-                        text:
-                            "This will help app users to understand the general wellbeing of people in a region - ",
-                        style: Theme.of(context).textTheme.caption),
-                    new TextSpan(
-                        text: "see here",
-                        style: TextStyle(
-                            fontFamily: 'Rosario',
-                            fontSize: 12,
-                            decoration: TextDecoration.underline,
-                            color: Colors.black),
-                        recognizer: new TapGestureRecognizer()
-                          ..onTap = () {
-                            launch(BASE_URL + '/map');
-                          })
-                  ]),
-                  textAlign: TextAlign.center),
-              SizedBox(height: 10),
-            ])),
-            decoration: pageDecoration),
-      ],
-      onDone: () => _onIntroEnd(
-        context,
-        _currentSliderValueWellbeing,
-        _currentSliderValueSputumColor,
-        _currentSliderValueMRCDyspnoeaScale,
-        _currentValueSpeechRateTest,
-        _currentValueTestDuration,
-        _currentValueSpeechRate,
-        _currentValueAudioURL,
-        _currentSwitchValue,
-        _wbCheckNotifDay,
-        _wbCheckNotifHour,
-        _wbCheckNotifMinute,
-      ),
-      showSkipButton: false,
-      next: const Icon(Icons.arrow_forward,
-          color: Color.fromARGB(255, 182, 125, 226)),
-      done: !doneTapped
-          ? const Text('Done',
-              style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: Color.fromARGB(255, 182, 125, 226)))
-          : CircularProgressIndicator(),
-      onChange: (int _) => _dismisKeyboard(),
-      dotsDecorator: const DotsDecorator(
-        size: Size(1.9, 2.5),
-        color: Color(0xFFBDBDBD),
-        activeColor: Color.fromARGB(255, 0, 74, 173),
-        activeSize: Size(2.9, 3.5),
-        activeShape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(25.0)),
-        ),
-      ),
-    );
+        pages: [
+          firstPage,
+          secondPage,
+          wellbeingPage,
+          sputumColorPage,
+          mrcDysoneaScalePage,
+          speechRatePage,
+          _getWBCheckNotificationPage(context, introTextStyle, pageDecoration),
+          shareData,
+          postCodeSupportCode
+        ],
+        onDone: () => _onIntroEnd(
+              context,
+              _currentSliderValueWellbeing,
+              _currentSliderValueSputumColor,
+              _currentSliderValueMRCDyspnoeaScale,
+              _currentValueSpeechRateTest,
+              _currentValueTestDuration,
+              _currentValueSpeechRate,
+              _currentValueAudioURL,
+              _currentSwitchValue,
+              _wbCheckNotifDay,
+              _wbCheckNotifHour,
+              _wbCheckNotifMinute,
+            ),
+        showSkipButton: false,
+        next: const Icon(Icons.arrow_forward,
+            color: Color.fromARGB(255, 182, 125, 226)),
+        done: !doneTapped
+            ? const Text('Done',
+                style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Color.fromARGB(255, 182, 125, 226)))
+            : CircularProgressIndicator(),
+        onChange: (int _) => _dismisKeyboard(),
+        dotsDecorator: dotIndicatorSettings);
   }
 
   /// If keyboard is open, closes it when user changes pages.

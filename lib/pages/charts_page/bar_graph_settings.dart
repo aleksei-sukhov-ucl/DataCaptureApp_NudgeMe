@@ -53,7 +53,7 @@ monthXAxisUnits(double value) {
   }
 }
 
-yearXAxisUnits(double value) {
+String yearXAxisUnits(double value) {
   switch (value.toInt()) {
     case 1:
       return 'J';
@@ -84,7 +84,7 @@ yearXAxisUnits(double value) {
   }
 }
 
-weekDayDescription(group) {
+String weekDayDescription(group) {
   /// Matching week day index with corresponding name
   switch (group.x.toInt()) {
     case 1:
@@ -106,7 +106,7 @@ weekDayDescription(group) {
   }
 }
 
-monthWeekDescription(group) {
+String monthWeekDescription(group) {
   switch (group.x.toInt()) {
     case 1:
       return '1';
@@ -129,7 +129,7 @@ monthWeekDescription(group) {
   }
 }
 
-yearMonthDescription(group) {
+String yearMonthDescription(group) {
   switch (group.x.toInt()) {
     case 1:
       return 'Jan';

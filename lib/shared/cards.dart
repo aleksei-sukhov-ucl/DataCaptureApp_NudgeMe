@@ -146,10 +146,38 @@ List<CardClass> cards = [
         size: 24,
       ),
       titleOfCard: "MRC Dyspnoea Scale",
-      units: "Score",
+      units: "MRC Dyspnoea Score",
       color: Color.fromRGBO(138, 127, 245, 1),
-      cardDescription: Text(
-          "The dyspnoea scale has been in use for many years for grading the effect of breathlessness on daily activities.\n\nThis scale measures perceived respiratory disability.\n\nThe MRC dyspnoea scale is simple to administer as it allows the patients to indicate the extent to which their breathlessness affects their mobility.")
+      cardDescription: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Text(
+              "The dyspnoea scale has been in use for many years for grading the effect of breathlessness on daily activities. This scale measures perceived respiratory disability.\n\nThe MRC dyspnoea scale is simple to administer as it allows the patients to indicate the extent to which their breathlessness affects their mobility."),
+          SizedBox(
+            height: 10,
+          ),
+          mrcDescriptionKey(
+              description:
+                  "Not troubled by breathless except on strenuous exercise",
+              id: "0"),
+          mrcDescriptionKey(
+              description:
+                  "Short of breath when hurrying on a level or when walking up a slight hill",
+              id: "1"),
+          mrcDescriptionKey(
+              description:
+                  "Walks slower than most people on the level, stops after a mile or so, or stops after 15 minutes walking at own pace",
+              id: "2"),
+          mrcDescriptionKey(
+              description:
+                  "Stops for breath after walking 100 yards, or after a few minutes on level ground",
+              id: "3"),
+          mrcDescriptionKey(
+              description:
+                  "Too breathless to leave the house, or breathless when dressing/undressing",
+              id: "4"),
+        ],
+      )
 
       ///Text ref: https://mrc.ukri.org/research/facilities-and-resources-for-researchers/mrc-scales/mrc-dyspnoea-scale-mrc-breathlessness-scale/
       ),
@@ -195,9 +223,36 @@ Widget cardKey({Color color, String text}) {
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-          child: Text(
-            text,
-            // style: Theme.of(context).textTheme.bodyText2,
+          child: Text(text),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget mrcDescriptionKey({String description, String id}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            color: Colors.white,
+          ),
+          height: 40,
+          width: 40,
+          child: Center(child: Text(id)),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+          child: Container(
+            width: 240,
+            child: Text(
+              description,
+              // style: Theme.of(context).textTheme.bodyText2,
+            ),
           ),
         ),
       ],

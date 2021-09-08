@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nudge_me/model/friends_model.dart';
 import 'package:nudge_me/model/user_model.dart';
-import 'package:nudge_me/pages/charts_page/graph_page.dart';
 import 'package:nudge_me/pages/intro_screen.dart';
 import 'package:pedometer/pedometer.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nudge_me/notification.dart';
@@ -50,12 +50,11 @@ void main() {
     }
   };
 
-  /// Cahanges the color of status bar i.e. battery % and time to darklastTotalSteps
-  SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(statusBarBrightness: Brightness.light));
+  /// Changes the color of status bar i.e. battery % and time to dark
   // run app in a special environment to capture errors
   runZonedGuarded(() async {
-    runApp(MyApp());
+    runApp(AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark, child: MyApp()));
   }, (Object err, StackTrace sTrace) {
     _reportError(err, sTrace);
   });
@@ -127,15 +126,14 @@ Future initNotification() async {
 
 /// Initialize the 'previous' step count total to the current value.
 void _setupStepCountTotal() async {
-  print(
-      "_setupStepCountTotal is getting executed thus we should have PREV_PEDOMETER_PAIR_KEY");
   final prefs = await SharedPreferences.getInstance();
+  await Permission.activityRecognition.request();
   final int totalSteps = await Pedometer.stepCountStream.first
       .then((value) => value.steps)
-      .catchError((_) => 0);
-  // print("prefs.getKeys(): ${prefs.getKeys()}");
+      .catchError((error) {
+    return 0;
+  });
   if (!prefs.containsKey(PREV_STEP_COUNT_KEY)) {
-    // print("prefs.setInt(PREV_STEP_COUNT_KEY, totalSteps)");
     prefs.setInt(PREV_STEP_COUNT_KEY, totalSteps);
   }
   if (!prefs.containsKey(PREV_PEDOMETER_PAIR_KEY)) {
@@ -143,7 +141,6 @@ void _setupStepCountTotal() async {
         // ISO date format allows easier parsing
         [totalSteps.toString(), DateTime.now().toIso8601String()]);
   }
-  // print(prefs.getStringList(PREV_PEDOMETER_PAIR_KEY));
 }
 
 /// [StatelessWidget] that is the top level widget for the app.
@@ -178,35 +175,35 @@ class MyApp extends StatelessWidget {
           fontFamily: 'Lato-Regular',
           textTheme: TextTheme(
               headline1: TextStyle(
-                  fontSize: 36.0,
+                  fontSize: 38.0,
                   fontWeight: FontWeight.w700,
-                  fontFamily: 'Lato-Regular'),
+                  fontFamily: 'Nato-Sans'),
               headline2: TextStyle(
-                fontFamily: 'Lato-Regular',
+                fontFamily: 'KiteOne-Regular',
                 fontSize: 25,
               ),
-              headline3: TextStyle(fontFamily: 'Lato-Regular', fontSize: 25),
+              headline3: TextStyle(fontFamily: 'KiteOne-Regular', fontSize: 25),
               subtitle1: TextStyle(
-                  fontFamily: 'Lato-Regular',
+                  fontFamily: 'KiteOne-Regular',
                   fontWeight: FontWeight.w500,
                   fontSize: 20),
               subtitle2: TextStyle(
-                  fontFamily: 'Lato-Regular',
+                  fontFamily: 'KiteOne-Regular',
                   color: Colors.white,
                   fontStyle: FontStyle.italic,
                   fontSize: 20), //for tutorial
-              bodyText1: TextStyle(fontFamily: 'Lato-Regular', fontSize: 20),
-              bodyText2: TextStyle(fontFamily: 'Lato-Regular', fontSize: 15),
-              caption: TextStyle(fontFamily: 'Lato-Regular', fontSize: 12)),
+              bodyText1: TextStyle(fontFamily: 'KiteOne-Regular', fontSize: 20),
+              bodyText2: TextStyle(fontFamily: 'KiteOne-Regular', fontSize: 15),
+              caption: TextStyle(fontFamily: 'KiteOne-Regular', fontSize: 12)),
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
             backgroundColor: Colors.white,
             selectedLabelStyle: TextStyle(
                 color: Colors.black,
-                fontFamily: 'Lato-Regular',
+                fontFamily: 'KiteOne-Regular',
                 fontSize: 14.0),
             unselectedLabelStyle: TextStyle(
                 color: Colors.black,
-                fontFamily: 'Lato-Regular',
+                fontFamily: 'KiteOne-Regular',
                 fontSize: 14.0),
             selectedItemColor: Colors.black,
             unselectedItemColor: Colors.black,

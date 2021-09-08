@@ -5,14 +5,14 @@ import 'package:nudge_me/model/friends_model.dart';
 import 'package:nudge_me/notification.dart';
 import 'package:nudge_me/pages/add_friend_page.dart';
 import 'package:nudge_me/pages/checkup.dart';
-// import 'package:nudge_me/pages/home_page.dart';
 import 'package:nudge_me/pages/nudge_screen.dart';
 import 'package:nudge_me/pages/support_page.dart';
 import 'package:nudge_me/pages/testing_page.dart';
-import 'package:nudge_me/shared/AudioRecording.dart';
+import 'package:nudge_me/shared/audio_recording.dart';
 import 'package:nudge_me/shared/cards.dart';
 import 'package:nudge_me/pages/wellbeing_page/wellbeing_page.dart';
 import 'package:nudge_me/pages/settings_page.dart';
+import 'package:nudge_me/shared/test_send_data.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:provider/provider.dart';
 import 'package:uni_links/uni_links.dart';
@@ -29,7 +29,7 @@ const BASE_URL = "https://health.nudgemehealth.co.uk";
 enum NavBarIndex {
   wellbeing,
   /*home,*/
-  /*textToSpeech,*/
+  // textToSpeech,
   network,
   settings,
   testing
@@ -135,6 +135,7 @@ class _MainPagesState extends State<MainPages> {
             Pedometer.stepCountStream.map((event) => event.steps),
         cards: cards,
       ),
+      // TestSEnd(),
       // AudioRecording(),
       // HomePage(Pedometer.stepCountStream.map((event) => event.steps)),
       SupportPage(),

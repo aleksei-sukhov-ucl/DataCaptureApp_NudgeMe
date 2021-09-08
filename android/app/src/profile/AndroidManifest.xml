@@ -13,4 +13,8 @@
 
     <!-- For pedometer -->
     <uses-permission android:name="android.gms.permission.ACTIVITY_RECOGNITION"/>
+
+    <!-- For audio recording-->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 </manifest>

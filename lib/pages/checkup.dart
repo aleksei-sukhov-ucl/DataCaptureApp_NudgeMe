@@ -1,13 +1,14 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:nudge_me/main.dart';
 import 'package:nudge_me/notification.dart';
 import 'dart:async';
 import 'package:nudge_me/model/user_model.dart';
-import 'package:nudge_me/shared/AudioRecording.dart';
+import 'package:nudge_me/shared/audio_recording.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:clock/clock.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 
 /// Weekly Checkup notification opens this page.
 /// Asks user how they are feeling and adds this score and their steps to their graph.
@@ -23,15 +24,21 @@ class WellbeingCheck extends StatelessWidget {
         body: SafeArea(
             child: SingleChildScrollView(
           child: Center(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                Text("Wellbeing Check",
-                    style: Theme.of(context).textTheme.headline1),
-                SizedBox(height: 30),
-                Container(
-                    width: 320, child: WellbeingCheckWidgets(stepValueStream)),
-              ])),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text("Wellbeing Check",
+                      style: Theme.of(context).textTheme.headline1),
+                  SizedBox(height: 30),
+                  Container(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: WellbeingCheckWidgets(
+                          // TODO: change before release
+                          stepValueStream
+                          // Stream.fromIterable([7777])
+                          )),
+                ]),
+          ),
         )),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor);
   }
@@ -128,9 +135,9 @@ class _WellbeingCheckWidgetsState extends State<WellbeingCheckWidgets> {
 
   /// Gets the actual steps taken accounting for the fact that the user may
   /// have reset their device.
-  int _getActualSteps(int total, int prevTotal) =>
+  int _getActualSteps(int currentTotal, int prevTotal) =>
       // using the difference between this week's and last week's steps
-      prevTotal > total ? total : total - prevTotal;
+      prevTotal > currentTotal ? currentTotal : currentTotal - prevTotal;
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +158,8 @@ class _WellbeingCheckWidgetsState extends State<WellbeingCheckWidgets> {
         });
       },
     );
-
+    print(
+        "_currentSliderValueMRCDyspnoeaScale: $_currentSliderValueMRCDyspnoeaScale");
     print("_currentValueAudioURL: $_currentValueAudioURL");
     print("_currentValueSpeechRateTest: $_currentValueSpeechRateTest");
     print("_currentValueTestDuration: $_currentValueTestDuration");
@@ -192,6 +200,7 @@ class _WellbeingCheckWidgetsState extends State<WellbeingCheckWidgets> {
                           style: Theme.of(context).textTheme.bodyText1),
                       Container(
                         child: SliderTheme(
+                            key: Key("Welleing Slider"),
                             data: SliderTheme.of(context).copyWith(
                                 valueIndicatorShape:
                                     PaddleSliderValueIndicatorShape()),
@@ -201,7 +210,7 @@ class _WellbeingCheckWidgetsState extends State<WellbeingCheckWidgets> {
 
                       /// Sputum Color
                       Text(
-                          "\n Over the past 7 days, rate what color your sputum was. ",
+                          "Over the past 7 days, rate what color your sputum was.",
                           style: Theme.of(context).textTheme.bodyText1,
                           textAlign: TextAlign.center),
                       SliderTheme(
@@ -287,56 +296,69 @@ class _WellbeingCheckWidgetsState extends State<WellbeingCheckWidgets> {
                       SizedBox(height: sizeBoxHeight),
 
                       /// MRC Dysonea Scale
-                      Text(
-                          "\n Over the past 7 days, rate your level of breathlessness.",
-                          style: Theme.of(context).textTheme.bodyText1,
-                          textAlign: TextAlign.center),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 15, 0, 5),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(15),
-                              ),
-                              color: Theme.of(context).colorScheme.primary),
-                          child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Text(
-                                descriptionsMRCDyspnoeaScale[
-                                    _currentSliderValueMRCDyspnoeaScale
-                                        .toInt()],
-                                style: TextStyle(color: Colors.white),
-                                textAlign: TextAlign.center),
-                          ),
-                        ),
-                      ),
                       Container(
-                        child: SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                              valueIndicatorShape:
-                                  PaddleSliderValueIndicatorShape(),
-                              valueIndicatorTextStyle:
-                                  TextStyle(overflow: TextOverflow.ellipsis)),
-                          child: Slider(
-                            value: _currentSliderValueMRCDyspnoeaScale,
-                            min: 0,
-                            max: 4,
-                            divisions: 4,
-                            activeColor: Theme.of(context).colorScheme.primary,
-                            inactiveColor: Color.fromARGB(189, 189, 189, 255),
-                            onChanged: (double newValue) {
-                              setState(() {
-                                _currentSliderValueMRCDyspnoeaScale = newValue;
-                                print(
-                                    "_currentSliderValueSputumColor: $_currentSliderValueMRCDyspnoeaScale");
-                              });
-                            },
-                          ),
+                        key: Key('MRCDysoneaScale'),
+                        child: Column(
+                          children: [
+                            Text(
+                                "Over the past 7 days, rate your level of breathlessness.",
+                                style: Theme.of(context).textTheme.bodyText1,
+                                textAlign: TextAlign.center),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 15, 0, 5),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(15),
+                                    ),
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Text(
+                                      descriptionsMRCDyspnoeaScale[
+                                          _currentSliderValueMRCDyspnoeaScale
+                                              .toInt()],
+                                      style: TextStyle(color: Colors.white),
+                                      textAlign: TextAlign.center),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              child: SliderTheme(
+                                data: SliderTheme.of(context).copyWith(
+                                    valueIndicatorShape:
+                                        PaddleSliderValueIndicatorShape(),
+                                    valueIndicatorTextStyle: TextStyle(
+                                        overflow: TextOverflow.ellipsis)),
+                                child: Slider(
+                                  value: _currentSliderValueMRCDyspnoeaScale,
+                                  min: 0,
+                                  max: 4,
+                                  divisions: 4,
+                                  activeColor:
+                                      Theme.of(context).colorScheme.primary,
+                                  inactiveColor:
+                                      Color.fromARGB(189, 189, 189, 255),
+                                  onChanged: (double newValue) {
+                                    setState(() {
+                                      _currentSliderValueMRCDyspnoeaScale =
+                                          newValue;
+                                      print(
+                                          "_currentSliderValueSputumColor: $_currentSliderValueMRCDyspnoeaScale");
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+
                       SizedBox(height: 20),
                       AudioRecording(
                           audioFileLocationURL: _currentValueAudioURL,
@@ -345,63 +367,51 @@ class _WellbeingCheckWidgetsState extends State<WellbeingCheckWidgets> {
                           currentValueTestDuration: _currentValueTestDuration,
                           callback: callback),
 
-                      /// Submit Button
-                      (_currentValueAudioURL == null)
-                          ? SizedBox.shrink()
-                          : Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ElevatedButton(
-                                onPressed: () async {
-                                  final dateString = // get date with fakeable clock
-                                      clock
-                                          .now()
-                                          .toIso8601String()
-                                          .substring(0, 10);
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            final dateString = // get date with fakeable clock
+                                clock.now().toIso8601String().substring(0, 10);
 
-                                  await Provider.of<UserWellbeingDB>(context,
-                                          listen: false)
-                                      .insertWithData(
-                                          date: dateString,
-                                          postcode: await _getPostcode(),
-                                          wellbeingScore:
-                                              _currentSliderValueWellbeing,
-                                          sputumColour:
-                                              _currentSliderValueSputumColor,
-                                          mrcDyspnoeaScale:
-                                              _currentSliderValueMRCDyspnoeaScale,
-                                          speechRateTest:
-                                              _currentValueSpeechRateTest,
-                                          testDuration:
-                                              _currentValueTestDuration,
-                                          speechRate: _currentValueSpeechRate,
-                                          audioURL: _currentValueAudioURL,
-                                          numSteps: thisWeeksSteps,
-                                          supportCode: await _getSupportCode());
-                                  // SharedPreferences.getInstance().then(
-                                  //     (value) => value.setInt(
-                                  //         PREV_STEP_COUNT_KEY,
-                                  //         currentTotalSteps));
+                            await Provider.of<UserWellbeingDB>(context,
+                                    listen: false)
+                                .insertWithData(
+                                    date: dateString,
+                                    postcode: await _getPostcode(),
+                                    wellbeingScore:
+                                        _currentSliderValueWellbeing,
+                                    sputumColour:
+                                        _currentSliderValueSputumColor,
+                                    mrcDyspnoeaScale:
+                                        _currentSliderValueMRCDyspnoeaScale,
+                                    speechRateTest: _currentValueSpeechRateTest,
+                                    testDuration: _currentValueTestDuration,
+                                    speechRate: _currentValueSpeechRate,
+                                    audioURL: _currentValueAudioURL,
+                                    numSteps: thisWeeksSteps,
+                                    supportCode: await _getSupportCode());
+                            SharedPreferences.getInstance().then((value) =>
+                                value.setInt(
+                                    PREV_STEP_COUNT_KEY, currentTotalSteps));
 
-                                  Navigator.pop(context);
+                            Navigator.pop(context);
 
-                                  _checkWellbeing(
-                                      2); // nudges if scores dropped twice
-                                },
-                                style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            Theme.of(context)
-                                                .colorScheme
-                                                .secondary)),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: const Text(
-                                    'Submit',
-                                    style: TextStyle(fontSize: 24),
-                                  ),
-                                ),
-                              ),
-                            )
+                            _checkWellbeing(
+                                2); // nudges if scores dropped twice
+                          },
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  Theme.of(context).colorScheme.secondary)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: const Text(
+                              'Submit',
+                              style: TextStyle(fontSize: 24),
+                            ),
+                          ),
+                        ),
+                      )
                     ],
                   );
                 } else if (streamSnapshot.hasError) {

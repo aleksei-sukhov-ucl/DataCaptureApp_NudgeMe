@@ -24,7 +24,6 @@ class _LineChartTrendsSharedState extends State<LineChartTrendsShared> {
       lineTouchData: LineTouchData(
         touchTooltipData: LineTouchTooltipData(
           tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
-          // rotateAngle: 40,
         ),
         touchCallback: (LineTouchResponse touchResponse) {},
         handleBuiltInTouches: false,
@@ -64,8 +63,6 @@ class _LineChartTrendsSharedState extends State<LineChartTrendsShared> {
           getTitles: (value) {
             return value.toString();
           },
-          // margin: 8,
-          // reservedSize: 30,
         ),
       ),
       borderData: FlBorderData(
@@ -278,28 +275,6 @@ class _LineChartTrendsSharedState extends State<LineChartTrendsShared> {
                       ],
                     ),
                   ),
-                  // Padding(
-                  //   padding:
-                  //   const EdgeInsets.fromLTRB(0, 10, 0, 20),
-                  //   child: Row(
-                  //     children: [
-                  //       Text(
-                  //           showEndDate(
-                  //               cardId: widget.card.cardId,
-                  //               initialIndex: initialIndex),
-                  //           style: Theme.of(context)
-                  //               .textTheme
-                  //               .bodyText2),
-                  //       Icon(Icons.arrow_forward),
-                  //       Text(
-                  //           DateFormat.yMMMMd('en_US')
-                  //               .format(DateTime.now()),
-                  //           style: Theme.of(context)
-                  //               .textTheme
-                  //               .bodyText2),
-                  //     ],
-                  //   ),
-                  // ),
                   Container(
                     child: Expanded(
                       child: lineChartTrends(),

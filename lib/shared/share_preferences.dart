@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nudge_me/shared/pdf_page.dart';
 import 'package:nudge_me/shared/share_export_page.dart';
-import 'package:pdf/pdf.dart';
-import 'package:printing/printing.dart';
 
 Future<void> showDataSharingDialog(BuildContext context) async {
   return await showDialog(
@@ -161,14 +158,7 @@ Future<void> showDataSharingDialog(BuildContext context) async {
                         ),
                       ),
                     );
-                    // await PDFExport.generatePDF();
                   }
-                  // else {
-                  //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  //       elevation: 100,
-                  //       backgroundColor: Colors.yellow,
-                  //       content: Text("Please select data to export")));
-                  // }
                 },
                 child: const Text('Export'),
               ),

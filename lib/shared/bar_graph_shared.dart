@@ -66,58 +66,6 @@ class _SharedBarChartState extends State<SharedBarChart> {
           initialIndex: (widget.cardId == 0) ? 1 : 0,
           dynamicMaxValue: maxY),
       minY: 0,
-      // barTouchData: BarTouchData(
-      //   touchTooltipData: BarTouchTooltipData(
-      //       tooltipBgColor: Colors.blueGrey,
-      //       getTooltipItem: (group, groupIndex, rod, rodIndex) {
-      //         String weekDayWeekMonth;
-      //
-      //         var date = DateTime.fromMillisecondsSinceEpoch(group.x.toInt());
-      //         var start_date = DateFormat.MMMd()
-      //             .format(date.subtract(Duration(days: (date.weekday - 1))));
-      //         var end_date = DateFormat.MMMd()
-      //             .format(date.subtract(Duration(days: (-7 + date.weekday))));
-      //         weekDayWeekMonth = "$start_date-\n$end_date\n";
-      //         // weekDayWeekMonth = DateFormat.MMMd().format(
-      //         //     date.subtract(Duration(days: (date.weekday - 1))));
-      //         // weekDayWeekMonth = DateFormat.MMMd().format(
-      //         //     DateTime.fromMillisecondsSinceEpoch(group.x.toInt()));
-      //
-      //         /// Popup with the information
-      //         return BarTooltipItem(
-      //           weekDayWeekMonth + '\n',
-      //           TextStyle(
-      //             color: Colors.white,
-      //             fontWeight: FontWeight.bold,
-      //             fontSize: 16,
-      //           ),
-      //           children: <TextSpan>[
-      //             TextSpan(
-      //               text: (rod.y).toStringAsFixed(2) +
-      //                   popupUnits(widget.card.cardId),
-      //               style: TextStyle(
-      //                 color: Colors.yellow,
-      //                 fontSize: 16,
-      //                 fontWeight: FontWeight.w500,
-      //               ),
-      //             ),
-      //           ],
-      //         );
-      //       }),
-
-      /// Making on tap dynamic so it disappears after on tap even
-      // touchCallback: (barTouchResponse) {
-      //   setState(() {
-      //     if (barTouchResponse.spot != null &&
-      //         barTouchResponse.touchInput is! PointerUpEvent &&
-      //         barTouchResponse.touchInput is! PointerExitEvent) {
-      //       touchedIndex = barTouchResponse.spot.touchedBarGroupIndex;
-      //     } else {
-      //       touchedIndex = -1;
-      //     }
-      //   });
-      // },
-      // ),
 
       /// Passing the actual data into the BarChart
       titlesData: FlTitlesData(
@@ -127,7 +75,6 @@ class _SharedBarChartState extends State<SharedBarChart> {
             getTextStyles: (context, value) => const TextStyle(
                 color: Colors.black, fontWeight: FontWeight.bold, fontSize: 10),
             margin: 16,
-            // TODO: Create a Switch-Case statement to get data for week/month/year
             getTitles: (double value) {
               var date = DateTime.fromMillisecondsSinceEpoch(value.toInt());
               return DateFormat.MMMd()
@@ -199,28 +146,6 @@ class _SharedBarChartState extends State<SharedBarChart> {
                       ],
                     ),
                   ),
-                  // Padding(
-                  //   padding:
-                  //   const EdgeInsets.fromLTRB(0, 10, 0, 20),
-                  //   child: Row(
-                  //     children: [
-                  //       Text(
-                  //           showEndDate(
-                  //               cardId: widget.card.cardId,
-                  //               initialIndex: initialIndex),
-                  //           style: Theme.of(context)
-                  //               .textTheme
-                  //               .bodyText2),
-                  //       Icon(Icons.arrow_forward),
-                  //       Text(
-                  //           DateFormat.yMMMMd('en_US')
-                  //               .format(DateTime.now()),
-                  //           style: Theme.of(context)
-                  //               .textTheme
-                  //               .bodyText2),
-                  //     ],
-                  //   ),
-                  // ),
                   Expanded(
                     child: BarChart(
                       mainBarData(data: barChartData, maxY: maxYaxis),

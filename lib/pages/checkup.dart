@@ -32,11 +32,7 @@ class WellbeingCheck extends StatelessWidget {
                   SizedBox(height: 30),
                   Container(
                       width: MediaQuery.of(context).size.width * 0.8,
-                      child: WellbeingCheckWidgets(
-                          // TODO: change before release
-                          stepValueStream
-                          // Stream.fromIterable([7777])
-                          )),
+                      child: WellbeingCheckWidgets(stepValueStream)),
                 ]),
           ),
         )),
@@ -158,12 +154,6 @@ class _WellbeingCheckWidgetsState extends State<WellbeingCheckWidgets> {
         });
       },
     );
-    print(
-        "_currentSliderValueMRCDyspnoeaScale: $_currentSliderValueMRCDyspnoeaScale");
-    print("_currentValueAudioURL: $_currentValueAudioURL");
-    print("_currentValueSpeechRateTest: $_currentValueSpeechRateTest");
-    print("_currentValueTestDuration: $_currentValueTestDuration");
-    print(_currentValueAudioURL);
 
     return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
       FutureBuilder(
@@ -179,8 +169,6 @@ class _WellbeingCheckWidgetsState extends State<WellbeingCheckWidgets> {
                 /// For Deployment change this to how it was
                 if (streamSnapshot.hasData) {
                   final currentTotalSteps = streamSnapshot.data;
-                  // final currentTotalSteps = 30;
-                  // final thisWeeksSteps = 10;
                   print(currentTotalSteps);
                   final thisWeeksSteps =
                       _getActualSteps(currentTotalSteps, lastTotalSteps);
@@ -348,8 +336,6 @@ class _WellbeingCheckWidgetsState extends State<WellbeingCheckWidgets> {
                                     setState(() {
                                       _currentSliderValueMRCDyspnoeaScale =
                                           newValue;
-                                      print(
-                                          "_currentSliderValueSputumColor: $_currentSliderValueMRCDyspnoeaScale");
                                     });
                                   },
                                 ),

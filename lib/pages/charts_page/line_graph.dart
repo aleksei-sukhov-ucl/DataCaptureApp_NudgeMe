@@ -6,12 +6,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:nudge_me/model/user_model.dart';
-import 'package:nudge_me/shared/cards.dart';
 import 'package:intl/intl.dart';
 import 'package:nudge_me/shared/loading_indicator.dart';
 import 'package:provider/provider.dart';
-import 'package:ml_dataframe/ml_dataframe.dart';
-import 'package:ml_preprocessing/ml_preprocessing.dart';
 import 'package:moving_average/moving_average.dart';
 
 class LineChartTrends extends StatefulWidget {
@@ -20,13 +17,6 @@ class LineChartTrends extends StatefulWidget {
 }
 
 class _LineChartTrendsState extends State<LineChartTrends> {
-  // Future _futureTrends;
-  //
-  // @override
-  // initState() {
-  //   super.initState();
-  //   _futureTrends = _getFutureTrends();
-  // }
   final double barWidth = 4;
 
   Future<List<WellbeingItem>> _getFutureTrends() async {
@@ -41,9 +31,7 @@ class _LineChartTrendsState extends State<LineChartTrends> {
           tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
           // rotateAngle: 40,
         ),
-        touchCallback: (LineTouchResponse touchResponse) {
-          // print("touchResponse: ${touchResponse.lineBarSpots}");
-        },
+        touchCallback: (LineTouchResponse touchResponse) {},
         handleBuiltInTouches: false,
       ),
       gridData: FlGridData(
@@ -157,7 +145,6 @@ class _LineChartTrendsState extends State<LineChartTrends> {
                       .toDouble();
                 }
                 double maxX = DateTime.parse(dataFromDB.last.date)
-                    // .subtract(Duration(days: -7))
                     .millisecondsSinceEpoch
                     .toDouble();
 
@@ -224,7 +211,7 @@ class _LineChartTrendsState extends State<LineChartTrends> {
                 // // final minMAmrcDyspnoeaScale = minMA(mAdatamrcDyspnoeaScale);
                 // // final minMASpeechRate = minMA(mAdataspeechRate);
 
-                /// Always need this
+                /// Always need this - FlSpot used for x and y axis identification
                 List<FlSpot> lineChartBarDataSteps = [];
                 List<FlSpot> lineChartBarDataWellbeingScore = [];
                 List<FlSpot> lineChartBarDatasputumColour = [];

@@ -17,9 +17,7 @@ import 'package:nudge_me/pages/nudge_progress_page.dart';
 import 'package:nudge_me/pages/send_nudge_page.dart';
 import 'package:nudge_me/shared/friend_graph.dart';
 import 'package:nudge_me/shared/generate_hashmap.dart';
-import 'package:nudge_me/shared/wellbeing_graph.dart';
 import 'package:pointycastle/pointycastle.dart' as pointyCastle;
-import 'package:permission_handler/permission_handler.dart';
 
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -118,7 +116,7 @@ class SupportPageState extends State<SupportPage> {
     final url = "$BASE_URL/add-friend?"
         "identifier=${Uri.encodeComponent(identifier)}"
         "&pubKey=${Uri.encodeComponent(pubKey)}";
-    return "Add me on NudgeMe by clicking this:\n$url";
+    return "Add me on NudgeShare by clicking this:\n$url";
   }
 
   List<Widget> _getShareLinkButtons() {
@@ -171,12 +169,7 @@ class SupportPageState extends State<SupportPage> {
 
     Provider.of<FriendDB>(context)
         .getFriends()
-        .then((value) => print("value:$value")
-            // value.forEach((element) {
-            //       print("element: $element");
-            //     }
-            //     ),
-            );
+        .then((value) => print("value:$value"));
     // NOTE: since we are using nested Scaffolds (there is one above this), we need
     // to wrap a ScaffoldMessenger in between them to avoid showing duplicate
     // snackbars, or rather, to avoid getting an exception since we were *about*
@@ -226,7 +219,7 @@ class SupportPageState extends State<SupportPage> {
         onPressed: () => showDialog(
             builder: (context) => AlertDialog(
                   scrollable: true,
-                  title: Text("My NudgeMe Identity \n(QR Code)",
+                  title: Text("My NudgeShare Identity \n(QR Code)",
                       textAlign: TextAlign.center),
                   content: FutureBuilder(
                     future: SharedPreferences.getInstance(),
@@ -242,7 +235,7 @@ class SupportPageState extends State<SupportPage> {
                               style: Theme.of(context).textTheme.bodyText2,
                               textAlign: TextAlign.center),
                           Text(
-                              "1. Open their NudgeMe app and navigate to the Network page.\n" +
+                              "1. Open their NudgeShare app and navigate to the Network page.\n" +
                                   "2. Click ‘Scan code to add to network.’\n" +
                                   "3. Using the camera on their phone, scan your code.\n" +
                                   "4. Once they have added you, add them back by clicking on the ‘Scan code to add to network’ button.",
@@ -279,8 +272,8 @@ class SupportPageState extends State<SupportPage> {
                 RichText(
                     text: new TextSpan(children: [
                       new TextSpan(
-                          text: "With NudgeMe, caring is sharing. \n\n" +
-                              "Let people in your care network know how you are. You can start this process by texting them a link to download NudgeMe.\n",
+                          text: "With NudgeShare, caring is sharing. \n\n" +
+                              "Let people in your care network know how you are. You can start this process by texting them a link to download NudgeShare.\n",
                           style: Theme.of(context).textTheme.bodyText2),
                     ]),
                     textAlign: TextAlign.center),
@@ -304,7 +297,7 @@ class SupportPageState extends State<SupportPage> {
                   text: new TextSpan(children: [
                     new TextSpan(
                         text:
-                            "When you both have NudgeMe, you can send your wellbeing diary to people who care for you and they can do the same with you.",
+                            "When you both have NudgeShare, you can send your wellbeing diary to people who care for you and they can do the same with you.",
                         style: TextStyle(
                             fontFamily: "Rosario",
                             fontSize: 15,
@@ -335,7 +328,7 @@ class SupportPageState extends State<SupportPage> {
         child: RichText(
             text: new TextSpan(children: [
               TextSpan(
-                  text: "With NudgeMe, caring is sharing. \n\n",
+                  text: "With NudgeShare, caring is sharing. \n\n",
                   style: Theme.of(context).textTheme.bodyText2),
               TextSpan(
                   text:
@@ -432,6 +425,7 @@ class SupportPageState extends State<SupportPage> {
           );
   }
 
+  /// Modal to select which wellbeing data to share
   Future<void> _showWellbeingSendDialog(
       BuildContext context, Friend friend) async {
     final List<WellbeingItem> dataFromDB =
@@ -562,6 +556,7 @@ class SupportPageState extends State<SupportPage> {
         MaterialPageRoute(builder: (context) => SendNudgePage(friend)));
   }
 
+  /// Modal to select what to do you what to send: a nudge or wellbeing data
   Widget getListTile(BuildContext context, Friend friend) {
     final sendOptionsDialog = SimpleDialog(
       title: const Text("Choose what to send"),
@@ -743,7 +738,6 @@ class SupportPageState extends State<SupportPage> {
       dataFromDB.forEach((wellbeingItem) {
         String matchDate = wellbeingItem.date;
         DateTime dateFromDb = DateTime.parse(wellbeingItem.date);
-        // print("dateFromDb: $dateFromDb");
 
         if (dateFromDb.weekday != 1) {
           matchDate = dateFromDb
@@ -813,20 +807,17 @@ class SupportPageState extends State<SupportPage> {
       cardIds.add(5);
     }
 
-    print("cardIds: $cardIds");
+    /// Forming JSON
     final Map<String, String> mapped = {
       'ids': cardIds.toString(),
       'data': json.encode(dataHashMap)
     };
 
     final jsonString = json.encode(mapped);
-    // print("jsonString: $jsonString");
-    // var test = json.decode(json.decode(jsonString)['data']);
-    // print("test: $test");
 
+    ///Encrypting JSON
     final encrypter = Encrypter(RSA(publicKey: friendKey));
     final data = encrypter.encrypt(jsonString).base64;
-    print(data);
     final prefs = await SharedPreferences.getInstance();
     final body = json.encode({
       'identifier_from': prefs.getString(USER_IDENTIFIER_KEY),
@@ -834,14 +825,12 @@ class SupportPageState extends State<SupportPage> {
       'identifier_to': friend.identifier,
       'data': data
     });
-    print(body);
 
     http
         .post(Uri.parse(BASE_URL + "/user/message/new"),
             headers: {"Content-Type": "application/json"}, body: body)
         .then((response) {
       final body = json.decode(response.body);
-      print(body);
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           elevation: 10,

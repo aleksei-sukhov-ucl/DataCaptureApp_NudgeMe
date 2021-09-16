@@ -40,7 +40,9 @@ void main() {
       expect(
           find.byWidgetPredicate((widget) =>
               widget is RichText &&
-              widget.text.toPlainText().contains('When you both have NudgeMe')),
+              widget.text
+                  .toPlainText()
+                  .contains('When you both have NudgeShare')),
           findsOneWidget);
       expect(find.byType(SliverList), findsNothing);
     });

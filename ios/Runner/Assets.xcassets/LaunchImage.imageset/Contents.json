@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "NudgeMeLaunchLogo.png",
+      "filename" : "NudgeMeLaunchLogo2.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "NudgeMeLaunch2.png",
+      "filename" : "NudgeMeLaunch22.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "NudgeMeLaunch3.png",
+      "filename" : "NudgeMeLaunch32.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

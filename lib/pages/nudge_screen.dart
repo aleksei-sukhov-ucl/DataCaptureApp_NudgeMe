@@ -8,7 +8,6 @@ class NudgeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        brightness: Brightness.light,
         title: Text("Nudge"),
       ),
       body: SafeArea(

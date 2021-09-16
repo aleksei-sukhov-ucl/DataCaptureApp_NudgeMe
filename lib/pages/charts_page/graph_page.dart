@@ -24,6 +24,7 @@ class ChartPage extends StatefulWidget {
 class _ChartPageState extends State<ChartPage> {
   int initialIndex = 0;
 
+  /// Date descriptions
   showEndDate({int cardId, int initialIndex}) {
     if (cardId == 5) {
       return DateFormat.yMMMMd('en_US').format(
@@ -48,10 +49,7 @@ class _ChartPageState extends State<ChartPage> {
 
   @override
   Widget build(BuildContext context) {
-    print("current card id: ${widget.card.cardId}");
-
     /// Share data button
-    /// Ref: https://flutter.dev/docs/release/breaking-changes/buttons
     TextButton shareDataButton = TextButton(
       onPressed: () async {
         await showDataSharingDialog(context);
@@ -115,21 +113,130 @@ class _ChartPageState extends State<ChartPage> {
       },
     );
 
+    /// Graph card
+    Widget graphCard = Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Container(
+          height: MediaQuery.of(context).size.height * 0.5,
+          width: MediaQuery.of(context).size.width * 0.95,
+          child: Card(
+            key: Key("Graph Card"),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            color: Colors.grey[100],
+            child: Stack(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisSize: MainAxisSize.max,
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            widget.card.units,
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
+                          (widget.card.cardId == 0 || widget.card.cardId == 5)
+                              ? SizedBox.shrink()
+                              : TextButton.icon(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            AddData(card: widget.card),
+                                      ),
+                                    );
+                                  },
+                                  label: Text("Add Data"),
+                                  icon: Icon(Icons.add),
+                                )
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 20),
+                        child: Row(
+                          children: [
+                            Text(
+                                showEndDate(
+                                    cardId: widget.card.cardId,
+                                    initialIndex: initialIndex),
+                                style: Theme.of(context).textTheme.bodyText2),
+                            Icon(Icons.arrow_forward),
+                            Text(
+                                DateFormat.yMMMMd('en_US')
+                                    .format(DateTime.now()),
+                                style: Theme.of(context).textTheme.bodyText2),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: (widget.card.cardId == 5)
+                            ? Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: LineChartTrends(),
+                              )
+                            : Provider.value(
+                                value: initialIndex,
+                                updateShouldNotify: (oldValue, newValue) =>
+                                    newValue != oldValue,
+                                child: BarChartWidget(
+                                    card: widget.card,
+                                    initialIndex: initialIndex),
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+
+    /// Description card
+    Widget descriptionCard = Container(
+      width: MediaQuery.of(context).size.width * 0.95,
+      child: Card(
+        key: Key("Card Description"),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        color: Colors.grey[100],
+        child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                  child: Text((widget.card.cardId != 5) ? "About" : "Key",
+                      style: Theme.of(context).textTheme.bodyText1),
+                ),
+                widget.card.cardDescription
+              ],
+            )),
+      ),
+    );
+
     return Scaffold(
       appBar: AppBar(
-        brightness: Brightness.light,
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-                icon: const Icon(Icons.arrow_back_ios_rounded),
-                onPressed: () {
-                  Navigator.pop(
-                    context,
-                    MaterialPageRoute(builder: (context) => WellbeingPage()),
-                  );
-                });
-          },
-        ),
+        leading: Builder(builder: (BuildContext context) {
+          return IconButton(
+              icon: const Icon(Icons.arrow_back_ios_rounded),
+              onPressed: () {
+                Navigator.pop(
+                  context,
+                  MaterialPageRoute(builder: (context) => WellbeingPage()),
+                );
+              });
+        }),
         title: Text(
           widget.card.titleOfCard,
           style: Theme.of(context).textTheme.subtitle1.merge(
@@ -148,160 +255,16 @@ class _ChartPageState extends State<ChartPage> {
                       ? SizedBox.shrink()
                       : timeFrameSelector,
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.5,
-                      width: MediaQuery.of(context).size.width * 0.95,
-                      child: Card(
-                        key: Key("Graph Card"),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        color: Colors.grey[100],
-                        child: Stack(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                mainAxisSize: MainAxisSize.max,
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        widget.card.units,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText1,
-                                      ),
-                                      (widget.card.cardId == 0 ||
-                                              widget.card.cardId == 5)
-                                          ? SizedBox.shrink()
-                                          : TextButton.icon(
-                                              onPressed: () {
-                                                Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        AddData(
-                                                            card: widget.card),
-                                                  ),
-                                                );
-                                              },
-                                              label: Text("Add Data"),
-                                              icon: Icon(Icons.add),
-                                            )
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(0, 10, 0, 20),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                            showEndDate(
-                                                cardId: widget.card.cardId,
-                                                initialIndex: initialIndex),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText2),
-                                        Icon(Icons.arrow_forward),
-                                        Text(
-                                            DateFormat.yMMMMd('en_US')
-                                                .format(DateTime.now()),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText2),
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                      child: (widget.card.cardId == 5)
-                                          ? Padding(
-                                              padding:
-                                                  const EdgeInsets.all(15.0),
-                                              child: LineChartTrends(),
-                                            )
-                                          : Provider.value(
-                                              value: initialIndex,
-                                              updateShouldNotify:
-                                                  (oldValue, newValue) =>
-                                                      newValue != oldValue,
-                                              child: BarChartWidget(
-                                                  card: widget.card,
-                                                  initialIndex: initialIndex))),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                graphCard,
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
                   child: shareDataButton,
                 ),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.95,
-                  child: Card(
-                    key: Key("Card Description"),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    color: Colors.grey[100],
-                    child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                              child: Text(
-                                  (widget.card.cardId != 5) ? "About" : "Key",
-                                  style: Theme.of(context).textTheme.bodyText1),
-                            ),
-                            widget.card.cardDescription
-                          ],
-                        )),
-                  ),
-                )
+                descriptionCard
               ],
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget key({Color color, String text}) {
-    return Padding(
-      padding: const EdgeInsets.all(4.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: color,
-            ),
-            height: 40,
-            width: 40,
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-            child: Text(
-              text,
-              style: Theme.of(context).textTheme.bodyText2,
-            ),
-          ),
-        ],
       ),
     );
   }

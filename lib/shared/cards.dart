@@ -22,17 +22,24 @@ class CardClass {
 
 /// Defining the list of cards
 List<CardClass> cards = [
+  /// Steps Card
+  /// Text ref: https://www.betterhealth.vic.gov.au/health/healthyliving/walking-for-good-health
   CardClass(
     cardId: 0,
     cardIcon: Icon(Icons.directions_walk),
     titleOfCard: "Steps",
     units: "Steps",
     color: Color.fromRGBO(123, 230, 236, 1),
-    cardDescription: Text(
-        "Walking for 30 minutes a day or more on most days of the week is a great way to improve or maintain your overall health.\n\nIf you can’t manage 30 minutes a day, remember ‘even a little is good, but more is better’.\n\nWalking with others can turn exercise into an enjoyable social occasion."),
+    cardDescription: Text("Walking for 30 minutes a day or more"
+        " on most days of the week is a great way"
+        " to improve or maintain your overall health."
+        "\n\nIf you can’t manage 30 minutes a day, "
+        "remember ‘even a little is good, but more"
+        " is better’.\n\nWalking with others can turn"
+        " exercise into an enjoyable social occasion."),
   ),
 
-  /// Text ref: https://www.betterhealth.vic.gov.au/health/healthyliving/walking-for-good-health
+  ///Wellbeing Score Card
   CardClass(
       cardId: 1,
       cardIcon: Icon(Icons.accessibility_new),
@@ -40,6 +47,8 @@ List<CardClass> cards = [
       units: "Wellbeing score",
       color: Colors.deepPurple,
       cardDescription: Text("")),
+
+  ///Sputum Color Card
   CardClass(
     cardId: 2,
     cardIcon: Icon(Icons.sentiment_satisfied_alt),
@@ -130,11 +139,6 @@ List<CardClass> cards = [
               ),
             ],
           )
-          // cardKey(color: Color.fromRGBO(246, 247, 249, 1), text: "1"),
-          // cardKey(color: Color.fromRGBO(253, 250, 243, 1.0), text: "2"),
-          // cardKey(color: Color.fromRGBO(252, 250, 227, 1), text: "3"),
-          // cardKey(color: Color.fromRGBO(220, 219, 188, 1), text: "4"),
-          // cardKey(color: Color.fromRGBO(211, 206, 125, 1), text: "5"),
         ]),
   ),
 
@@ -151,8 +155,12 @@ List<CardClass> cards = [
       cardDescription: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Text(
-              "The dyspnoea scale has been in use for many years for grading the effect of breathlessness on daily activities. This scale measures perceived respiratory disability.\n\nThe MRC dyspnoea scale is simple to administer as it allows the patients to indicate the extent to which their breathlessness affects their mobility."),
+          Text("The dyspnoea scale has been in use for many years for grading "
+              "the effect of breathlessness on daily activities. This scale"
+              " measures perceived respiratory disability.\n\nThe MRC dyspnoea"
+              " scale is simple to administer as it allows the patients to "
+              "indicate the extent to which their breathlessness affects"
+              " their mobility."),
           SizedBox(
             height: 10,
           ),
@@ -161,26 +169,29 @@ List<CardClass> cards = [
                   "Not troubled by breathless except on strenuous exercise",
               id: "0"),
           mrcDescriptionKey(
-              description:
-                  "Short of breath when hurrying on a level or when walking up a slight hill",
+              description: "Short of breath when hurrying on a level or "
+                  "when walking up a slight hill",
               id: "1"),
           mrcDescriptionKey(
               description:
-                  "Walks slower than most people on the level, stops after a mile or so, or stops after 15 minutes walking at own pace",
+                  "Walks slower than most people on the level, stops after "
+                  "a mile or so, or stops after 15 minutes walking at own pace",
               id: "2"),
           mrcDescriptionKey(
-              description:
-                  "Stops for breath after walking 100 yards, or after a few minutes on level ground",
+              description: "Stops for breath after walking 100 yards, or"
+                  " after a few minutes on level ground",
               id: "3"),
           mrcDescriptionKey(
-              description:
-                  "Too breathless to leave the house, or breathless when dressing/undressing",
+              description: "Too breathless to leave the house, "
+                  "or breathless when dressing/undressing",
               id: "4"),
         ],
       )
 
       ///Text ref: https://mrc.ukri.org/research/facilities-and-resources-for-researchers/mrc-scales/mrc-dyspnoea-scale-mrc-breathlessness-scale/
       ),
+
+  ///Speech to text card
   // CardClass(
   //   cardId: 4,
   //   cardIcon: Icon(Icons.record_voice_over),
@@ -189,6 +200,8 @@ List<CardClass> cards = [
   //   color: Color.fromRGBO(241, 139, 128, 1.0),
   //   cardDescription: Text(""),
   // ),
+
+  /// Trends card
   CardClass(
       cardId: 5,
       cardIcon: Icon(Icons.timeline_outlined),
@@ -221,9 +234,11 @@ Widget cardKey({Color color, String text}) {
           height: 40,
           width: 40,
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-          child: Text(text),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+            child: Text(text),
+          ),
         ),
       ],
     ),

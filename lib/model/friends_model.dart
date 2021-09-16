@@ -16,8 +16,7 @@ const _columns = [
   "identifier",
   "publicKey", // the public key owned by the friend
   "latestData", // the most recent data sent by the user
-  "read",
-  // columns related to p2p nudging:
+  "read", // columns related to p2p nudging:
   "currentStepsGoal",
   "sentActiveGoal",
   "initialStepCount"
@@ -36,6 +35,35 @@ class FriendDB extends ChangeNotifier {
 
   FriendDB._(); // private constructor
   factory FriendDB() => _instance; // factory so we don't return new instance
+
+  Future<Database> get database async {
+    if (_database == null) {
+      _database = await _init();
+    }
+    return _database;
+  }
+
+  Future<Database> _init() async {
+    final dir = await getDatabasesPath();
+    final dbPath = join(dir, _dbName);
+    return openDatabase(dbPath, version: _dbVersion, onCreate: _onCreate);
+  }
+
+  void _onCreate(Database db, int version) {
+    db.execute('''
+      CREATE TABLE $_tableName (
+      ${_columns[0]} INTEGER PRIMARY KEY AUTOINCREMENT,
+      ${_columns[1]} TEXT NOT NULL,
+      ${_columns[2]} TEXT NOT NULL,
+      ${_columns[3]} TEXT NOT NULL,
+      ${_columns[4]} TEXT,
+      ${_columns[5]} INTEGER,
+      ${_columns[6]} INTEGER,
+      ${_columns[7]} INTEGER NOT NULL,
+      ${_columns[8]} INTEGER
+    )
+      ''');
+  }
 
   /// inserts a wellbeing record.
   /// returns the id of the newly inserted record
@@ -216,41 +244,12 @@ class FriendDB extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Database> get database async {
-    if (_database == null) {
-      _database = await _init();
-    }
-    return _database;
-  }
-
   /// returns `true` if there are 0 rows in the DB
   Future<bool> get empty async {
     final db = await database;
     return firstIntValue(
             await db.rawQuery('SELECT COUNT(*) FROM $_tableName')) ==
         0;
-  }
-
-  Future<Database> _init() async {
-    final dir = await getDatabasesPath();
-    final dbPath = join(dir, _dbName);
-    return openDatabase(dbPath, version: _dbVersion, onCreate: _onCreate);
-  }
-
-  void _onCreate(Database db, int version) {
-    db.execute('''
-      CREATE TABLE $_tableName (
-      ${_columns[0]} INTEGER PRIMARY KEY AUTOINCREMENT,
-      ${_columns[1]} TEXT NOT NULL,
-      ${_columns[2]} TEXT NOT NULL,
-      ${_columns[3]} TEXT NOT NULL,
-      ${_columns[4]} TEXT,
-      ${_columns[5]} INTEGER,
-      ${_columns[6]} INTEGER,
-      ${_columns[7]} INTEGER NOT NULL,
-      ${_columns[8]} INTEGER
-    )
-      ''');
   }
 }
 

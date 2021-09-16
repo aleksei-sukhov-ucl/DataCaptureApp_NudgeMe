@@ -431,7 +431,7 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
     /// First Page
     PageViewModel firstPage = PageViewModel(
         title: "Welcome",
-        image: Image.asset("lib/images/IntroLogo.png"),
+        image: Image.asset("lib/images/IntroLogo2RegularInline.png"),
         // image: Image.asset("lib/images/launcher/logo.png"),
         bodyWidget: Text(
             "It is recognised that people often forget to look after themselves. \n\n " +
@@ -443,7 +443,8 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
     /// Second Page
     PageViewModel secondPage = PageViewModel(
         title: "How?",
-        image: Image.asset("lib/images/IntroLogo.png"),
+        // image: Image.asset("lib/images/IntroLogo.png"),
+        image: Image.asset("lib/images/IntroLogo2RegularInline.png"),
         bodyWidget: Text(
             "Occasionally, it will nudge you to keep in contact with people you like to speak to. " +
                 "It will also make you aware of opportunities to share your wellbeing with this group. " +
@@ -604,17 +605,11 @@ class _IntroScreenWidgetsState extends State<IntroScreenWidgets> {
                       min: 0,
                       max: 4,
                       divisions: 4,
-                      // label: _currentSliderValueMRCDyspnoeaScale.toString(),
-                      // label: descriptionsMRCDyspnoeaScale[
-                      //     _currentSliderValueMRCDyspnoeaScale.toInt() -
-                      //         1],
                       activeColor: Theme.of(context).colorScheme.primary,
                       inactiveColor: Color.fromARGB(189, 189, 189, 255),
                       onChanged: (double newValue) {
                         setState(() {
                           _currentSliderValueMRCDyspnoeaScale = newValue;
-                          print(
-                              "_currentSliderValueMRCDyspnoeaScale: $_currentSliderValueMRCDyspnoeaScale");
                         });
                       },
                     ),

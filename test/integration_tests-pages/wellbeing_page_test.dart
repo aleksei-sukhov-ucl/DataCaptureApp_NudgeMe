@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nudge_me/main.dart';
 import 'package:nudge_me/model/user_model.dart';
-import 'package:nudge_me/pages/checkup.dart';
 import 'package:nudge_me/pages/wellbeing_page/trends_tile.dart';
 import 'package:nudge_me/pages/wellbeing_page/wellbeing_page.dart';
 import 'package:nudge_me/shared/cards.dart';
@@ -12,7 +11,6 @@ import 'package:nudge_me/shared/wellbeing_circle.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:clock/clock.dart';
 
 import '../widget_test.dart';
 
@@ -50,7 +48,7 @@ void main() {
           wbDB: mockedUserWellbeingDB));
       await tester.pumpAndSettle();
       // Check the title is loaded correctly
-      expect(find.text('NudgeMe'), findsOneWidget);
+      expect(find.text('NudgeShare'), findsOneWidget);
       expect(find.byIcon(Icons.help_outline), findsOneWidget);
       //Check that all cards loaded correctly
       expect(find.text('View More'), findsNWidgets(numberOfCard));
@@ -192,7 +190,6 @@ void main() {
           WellbeingPage(cards: cards, currentStepValueStream: fakeStepStream),
           wbDB: mockedUserWellbeingDB));
       await tester.pumpAndSettle();
-      final iconToFind = Icons.sentiment_satisfied_alt;
       //Find a MRC Dyspnoea Scale card
       final parentFinder = find.ancestor(
           of: find.text("MRC Dyspnoea Scale"), matching: find.byType(Card));

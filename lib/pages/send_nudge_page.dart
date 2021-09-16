@@ -133,11 +133,13 @@ class _StepSelectorState extends State<StepSelector> {
         // their current goal)
         Provider.of<FriendDB>(context, listen: false)
             .updateActiveNudge(widget.friend.identifier, true);
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Nudged ${widget.friend.name}.")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.green,
+            content: Text("Nudged ${widget.friend.name}.")));
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Failed to send nudge.")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.yellow,
+            content: Text("Failed to send nudge.")));
       }
     });
   }

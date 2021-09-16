@@ -11,8 +11,6 @@ import 'package:nudge_me/shared/wellbeing_circle.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-// import '../../background.dart';
 import '../../main.dart';
 
 const URL_USER_MANUAL =
@@ -46,29 +44,11 @@ class _WellbeingPageState extends State<WellbeingPage> {
   @override
   void didChangeDependencies() {
     setState(() {
-      /// TODO: DELETE THIS
-      // _getAllshared();
-      // schedulePedometerInsert();
       print("didChangeDependencies got triggered");
       _futureLatestData = _getFutureLatestData();
       super.didChangeDependencies();
     });
   }
-
-  /// TODO: DELETE THIS
-  // _getAllshared() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final keys = prefs.getKeys();
-  //
-  //   final prefsMap = Map<String, dynamic>();
-  //   for (String key in keys) {
-  //     prefsMap[key] = prefs.get(key);
-  //   }
-  //
-  //   prefsMap.forEach((key, value) {
-  //     print("key: $key | value: $value");
-  //   });
-  // }
 
   _getFutureLatestData() async {
     return await Provider.of<UserWellbeingDB>(context, listen: true)
@@ -126,10 +106,6 @@ class _WellbeingPageState extends State<WellbeingPage> {
         }
       }
 
-      // if (element.wellbeingScore != null) {
-      //   maxSpeehRate = element.wellbeingScore;
-      // }
-
       Widget _dataGraph({CardClass card, List<WellbeingItem> lastItems}) {
         final lastItemsList = lastItems.reversed;
         switch (card.cardId) {
@@ -138,11 +114,9 @@ class _WellbeingPageState extends State<WellbeingPage> {
           case 1:
             lastItemsList.forEach((element) {
               if (element.wellbeingScore != null) {
-                // print("element.wellbeingScore: ${element.wellbeingScore}");
                 lastWellbeingScore = element.wellbeingScore;
               }
             });
-            // print("print(lastWellbeingScore): $lastWellbeingScore");
             return WellbeingCircle(
               score: lastWellbeingScore.truncate(),
             );
@@ -154,7 +128,6 @@ class _WellbeingPageState extends State<WellbeingPage> {
                 lastSputumColour = element.sputumColour;
               }
             });
-            // print("lastSputumColour: $lastSputumColour");
             return WellbeingCircle(
                 score: lastSputumColour.truncate(),
                 firstColor: card.color,
@@ -191,7 +164,6 @@ class _WellbeingPageState extends State<WellbeingPage> {
 
       if (card.cardId == 0) {
         return FutureBuilder(
-            // key: _stepsTutorialKey,
             future: _lastTotalStepsFuture,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
@@ -203,6 +175,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       print("Card.cardId == 0 Snapshot has data!");
+
                       final int currTotalSteps = snapshot.data;
 
                       print("currTotalSteps: $currTotalSteps");
@@ -225,7 +198,7 @@ class _WellbeingPageState extends State<WellbeingPage> {
                       // no case where the pedometer throws an error but no
                       // banner is shown.
                       pedometerWarn = true;
-                      print("In the case that pedometer is unavailable");
+                      print("Pedometer is unavailable - future");
                       return CirclePercentIndicator(
                           color: card.color, units: card.units);
                     } else {
@@ -240,7 +213,6 @@ class _WellbeingPageState extends State<WellbeingPage> {
               }
               print("Future Builder has no data:");
               return loadingIndicator();
-              // return Text("Pedometer is unavailable! Future Builder Error");
             });
       } else {
         return FutureBuilder(
@@ -270,17 +242,13 @@ class _WellbeingPageState extends State<WellbeingPage> {
               (MediaQuery.of(context).size.height / 1.53),
         ),
         itemBuilder: (BuildContext context, int index) {
-          // print(cards[index].units);
           return GestureDetector(
             child: Card(
               shadowColor: Theme.of(context).primaryColor,
               color: Colors.grey[100],
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
+                  borderRadius: BorderRadius.circular(15.0)),
               margin: EdgeInsets.fromLTRB(8, 8, 8, 8),
-
-              /// Padding for card contents
               child: Container(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -322,14 +290,8 @@ class _WellbeingPageState extends State<WellbeingPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          Text(
-                            'View More',
-                            style: TextStyle(fontSize: 8),
-                          ),
-                          Icon(
-                            Icons.keyboard_arrow_right,
-                            size: 8,
-                          ),
+                          Text('View More', style: TextStyle(fontSize: 8)),
+                          Icon(Icons.keyboard_arrow_right, size: 8)
                         ],
                       ),
                     ],
@@ -340,32 +302,11 @@ class _WellbeingPageState extends State<WellbeingPage> {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => ChartPage(card: widget.cards[index]),
-                ),
+                    builder: (context) => ChartPage(card: widget.cards[index])),
               );
             },
           );
         });
-
-    // UserWellbeingDB().dataPastWeekToPublish().then((items) {
-    //   print(UserWellbeingDB);
-    //   final item = items.first;
-    //   print("UserWellbeingDB().dataPastWeekToPublish(): $item");
-    //   final body = jsonEncode({
-    //     "postCode": item.postcode,
-    //     "weeklySteps": item.numSteps,
-    //     "wellbeingScore": item.wellbeingScore,
-    //     "sputumColour": item.sputumColour,
-    //     "mrcDyspnoeaScale": item.mrcDyspnoeaScale,
-    //     // "errorRate": errorRate.truncate(),
-    //     "supportCode": item.supportCode,
-    //     "date_sent": item.date,
-    //
-    //     ///N.B. The weeks are represented starting from monday of every week
-    //   });
-    //
-    //   print("Sending body $body");
-    // });
 
     return Scaffold(
         body: SafeArea(

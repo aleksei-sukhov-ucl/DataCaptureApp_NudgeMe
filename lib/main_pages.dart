@@ -5,14 +5,11 @@ import 'package:nudge_me/model/friends_model.dart';
 import 'package:nudge_me/notification.dart';
 import 'package:nudge_me/pages/add_friend_page.dart';
 import 'package:nudge_me/pages/checkup.dart';
-import 'package:nudge_me/pages/nudge_screen.dart';
 import 'package:nudge_me/pages/support_page.dart';
 import 'package:nudge_me/pages/testing_page.dart';
-import 'package:nudge_me/shared/audio_recording.dart';
 import 'package:nudge_me/shared/cards.dart';
 import 'package:nudge_me/pages/wellbeing_page/wellbeing_page.dart';
 import 'package:nudge_me/pages/settings_page.dart';
-import 'package:nudge_me/shared/test_send_data.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:provider/provider.dart';
 import 'package:uni_links/uni_links.dart';
@@ -23,17 +20,10 @@ import 'main.dart';
 /// URL of the server running back-end code. This should be changed
 /// if the domain has changed.
 /// Also ensure 'https' is used since we want to securely send data.
-const BASE_URL = "https://health.nudgemehealth.co.uk";
+const BASE_URL = "https://nudgeshare.org";
 
 /// defines the index of a page
-enum NavBarIndex {
-  wellbeing,
-  /*home,*/
-  // textToSpeech,
-  network,
-  settings,
-  testing
-}
+enum NavBarIndex { wellbeing, network, settings, testing }
 
 /// Widget that switches between and displays the currently selected
 /// page from the navigation bar.
@@ -64,8 +54,6 @@ class _MainPagesState extends State<MainPages> {
     List<TabItem> items = [
       TabItem(
           icon: Icon(Icons.bar_chart, color: Colors.white), title: "Wellbeing"),
-      // TabItem(icon: Icon(Icons.home, color: Colors.white), title: "Home"),
-      // TabItem(icon: Icon(Icons.home, color: Colors.white), title: "TTS"),
       TabItem(icon: Icon(Icons.people, color: Colors.white), title: "Network"),
       TabItem(
           icon: Icon(Icons.settings, color: Colors.white), title: "Settings"),
@@ -135,7 +123,6 @@ class _MainPagesState extends State<MainPages> {
             Pedometer.stepCountStream.map((event) => event.steps),
         cards: cards,
       ),
-      // TestSEnd(),
       // AudioRecording(),
       // HomePage(Pedometer.stepCountStream.map((event) => event.steps)),
       SupportPage(),
@@ -183,7 +170,7 @@ class _MainPagesState extends State<MainPages> {
         break;
       case NUDGE_PAYLOAD:
         await navigatorKey.currentState
-            .push(MaterialPageRoute(builder: (context) => NudgeScreen()));
+            .push(MaterialPageRoute(builder: (context) => SupportPage()));
         break;
       case FRIEND_DATA_PAYLOAD:
         setState(() {

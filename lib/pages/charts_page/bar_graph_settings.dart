@@ -184,13 +184,6 @@ double maxYaxis({int cardId, int initialIndex, double dynamicMaxValue}) {
         // print("MaxY for year");
         return ((dynamicMaxValue / 10).ceil() * 10).toDouble();
       }
-      // if (initialIndex == 0) {
-      //   return 20;
-      // } else if (initialIndex == 1) {
-      //   return 100;
-      // } else {
-      //   return 350;
-      // }
       break;
     case 1:
       return 10;
@@ -202,7 +195,6 @@ double maxYaxis({int cardId, int initialIndex, double dynamicMaxValue}) {
       return (dynamicMaxValue == 0)
           ? 10
           : ((dynamicMaxValue / 5).ceil() * 5).toDouble();
-    // return 200;
     default:
       return 10;
   }
@@ -220,13 +212,6 @@ double stepSize({int cardId, int initialIndex, double dynamicMaxValue}) {
       } else if (initialIndex == 2) {
         return (dynamicMaxValue / 10).ceil().toDouble();
       }
-      // if (initialIndex == 0) {
-      //   return 4;
-      // } else if (initialIndex == 1) {
-      //   return 20;
-      // } else {
-      //   return 25;
-      // }
       break;
     case 1:
       return 2;
@@ -238,7 +223,6 @@ double stepSize({int cardId, int initialIndex, double dynamicMaxValue}) {
       return (dynamicMaxValue == 0)
           ? 2
           : (dynamicMaxValue / 5).ceil().toDouble();
-    // return 200;
     default:
       return 1;
   }

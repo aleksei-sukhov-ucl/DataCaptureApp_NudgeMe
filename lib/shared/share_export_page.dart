@@ -234,9 +234,6 @@ class PDFExportPage extends StatelessWidget {
   }
 
   Future<void> getImages(List<GlobalKey> globalKeys) async {
-    // Future.delayed(Duration(seconds: 4),
-    //     () async => await PDFExport.generatePDF(globalKeys));
-
     await Future.delayed(const Duration(seconds: 2), () {
       PDFExport.generatePDF(globalKeys);
     });

@@ -3,14 +3,16 @@ import 'dart:async';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:highlighter_coachmark/highlighter_coachmark.dart';
-import 'package:nudge_me/shared/cards.dart';
-import 'package:nudge_me/pages/wellbeing_page/wellbeingPageGridView.dart';
 import 'package:nudge_me/model/user_model.dart';
 import 'package:nudge_me/shared/share_button.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 ////////// LEGACY GRAPH ////////////////
+////////// LEGACY GRAPH ////////////////
+////////// LEGACY GRAPH ////////////////
+////////// LEGACY GRAPH ////////////////
+
 /// an upper bound for the recommended number of steps to walk in a week
 const RECOMMENDED_STEPS_IN_WEEK = 70000;
 
@@ -249,7 +251,7 @@ class _WellbeingGraphState extends State<WellbeingGraph> {
           if (snapshot.hasData) {
             // TODO understand how to add generated data to the graphs
             // final items = snapshot.data;
-            final graph = WellbeingPageGridView(cards: cards);
+            // final graph = WellbeingPageGridView(cards: cards);
 
             final List<Widget> buttons = [];
             if (widget.shouldShowTutorial) {
@@ -283,10 +285,10 @@ class _WellbeingGraphState extends State<WellbeingGraph> {
                   key: _wbGraphTutorialKey,
                   child: Flexible(
                     child: RepaintBoundary(
-                        // wraps it in a [RepaintBoundary] so we can use .toImage()
-                        key:
-                            _printKey, // this [RepaintBoundary] will be 'printed'/shared
-                        child: graph),
+                      // wraps it in a [RepaintBoundary] so we can use .toImage()
+                      key:
+                          _printKey, // this [RepaintBoundary] will be 'printed'/shared
+                    ),
                   )
                   // graph
                   )

@@ -6,11 +6,6 @@ class SpeechRareTile extends StatelessWidget {
   final int score;
   const SpeechRareTile({Key key, this.card, this.score = 0}) : super(key: key);
 
-//   @override
-//   _SpeechRareTileState createState() => _SpeechRareTileState();
-// }
-//
-// class _SpeechRareTileState extends State<SpeechRareTile> {
   @override
   Widget build(BuildContext context) {
     return Container(

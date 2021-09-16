@@ -88,19 +88,15 @@ class FriendGraph extends StatelessWidget {
       builder: (ctx, dat) {
         if (dat.hasData) {
           String data = dat.data;
-          // print("data: $data");
           if (data == "") {
             return Text("They haven't sent you anything.");
           }
           List<Widget> graphs = [];
           Map<String, dynamic> dataReceived = jsonDecode(data);
-          // print(dataReceived);
 
           final List<dynamic> ids = jsonDecode(dataReceived['ids']).toList();
           final Map<String, dynamic> rawDataForBarchart =
               json.decode(dataReceived['data']);
-
-          print("ids: $ids");
 
           List<int> zeros = List.filled(ids.length, 0);
           rawDataForBarchart.forEach((key, value) {
@@ -121,7 +117,6 @@ class FriendGraph extends StatelessWidget {
             Map<String, List<double>> hashMapForBarChart = {};
 
             rawDataForBarchart.forEach((key, value) {
-              // print(List<double>.from(rawDataForBarchart[key]));
               hashMapForBarChart[key] =
                   List<double>.from(rawDataForBarchart[key]);
             });
@@ -134,13 +129,9 @@ class FriendGraph extends StatelessWidget {
               ids.contains(1) ||
               ids.contains(2) ||
               ids.contains(3)) {
-            print("idsLength:$idsLength");
-            print(rawDataForBarchart);
             for (var i = 0; i < idsLength; i++) {
-              print("i:$i");
               Map<String, double> hashMapForBarChart = {};
               rawDataForBarchart.forEach((key, value) {
-                print("value[$i]: ${value[i]}");
                 if (ids.contains(5)) {
                   hashMapForBarChart[key] =
                       double.parse(value[ids[i]].toString());
@@ -148,17 +139,13 @@ class FriendGraph extends StatelessWidget {
                   hashMapForBarChart[key] = double.parse(value[i].toString());
                 }
               });
-              print("hashMapForBarChart: $hashMapForBarChart");
-              // print(hashMapForBarChart);
+
               graphs.add(SharedBarChart(
                   cardId: ids[i],
                   hashMapForBarChart: hashMapForBarChart,
                   card: cards[ids[i]]));
             }
           }
-
-          print("ids.length: ${ids.length}");
-          print("graphs:$graphs");
 
           return Container(
             height: MediaQuery.of(context).size.height * 0.65,

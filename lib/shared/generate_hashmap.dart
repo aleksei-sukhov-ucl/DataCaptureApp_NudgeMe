@@ -1,7 +1,5 @@
 import 'package:nudge_me/model/user_model.dart';
 
-import 'cards.dart';
-
 generateMonthlyHashMap() {
   Map dataHashMap = Map<String, double>();
   DateTime nextDate;
@@ -44,35 +42,26 @@ generateYearlyHashMap() {
   return dataHashMap;
 }
 
+/// Fetching data from DB for particular wellbeing metrics
 double selectWellbeingItem({int cardId, WellbeingItem wellbeingItem}) {
   switch (cardId) {
     case 0:
-      // print(
-      //     "Date ${wellbeingItem.date} | numSteps ${wellbeingItem.numSteps}");
       return (wellbeingItem.numSteps == null)
           ? 0
           : wellbeingItem.numSteps / 1000;
     case 1:
-      // print(
-      //     "Date ${wellbeingItem.date} | wellbeingScore ${wellbeingItem.wellbeingScore}");
       return (wellbeingItem.wellbeingScore == null)
           ? 0
           : wellbeingItem.wellbeingScore;
     case 2:
-      // print(
-      //     "Date ${wellbeingItem.date} | sputumColour ${wellbeingItem.sputumColour}");
       return (wellbeingItem.sputumColour == null)
           ? 0
           : wellbeingItem.sputumColour;
     case 3:
-      // print(
-      //     "Date ${wellbeingItem.date} | mrcDyspnoeaScale ${wellbeingItem.mrcDyspnoeaScale}");
       return (wellbeingItem.mrcDyspnoeaScale == null)
           ? 0
           : wellbeingItem.mrcDyspnoeaScale;
     case 4:
-      // print(
-      //     "Date ${wellbeingItem.date} | speechRate ${wellbeingItem.speechRate}");
       return (wellbeingItem.speechRate == null) ? 0 : wellbeingItem.speechRate;
     default:
       print("Error in picking upp the data from DB");
@@ -84,10 +73,8 @@ populateWeeklyHashMapWithDataFromDB(Map<String, List<double>> hashMap,
     List<WellbeingItem> dataFromDB, int cardId) {
   ///Populating HashMap
   dataFromDB.forEach((wellbeingItem) {
-    // print("cardId:$cardId");
     String matchDate = wellbeingItem.date;
     DateTime dateFromDb = DateTime.parse(wellbeingItem.date);
-    // print("dateFromDb: $dateFromDb");
 
     if (dateFromDb.weekday != 1) {
       matchDate = dateFromDb

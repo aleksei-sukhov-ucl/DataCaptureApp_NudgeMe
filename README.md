@@ -1,10 +1,10 @@
-# NudgeMe - COMP0016 2020/21, Team 26
+# NudgeShare - COMP0073 2020/21
 
 [![Flutter Checks](https://github.com/UCLComputerScience/COMP0016_2020_21_Team26/actions/workflows/flutter.yml/badge.svg)](https://github.com/UCLComputerScience/COMP0016_2020_21_Team26/actions/workflows/flutter.yml)
 
-> V2 of the CarerCare app.
+> V2.1 of the CarerCare app.
 
-NudgeMe is a privacy focused, cross-platform mobile app that helps you track and share
+NudgeShare is a privacy focused, cross-platform mobile app that helps you track and share
 your wellbeing & steps.
 
 This is built on Flutter's stable branch.
@@ -103,14 +103,16 @@ We would like to share the last 5 weeks, like with the PDF, so the JSON *data* w
 something like this:
 
 ``` json
-[
-{"week": 1, "score": 8, "steps": 1005},
-{"week": 2, "score": 9, "steps": 12300},
-{"week": 3, "score": 7, "steps": 105},
-{"week": 4, "score": 2, "steps": 200},
-{"week": 5, "score": 3, "steps": 300},
+[{"ids":"[5]",
+  "data":"{\"2021-08-16\":[27.42,4.0,2.0,2.33],
+           \"2021-08-23\":[41.68,4.0,2.0,2.29],
+           \"2021-08-30\":[33.23,4.43,2.0,2.0],
+           \"2021-09-06\":[45.93,2.57,2.0,2.0],
+           \"2021-09-13\":[20.45,3.75,1.75,1.0]
+ }"}
 ]
 ```
+Note: the ids correspond to the card ids associated with every well being metric.
 (Using a dictionary instead of an array because we may want their week number.)
 
 But we want e2e encryption, so mobile clients should convert this json to a string and

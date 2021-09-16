@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:cron/cron.dart';
 import 'package:flutter/foundation.dart';
@@ -241,6 +240,7 @@ Future<Null> _handleGoalCompleted(Friend friend) async {
   await FriendDB().updateGoalFromFriend(friend.identifier, null, null);
 }
 
+/// Back ground task to weekly insert the steps for that particular day
 void schedulePrevStepCountKeyInsert() async {
   final day = DateTime.sunday;
   final hour = 11;
@@ -254,7 +254,6 @@ void schedulePrevStepCountKeyInsert() async {
   prevStepCountKeyInsert =
       Cron().schedule(Schedule.parse("$minute $hour * * $day"), () async {
     if (!prefs.containsKey(PREV_STEP_COUNT_KEY)) {
-      // print("prefs.setInt(PREV_STEP_COUNT_KEY, totalSteps)");
       prefs.setInt(PREV_STEP_COUNT_KEY, totalSteps);
     } else {
       prefs.setInt(PREV_STEP_COUNT_KEY, totalSteps);
@@ -262,6 +261,7 @@ void schedulePrevStepCountKeyInsert() async {
   });
 }
 
+/// Back ground task to daily insert the steps for that particular day
 void schedulePedometerInsert() {
   print("Cron executes background tasks");
 
@@ -276,13 +276,9 @@ void schedulePedometerInsert() {
 
 /// schedules a cron job to publish data
 void schedulePublish() {
-  ///TODO: Uncomment the above lines to make data sending take place on Mon
-  // final day = DateTime.monday;
-  // final hour = 12;
-  // final minute = 0;
-  final day = DateTime.tuesday;
-  final hour = 11;
-  final minute = 50;
+  final day = DateTime.monday;
+  final hour = 12;
+  final minute = 0;
 
   // This may help: https://crontab.guru/
   publishTask =
@@ -298,7 +294,6 @@ void schedulePublish() {
       }
     }
   });
-  publishData();
 }
 
 void cancelPublish() {
@@ -306,7 +301,7 @@ void cancelPublish() {
   publishTask = null;
 }
 
-/// This task needs to be scheduled every day at 23:58
+/// Void to actually save daily steps
 void _addStepsDaily() async {
   final prefs = await SharedPreferences.getInstance();
   final pedometerPair = prefs.getStringList(PREV_PEDOMETER_PAIR_KEY);
@@ -371,24 +366,18 @@ insertData({int numSteps}) async {
 }
 
 void publishData() async {
-  /// Since we log the steps every day and allow the user to "add data"
-  /// we will be getting last week worth of data
   String serverAudioUrl;
-  print("Data Sent");
   final items = await UserWellbeingDB().dataPastWeekToPublish();
-  print("items: $items");
   try {
     final item = items[0];
     if (item.audioURL != null) {
+      /// API call to send audio up to the server
       print("item.audioURL: ${item.audioURL}");
       if (await File(item.audioURL).exists()) {
-        print("File Exists");
         var request = http.MultipartRequest(
             'POST', Uri.parse(BASE_URL + "/upload_audio"));
-
         request.files
             .add(await http.MultipartFile.fromPath('audioFile', item.audioURL));
-
         var res = await request.send();
         print("res.statusCode:${res.statusCode}");
         var resBody = await http.Response.fromStream(res);
@@ -403,17 +392,13 @@ void publishData() async {
       "wellbeingScore": item.wellbeingScore,
       "sputumColour": item.sputumColour,
       "mrcDyspnoeaScale": item.mrcDyspnoeaScale,
-      // "errorRate": errorRate.truncate(),
       "supportCode": item.supportCode,
       "date_sent": item.date,
       "speechRateTest": item.speechRateTest,
       "testDuration": item.testDuration,
       "audioUrl": serverAudioUrl
-
-      ///N.B. The weeks are represented starting from monday of every week
     });
 
-    print("Sending body $body");
     http
         .post(Uri.parse(BASE_URL + "/add-wellbeing-record"),
             headers: {"Content-Type": "application/json"}, body: body)
@@ -446,76 +431,4 @@ void publishData() async {
 // int _anonymizeScore(double score) {
 //   final random = Random();
 //   return (random.nextInt(100) > 69) ? random.nextInt(11) : score.truncate();
-// }
-
-///TODO: Delete This
-// publishData() async {
-//   /// Since we log the steps every day and allow the user to "add data"
-//   /// we will be getting last week worth of data
-//   String serverAudioUrl;
-//   print("Data Sent");
-//   final items = await UserWellbeingDB().getLastNDaysAvailable(1);
-//   print("items: $items");
-//   try {
-//     final item = items[0];
-//     if (item.audioURL != null) {
-//       print("item.audioURL: ${item.audioURL}");
-//       if (await File(item.audioURL).exists()) {
-//         print("File Exists");
-//         var request = http.MultipartRequest('POST',
-//             Uri.parse("https://health.nudgemehealth.co.uk/upload_audio"));
-//
-//         request.files
-//             .add(await http.MultipartFile.fromPath('audioFile', item.audioURL));
-//
-//         var res = await request.send();
-//         print("res.statusCode:${res.statusCode}");
-//         var resBody = await http.Response.fromStream(res);
-//         serverAudioUrl = jsonDecode(resBody.body);
-//         print("serverAudioUrl:$serverAudioUrl");
-//       }
-//     }
-//
-//     final body = jsonEncode({
-//       "postCode": item.postcode,
-//       "weeklySteps": item.numSteps,
-//       "wellbeingScore": item.wellbeingScore,
-//       "sputumColour": item.sputumColour,
-//       "mrcDyspnoeaScale": item.mrcDyspnoeaScale,
-//       // "errorRate": errorRate.truncate(),
-//       "supportCode": item.supportCode,
-//       "date_sent": item.date,
-//       "speechRateTest": item.speechRateTest,
-//       "testDuration": item.testDuration,
-//       "audioUrl": serverAudioUrl
-//
-//       ///N.B. The weeks are represented starting from monday of every week
-//     });
-//
-//     print("Sending body $body");
-//     http
-//         .post(Uri.parse(BASE_URL + "/add-wellbeing-record"),
-//             headers: {"Content-Type": "application/json"}, body: body)
-//         .then((response) {
-//       print("Response status: ${response.statusCode}");
-//       print("Response body: ${response.body}");
-//       final asJson = jsonDecode(response.body);
-//       // could be null:
-//       if (asJson['success'] != true) {
-//         print("Something went wrong.");
-//       }
-//     });
-//   } catch (err) {
-//     print(err);
-//     print("No data for the past week to be send up to the server!");
-//   }
-//
-//   /// Legacy code for "seeding accurate data 70% of the time
-//   // final int anonScore = _anonymizeScore(item.wellbeingScore);
-//   // int1/int2 is a double in dart
-//   // final double normalizedSteps =
-//   //     (item.numSteps / RECOMMENDED_STEPS_IN_WEEK) * 10.0;
-//   // final double errorRate = (normalizedSteps > anonScore)
-//   //     ? normalizedSteps - anonScore
-//   //     : anonScore - normalizedSteps;
 // }

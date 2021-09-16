@@ -18,7 +18,7 @@ import 'package:uni_links/uni_links.dart';
 import 'main_pages.dart';
 
 /// true if app is in production, meant for end users
-bool isProduction = false;
+bool isProduction = true;
 
 /// key to retrieve [bool] that is true if setup is done
 const FIRST_TIME_DONE_KEY = "first_time_done";
@@ -131,16 +131,24 @@ void _setupStepCountTotal() async {
   final int totalSteps = await Pedometer.stepCountStream.first
       .then((value) => value.steps)
       .catchError((error) {
+    print("Catches error");
     return 0;
   });
+  print("Steps from pedometer: $totalSteps");
+
   if (!prefs.containsKey(PREV_STEP_COUNT_KEY)) {
+    print("prefs.setInt(PREV_STEP_COUNT_KEY, totalSteps);");
     prefs.setInt(PREV_STEP_COUNT_KEY, totalSteps);
   }
   if (!prefs.containsKey(PREV_PEDOMETER_PAIR_KEY)) {
+    print("prefs.setStringList(PREV_PEDOMETER_PAIR_KEY");
     prefs.setStringList(PREV_PEDOMETER_PAIR_KEY,
         // ISO date format allows easier parsing
         [totalSteps.toString(), DateTime.now().toIso8601String()]);
   }
+
+  print(
+      "PREV_PEDOMETER_PAIR_KEY: ${prefs.getStringList(PREV_PEDOMETER_PAIR_KEY)}");
 }
 
 /// [StatelessWidget] that is the top level widget for the app.

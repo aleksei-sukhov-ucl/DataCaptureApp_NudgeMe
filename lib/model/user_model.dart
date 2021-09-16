@@ -50,6 +50,39 @@ class UserWellbeingDB extends ChangeNotifier {
   factory UserWellbeingDB() =>
       _instance; // factory so we don't return new instance
 
+  Future<Database> get database async {
+    if (_database == null) {
+      _database = await _init();
+    }
+    return _database;
+  }
+
+  Future<Database> _init() async {
+    final dir = await getDatabasesPath();
+    final dbPath = join(dir, _dbName);
+    return openDatabase(dbPath, version: _dbVersion, onCreate: _onCreate);
+  }
+
+  /// Creates the DB and is call above in _init()
+  void _onCreate(Database db, int version) async {
+    await db.execute('''
+      CREATE TABLE $_tableName (
+      ${_columns[0]} INTEGER PRIMARY KEY AUTOINCREMENT,
+      ${_columns[1]} TEXT,
+      ${_columns[2]} TEXT,
+      ${_columns[3]} INTEGER,
+      ${_columns[4]} DOUBLE,
+      ${_columns[5]} DOUBLE,
+      ${_columns[6]} DOUBLE,
+      ${_columns[7]} DOUBLE,
+      ${_columns[8]} INTEGER,
+      ${_columns[9]} DOUBLE,    
+      ${_columns[10]} TEXT,
+      ${_columns[11]} TEXT
+    )
+      ''');
+  }
+
   /// inserts a wellbeing record.
   /// returns the id of the newly inserted record
   Future<int> insert(WellbeingItem item) async {
@@ -81,11 +114,6 @@ class UserWellbeingDB extends ChangeNotifier {
       currentValueAudioURL,
       Date}) async {
     final db = await database;
-
-    // "speechRate",
-    // "speechRateTest",
-    // "testDuration",
-    // "audioURL"
 
     Map<String, dynamic> row = {
       _columns[7]: currentValueSpeechRate,
@@ -141,9 +169,6 @@ class UserWellbeingDB extends ChangeNotifier {
     List<Map> wellbeingMaps = await db.query(_tableName,
         columns: _columns2, orderBy: "${_columns[1]} DESC", limit: n);
 
-    // for (var value in wellbeingMaps) {
-    //   print("getLastNDays: $value");
-    // }
     final itemList = wellbeingMaps
         .map((wellbeingMap) => WellbeingItem.fromMap(wellbeingMap))
         .toList(growable: false);
@@ -159,7 +184,6 @@ class UserWellbeingDB extends ChangeNotifier {
 
     /// Generating a list of columns we want to get
     List<String> allNeededColumns = ["${_columns[1]}", "${_columns[id]}"];
-    // print("allNeededColumns: $allNeededColumns");
 
     /// Genrating start and end date
     final startDate = DateTime.now().toIso8601String().substring(0, 10);
@@ -167,17 +191,10 @@ class UserWellbeingDB extends ChangeNotifier {
         .subtract(Duration(days: 6))
         .toIso8601String()
         .substring(0, 10);
-    List<Map> wellbeingMaps = await db.query(
-      _tableName,
-      columns: allNeededColumns,
-      where: '''date BETWEEN '$endDate' AND '$startDate' ''',
-      orderBy: "${allNeededColumns[0]}",
-      // groupBy: "[date]"
-    );
-
-    // wellbeingMaps.forEach((element) {
-    //   print("getLastWeekOfSpecificColumns: $element");
-    // });
+    List<Map> wellbeingMaps = await db.query(_tableName,
+        columns: allNeededColumns,
+        where: '''date BETWEEN '$endDate' AND '$startDate' ''',
+        orderBy: "${allNeededColumns[0]}");
 
     final itemList = wellbeingMaps
         .map((wellbeingMap) => WellbeingItem.fromMap(wellbeingMap))
@@ -228,19 +245,6 @@ class UserWellbeingDB extends ChangeNotifier {
             ORDER BY date
             ''');
 
-    print('''
-            SELECT STRFTIME('%$timeframe',date) as IsoSting, date, ${allNeededColumns.join(", ")}
-            FROM $_tableName
-            WHERE date BETWEEN '$endDate' AND '$startDate' 
-            GROUP BY STRFTIME('%$timeframe',date)
-            ORDER BY date
-            ''');
-
-    // print("endDate: $endDate");
-    wellbeingMaps.forEach((element) {
-      print("$element");
-    });
-
     final itemList = wellbeingMaps
         .map((wellbeingMap) => WellbeingItem.fromMap(wellbeingMap))
         .toList();
@@ -272,10 +276,6 @@ class UserWellbeingDB extends ChangeNotifier {
     WHERE date BETWEEN '$endDate' AND '$startDate' 
     GROUP BY STRFTIME('%W',date)
     ''');
-
-    wellbeingMaps.forEach((element) {
-      print("$element");
-    });
 
     final itemList = wellbeingMaps
         .map((wellbeingMap) => WellbeingItem.fromMap(wellbeingMap))
@@ -315,27 +315,6 @@ class UserWellbeingDB extends ChangeNotifier {
     GROUP BY STRFTIME('%W',date)
     ''');
 
-    print('''
-    SELECT STRFTIME('%W',date) as IsoSting,
-    postcode,
-    date,
-    sum(numSteps) as numSteps,
-    avg(wellbeingScore) as wellbeingScore,
-    avg(sputumColour) as sputumColour,
-    avg(mrcDyspnoeaScale) as mrcDyspnoeaScale,
-    speechRateTest,
-    testDuration,
-    audioURL,
-    support_code
-    FROM $_tableName
-    WHERE date BETWEEN '$endDate' AND '$startDate'
-    GROUP BY STRFTIME('%W',date)
-    ''');
-
-    wellbeingMaps.forEach((element) {
-      print("$element");
-    });
-
     final itemList = wellbeingMaps
         .map((wellbeingMap) => WellbeingItem.fromMap(wellbeingMap))
         .toList(growable: false);
@@ -348,13 +327,6 @@ class UserWellbeingDB extends ChangeNotifier {
     deleteDatabase(join(base, _dbName));
     _database = null; // will be created next time its needed
     notifyListeners();
-  }
-
-  Future<Database> get database async {
-    if (_database == null) {
-      _database = await _init();
-    }
-    return _database;
   }
 
   /// returns `true` if there are 0 rows in the DB
@@ -370,44 +342,6 @@ class UserWellbeingDB extends ChangeNotifier {
     return firstIntValue(await db.rawQuery('''SELECT EXISTS(SELECT 1 
                FROM $_tableName 
                WHERE date="$checkDate");''')) == 1;
-  }
-
-  Future<Database> _init() async {
-    final dir = await getDatabasesPath();
-    final dbPath = join(dir, _dbName);
-    return openDatabase(dbPath, version: _dbVersion, onCreate: _onCreate);
-  }
-
-  /// Creates the DB and is call above in _init()
-  void _onCreate(Database db, int version) async {
-    await db.execute('''
-      CREATE TABLE $_tableName (
-      ${_columns[0]} INTEGER PRIMARY KEY AUTOINCREMENT,
-      ${_columns[1]} TEXT,
-      ${_columns[2]} TEXT,
-      ${_columns[3]} INTEGER,
-      ${_columns[4]} DOUBLE,
-      ${_columns[5]} DOUBLE,
-      ${_columns[6]} DOUBLE,
-      ${_columns[7]} DOUBLE,
-      ${_columns[8]} INTEGER,
-      ${_columns[9]} DOUBLE,    
-      ${_columns[10]} TEXT,
-      ${_columns[11]} TEXT
-    )
-      ''');
-    /*"id",
-      "date",
-      "postcode",
-      "numSteps",
-      "wellbeingScore",
-      "sputumColour",
-      "mrcDyspnoeaScale",
-      "speechRate",
-      "speechRateTest",
-      "testDuration",
-      "audioURL",
-      "support_code"*/
   }
 }
 
@@ -427,7 +361,7 @@ class WellbeingItem {
   String supportCode;
 
   WellbeingItem(
-      {this.id, // this should prob be left null so SQL will handle it
+      {this.id, // this should be left null so SQL will handle it
       this.date,
       this.postcode,
       this.numSteps,
@@ -475,6 +409,4 @@ class WellbeingItem {
     }
     return map;
   }
-
-  add(WellbeingItem wellbeingItem) {}
 }

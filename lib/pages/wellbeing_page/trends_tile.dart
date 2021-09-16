@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+/// This is just a template line graph - do not really need to edit anything here
 class LineChartTile extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => LineChartTileState();

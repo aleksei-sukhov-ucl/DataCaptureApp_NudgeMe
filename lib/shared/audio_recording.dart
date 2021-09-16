@@ -123,8 +123,6 @@ class _AudioRecordingState extends State<AudioRecording> {
                   onChanged: (int newValue) {
                     setState(() {
                       _currentValueTestDuration = newValue.toDouble();
-                      print(
-                          "_currentValueTestDuration: $_currentValueTestDuration");
                     });
                   },
                   items: <int>[
@@ -172,18 +170,6 @@ class _AudioRecordingState extends State<AudioRecording> {
         return Icons.mic_none_rounded;
     }
   }
-
-  // _checkingPermission() async {
-  //   final status = await Permission.microphone.request();
-  //   print("status: $status");
-  //   if (status == PermissionStatus.permanentlyDenied) {
-  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //         elevation: 10,
-  //         backgroundColor: Colors.yellow,
-  //         content: Text(
-  //             "Please enable access to the microphone in your device settings")));
-  //   }
-  // }
 
   iconColorSelect(int _isRecording) {
     switch (_isRecording) {
@@ -311,8 +297,8 @@ class _AudioRecordingState extends State<AudioRecording> {
     final directory = await getApplicationDocumentsDirectory();
     print("directory: $directory");
     print("path:$path");
-    print(await File(path /*.split("/").last*/).exists());
-    print(await File(path).delete());
+    await File(path).exists();
+    await File(path).delete();
 
     setState(() => _isRecording = 2);
   }

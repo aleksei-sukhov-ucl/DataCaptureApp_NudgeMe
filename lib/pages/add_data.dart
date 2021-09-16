@@ -4,7 +4,6 @@ import 'package:nudge_me/model/user_model.dart';
 import 'package:nudge_me/shared/cards.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 
 class AddData extends StatefulWidget {
   final CardClass card;
@@ -21,7 +20,7 @@ class _AddDataState extends State<AddData> {
   int _currentValueSpeechRateTest = 0;
   double _currentValueTestDuration = 30;
   double _currentValueSpeechRate = 0;
-  String _currentValueAudioURL = "url/test";
+  String _currentValueAudioURL;
   DateTime selectedDate = DateTime.now();
   bool _speechRateTest = false;
 
@@ -65,150 +64,36 @@ class _AddDataState extends State<AddData> {
     });
   }
 
-  speechRateTest() {
-    return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Text("Please select the type of test:",
-                style: Theme.of(context).textTheme.bodyText1,
-                textAlign: TextAlign.center),
-          ),
-          ToggleSwitch(
-            fontSize: Theme.of(context).textTheme.bodyText1.fontSize,
-            initialLabelIndex: _currentValueSpeechRateTest,
-            minWidth: MediaQuery.of(context).size.width * 0.34,
-            minHeight: MediaQuery.of(context).size.height * 0.04,
-            activeBgColors: [
-              [Theme.of(context).colorScheme.primary],
-              [Theme.of(context).colorScheme.secondary]
-            ],
-            inactiveBgColor: Colors.grey[100],
-            totalSwitches: 2,
-            labels: ["Text", "Numbers"],
-            // with just animate set to true, default curve = Curves.easeIn
-            radiusStyle: true,
-            cornerRadius: 15.0,
-            onToggle: (index) {
-              setState(() {
-                _currentValueSpeechRateTest = index;
-              });
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 20),
-            child: Text(
-              (_currentValueSpeechRateTest == 0)
-                  ? "In this test, you will be asked to say \"Hippopotamus\" as many times as possible in a selected time "
-                  : "In this test, you will be asked to count from one onwards until the time runs out",
-              textAlign: TextAlign.center,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-            child: Text("Please select the duration of test:",
-                style: Theme.of(context).textTheme.bodyText1,
-                textAlign: TextAlign.center),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(
-                child: DropdownButton<int>(
-                  value: _currentValueTestDuration.toInt(),
-                  icon: const Icon(Icons.arrow_drop_down,
-                      color: Color.fromRGBO(113, 101, 226, 1)),
-                  iconSize: 24,
-                  elevation: 16,
-                  style: const TextStyle(color: Colors.black),
-                  underline: Container(
-                    height: 2,
-                    color: Colors.deepPurpleAccent,
-                  ),
-                  onChanged: (int newValue) {
-                    setState(() {
-                      _currentValueTestDuration = newValue.toDouble();
-                      print(
-                          "_currentValueTestDuration: $_currentValueTestDuration");
-                    });
-                  },
-                  items: <int>[
-                    30,
-                    60,
-                    90,
-                    120,
-                  ].map<DropdownMenuItem<int>>((int value) {
-                    return DropdownMenuItem<int>(
-                      value: value,
-                      child: Text(value.toString(),
-                          style: Theme.of(context).textTheme.bodyText1,
-                          textAlign: TextAlign.center),
-                    );
-                  }).toList(),
-                ),
-              ),
-              Text("Seconds",
-                  style: Theme.of(context).textTheme.bodyText1,
-                  textAlign: TextAlign.center),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-            child: !_speechRateTest
-                ? ElevatedButton(
-                    onPressed: () {
-                      _currentValueSpeechRate = 185;
-                      hideButton();
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text("Start Test",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2
-                              .merge(TextStyle(color: Colors.white)),
-                          textAlign: TextAlign.center),
-                    ))
-                : Text("${_currentValueSpeechRate.truncate()}  Words/min"),
-          )
-        ]);
-  }
-
+  /// Adding data widgets for different wellbeing metrics
   Widget addingIndividualData({int cardId}) {
     switch (cardId) {
       case 1:
         return Container(
           width: 300,
-          child: Column(
-              // crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("\n Rate how well you have felt today out of 10. ",
-                    textAlign: TextAlign.center),
-                Container(
-                    child: SliderTheme(
-                      data: SliderTheme.of(context).copyWith(
-                          valueIndicatorShape:
-                              PaddleSliderValueIndicatorShape()),
-                      child: Slider(
-                        value: _currentSliderValueWellbeing,
-                        min: 0,
-                        max: 10,
-                        divisions: 10,
-                        label: _currentSliderValueWellbeing.round().toString(),
-                        activeColor: Theme.of(context).primaryColor,
-                        inactiveColor: Color.fromARGB(189, 189, 189, 255),
-                        onChanged: (double value) {
-                          setState(() {
-                            _currentSliderValueWellbeing = value;
-                          });
-                        },
-                      ),
-                    ),
-                    width: 300.0)
-              ]),
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Text("\n Rate how well you have felt today out of 10. ",
+                textAlign: TextAlign.center),
+            Container(
+                child: SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                      valueIndicatorShape: PaddleSliderValueIndicatorShape()),
+                  child: Slider(
+                    value: _currentSliderValueWellbeing,
+                    min: 0,
+                    max: 10,
+                    divisions: 10,
+                    label: _currentSliderValueWellbeing.round().toString(),
+                    activeColor: Theme.of(context).primaryColor,
+                    inactiveColor: Color.fromARGB(189, 189, 189, 255),
+                    onChanged: (double value) {
+                      setState(() {
+                        _currentSliderValueWellbeing = value;
+                      });
+                    },
+                  ),
+                ),
+                width: 300.0)
+          ]),
         );
       case 2:
         return Container(
@@ -358,18 +243,12 @@ class _AddDataState extends State<AddData> {
                     ),
                   ),
                 ]));
-      case 4:
-        return Container(
-            width: 300,
-            child: Column(
-                // crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [speechRateTest()]));
       default:
         Text("No data to add...");
     }
   }
 
+  /// Modal for data selection
   _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         context: context,
@@ -391,6 +270,7 @@ class _AddDataState extends State<AddData> {
       });
   }
 
+  /// Inserting wellbeing metric
   insertData({int cardId}) async {
     switch (cardId) {
       case 1:
@@ -456,6 +336,7 @@ class _AddDataState extends State<AddData> {
     }
   }
 
+  /// Updating wellbeing metric in the database
   updateData({int cardId}) async {
     switch (cardId) {
       case 1:
@@ -494,12 +375,6 @@ class _AddDataState extends State<AddData> {
 
   @override
   Widget build(BuildContext context) {
-    // // _checkIfDataExists(
-    // //     checkDate: DateTime.now().toIso8601String().substring(0, 10));
-    // print(_checkIfDataExists(
-    //     checkDate: DateTime.now().toIso8601String().substring(0, 10)));
-    // // print("_dataAlreadyExists: $_dataAlreadyExists");
-
     return Scaffold(
       appBar: AppBar(
         title: Text(

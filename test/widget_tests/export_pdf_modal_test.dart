@@ -4,13 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nudge_me/main.dart';
 import 'package:nudge_me/model/user_model.dart';
-import 'package:nudge_me/pages/charts_page/bar_graph.dart';
 import 'package:nudge_me/pages/charts_page/graph_page.dart';
 import 'package:nudge_me/shared/cards.dart';
-import 'package:nudge_me/shared/share_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:toggle_switch/toggle_switch.dart';
-import 'package:intl/intl.dart';
 import '../widget_test.dart';
 
 void main() {

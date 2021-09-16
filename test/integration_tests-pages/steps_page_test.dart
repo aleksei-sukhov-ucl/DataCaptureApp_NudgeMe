@@ -7,7 +7,6 @@ import 'package:nudge_me/model/user_model.dart';
 import 'package:nudge_me/pages/charts_page/bar_graph.dart';
 import 'package:nudge_me/pages/charts_page/graph_page.dart';
 import 'package:nudge_me/shared/cards.dart';
-import 'package:pedometer/pedometer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:intl/intl.dart';

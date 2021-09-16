@@ -1,11 +1,9 @@
 import 'package:charts_flutter/flutter.dart';
-import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:nudge_me/main.dart';
 import 'package:nudge_me/model/user_model.dart';
-import 'package:nudge_me/pages/charts_page/bar_graph.dart';
 import 'package:nudge_me/pages/charts_page/graph_page.dart';
 import 'package:nudge_me/pages/charts_page/line_graph.dart';
 import 'package:nudge_me/shared/cards.dart';
